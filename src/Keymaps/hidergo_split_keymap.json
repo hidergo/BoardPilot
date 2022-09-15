@@ -1,0 +1,391 @@
+{
+    "name": "hid:ergo Split",
+    "type": "SPLITKB",
+
+    "keys_left": [
+        [
+            {
+                "name": "esc",
+                "dsp": "ESC",
+                "size": 1
+            },
+            {
+                "name": "1",
+                "dsp": "1",
+                "size": 1
+            },
+            {
+                "name": "2",
+                "dsp": "2",
+                "size": 1
+            },
+            {
+                "name": "3",
+                "dsp": "3",
+                "size": 1
+            },
+            {
+                "name": "4",
+                "dsp": "4",
+                "size": 1
+            },
+            {
+                "name": "5",
+                "dsp": "5",
+                "size": 1
+            },
+            {
+                "name": "6",
+                "dsp": "6",
+                "size": 1
+            }
+        ],
+        [
+            {
+                "name": "tab",
+                "dsp": "TAB",
+                "size": 1.5
+            },
+            {
+                "name": "q",
+                "dsp": "Q",
+                "size": 1
+            },
+            {
+                "name": "w",
+                "dsp": "W",
+                "size": 1
+            },
+            {
+                "name": "e",
+                "dsp": "E",
+                "size": 1
+            },
+            {
+                "name": "r",
+                "dsp": "R",
+                "size": 1
+            },
+            {
+                "name": "t",
+                "dsp": "T",
+                "size": 1
+            }
+        ],
+        [
+            {
+                "name": "mod",
+                "dsp": "MOD",
+                "size": 1.75
+            },
+            {
+                "name": "a",
+                "dsp": "A",
+                "size": 1
+            },
+            {
+                "name": "s",
+                "dsp": "S",
+                "size": 1
+            },
+            {
+                "name": "d",
+                "dsp": "D",
+                "size": 1
+            },
+            {
+                "name": "f",
+                "dsp": "F",
+                "size": 1
+            },
+            {
+                "name": "g",
+                "dsp": "G",
+                "size": 1
+            }
+        ],
+        [
+            {
+                "name": "lshift",
+                "dsp": "SHIFT",
+                "size": 1.25,
+                "fontSize": 0.9
+            },
+            {
+                "name": "lt",
+                "dsp": "<",
+                "size": 1
+            },
+            {
+                "name": "z",
+                "dsp": "Z",
+                "size": 1
+            },
+            {
+                "name": "x",
+                "dsp": "X",
+                "size": 1
+            },
+            {
+                "name": "c",
+                "dsp": "C",
+                "size": 1
+            },
+            {
+                "name": "v",
+                "dsp": "V",
+                "size": 1
+            },
+            {
+                "name": "b",
+                "dsp": "B",
+                "size": 1
+            }
+        ],
+        [
+            {
+                "name": "lctrl",
+                "dsp": "CTRL",
+                "size": 1.25
+            },
+            {
+                "name": "super",
+                "dsp": "SUPER",
+                "size": 1.25,
+                "fontSize": 0.75
+            },
+            {
+                "name": "lalt",
+                "dsp": "ALT",
+                "size": 1.25
+            },
+            {
+                "name": "tog",
+                "dsp": "TO",
+                "size": 1
+            },
+            {
+                "name": "lbspace",
+                "dsp": "BACK",
+                "size": 2,
+                "rot": -45,
+                "offX": -0.3,
+                "offY": 1.5
+            },
+            {
+                "name": "lspace",
+                "dsp": "SPACE",
+                "size": 2,
+                "rot": -45,
+                "offX": -1.5,
+                "offY": 2.3
+            },
+            {
+                "name": "lenter",
+                "dsp": "ENTER",
+                "size": 1,
+                "rot": -45,
+                "offX": -2,
+                "offY": 0.8,
+                "fontSize": 0.5
+            }
+        ]
+        
+    ],
+    "keys_right": [
+        [
+            {
+                "name": "rbspace",
+                "dsp": "BACK",
+                "size": 2
+            },
+            {
+                "name": "acute",
+                "dsp": "´",
+                "size": 1
+            },
+            {
+                "name": "plus",
+                "dsp": "+",
+                "size": 1
+            },
+            {
+                "name": "0",
+                "dsp": "0",
+                "size": 1
+            },
+            {
+                "name": "9",
+                "dsp": "9",
+                "size": 1
+            },
+            {
+                "name": "8",
+                "dsp": "8",
+                "size": 1
+            },
+            {
+                "name": "7",
+                "dsp": "7",
+                "size": 1
+            }
+        ],
+        [
+            {
+                "name": "renter",
+                "dsp": "ENTER",
+                "size": 1.5
+            },
+            {
+                "name": "caret",
+                "dsp": "^",
+                "size": 1
+            },
+            {
+                "name": "å",
+                "dsp": "Å",
+                "size": 1
+            },
+            {
+                "name": "p",
+                "dsp": "P",
+                "size": 1
+            },
+            {
+                "name": "o",
+                "dsp": "O",
+                "size": 1
+            },
+            {
+                "name": "i",
+                "dsp": "I",
+                "size": 1
+            },
+            {
+                "name": "u",
+                "dsp": "U",
+                "size": 1
+            },
+            {
+                "name": "y",
+                "dsp": "Y",
+                "size": 1
+            }
+        ],
+        [
+            {
+                "name": "renter",
+                "dsp": "ENTER",
+                "size": 1.25,
+                "fontSize": 0.8
+            },
+            {
+                "name": "squote",
+                "dsp": "'",
+                "size": 1
+            },
+            {
+                "name": "ä",
+                "dsp": "Ä",
+                "size": 1
+            },
+            {
+                "name": "ö",
+                "dsp": "Ö",
+                "size": 1
+            },
+            {
+                "name": "l",
+                "dsp": "L",
+                "size": 1
+            },
+            {
+                "name": "k",
+                "dsp": "K",
+                "size": 1
+            },
+            {
+                "name": "j",
+                "dsp": "J",
+                "size": 1
+            },
+            {
+                "name": "h",
+                "dsp": "H",
+                "size": 1
+            }
+        ],
+        [
+            {
+                "name": "rshift",
+                "dsp": "SHIFT",
+                "size": 2.75
+            },
+            {
+                "name": "dash",
+                "dsp": "-",
+                "size": 1
+            },
+            {
+                "name": "dot",
+                "dsp": ".",
+                "size": 1
+            },
+            {
+                "name": "comma",
+                "dsp": ",",
+                "size": 1
+            },
+            {
+                "name": "m",
+                "dsp": "M",
+                "size": 1
+            },
+            {
+                "name": "n",
+                "dsp": "N",
+                "size": 1
+            },
+            {
+                "name": "b",
+                "dsp": "B",
+                "size": 1
+            }
+        ],
+        [
+            {
+                "name": "rctrl",
+                "dsp": "CTRL",
+                "size": 1.5
+            },
+            {
+                "name": "fn",
+                "dsp": "Fn",
+                "size": 1.25
+            },
+            {
+                "name": "menu",
+                "dsp": "MENU",
+                "size": 1,
+                "fontSize": 0.6
+            },
+            {
+                "name": "rsuper",
+                "dsp": "SUPER",
+                "size": 1.25,
+                "fontSize": 0.7
+            },
+            {
+                "name": "ralt",
+                "dsp": "ALTGR",
+                "size": 1.25,
+                "fontSize": 0.8
+            },
+            {
+                "name": "rspace",
+                "dsp": "SPACE",
+                "size": 2
+            }
+        ]
+    ]
+}
