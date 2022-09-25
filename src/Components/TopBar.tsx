@@ -34,31 +34,26 @@ export default function TopBar (props: {onChangeView: OnChangeViewCallback}) {
             </div>
             <div style={{flex: 8, padding: 0, margin: 0}}>
                 <div style={{display: 'flex', flex: 1, flexDirection: 'row', alignItems: 'center', height: '100%'}}>
-                    <div style={topBarButton} onClick={() => {props.onChangeView("home")}}>
-                        <p style={{padding: 0, margin: 0}}>
-                            Home
-                        </p>
-                    </div>
                     <div style={topBarButton}>  
                         <p style={{padding: 0, margin: 0}} onClick={() => {props.onChangeView("keymapeditor")}}>
                             Keymap
                         </p>
                     </div>
-                    <div style={{...topBarButton, ...{borderRight: 'none'}}}>
+                    <div style={{...topBarButton, ...{borderRight: 'none'}}} onClick={() => {props.onChangeView("display")}}>
                         <p style={{padding: 0, margin: 0}}>
                             Display
                         </p>
                     </div>
                 </div>
             </div>
-            <div style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
+            <div style={{flex: 1, display: 'flex', flexDirection: 'row'}}>
                 <div style={{flex: 1}}>
                     Device:
                 </div>
                 <div style={{flex: 1, marginBottom: 5}}>
                     <select>
                         <option>
-                            Split
+                            &lt;None&gt;
                         </option>
                     </select>
                 </div>

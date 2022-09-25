@@ -6,27 +6,26 @@ import LayoutView from "./Views/KeymapEditor";
 import TopBar from "./Components/TopBar";
 import KeymapEditor from "./Views/KeymapEditor";
 import Home from "./Views/Home";
+import { listen } from "@tauri-apps/api/event";
+import Hidergod from "./Hidergod";
+import Display from "./Views/Display";
+
+let hidergod : Hidergod = new Hidergod();
 
 function App() {
-	const [greetMsg, setGreetMsg] = useState("");
-	const [name, setName] = useState("");
-	const [view, setView] = useState("home");
-
-	async function greet() {
-		setGreetMsg(await invoke("greet", { name }));
-	}
+	const [view, setView] = useState("keymapeditor");
 
 	return (
 		<div className="container">
 			<TopBar onChangeView={(view) => {setView(view)}} />
 			<div className="content-container">
 				{
-					view === "home" &&
-					<Home />
-				}
-				{
 					view === "keymapeditor" &&
 					<KeymapEditor />
+				}
+				{
+					view === "display" &&
+					<Display />
 				}
 			</div>
 		</div>
