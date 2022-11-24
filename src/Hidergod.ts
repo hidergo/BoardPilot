@@ -3,7 +3,17 @@ import { listen } from "@tauri-apps/api/event";
 
 export type OnResponseCallback = (data: object | null) => any;
 
-type AuthenticationResponse = {cmd: 0x01, status: boolean};
+export enum HidergodCmd {
+    APICMD_REGISTER =       0x01,
+    APICMD_DEVICES =        0x10,
+
+    APICMD_SET_IQS_REGS =   0x40,
+
+    // Events
+    APICMD_EVENT =          0x80
+}
+
+type AuthenticationResponse = {cmd: HidergodCmd.APICMD_REGISTER, status: boolean};
 
 export default class Hidergod {
 
@@ -12,11 +22,18 @@ export default class Hidergod {
         return this._reqid++;
     }
 
+    public static instance : Hidergod | null = null;
+
     private connected = false;
 
     private _requests : {reqid: number, callback: OnResponseCallback}[] = [];
 
     constructor (port: number = 24429) {
+
+        if(Hidergod.instance !== null)
+            return;
+
+        Hidergod.instance = this;
 
         // Set events
         listen('api_onopen', (event) => {
@@ -63,7 +80,7 @@ export default class Hidergod {
 
         console.log("Authenticating...")
         const msg = {
-            cmd: 0x01,
+            cmd: HidergodCmd.APICMD_REGISTER,
             key: "p*kG462jhJBY166EZLKxf9Du"
         };
 

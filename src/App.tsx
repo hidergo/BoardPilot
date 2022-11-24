@@ -9,6 +9,7 @@ import Home from "./Views/Home";
 import { listen } from "@tauri-apps/api/event";
 import Hidergod from "./Hidergod";
 import Display from "./Views/Display";
+import Trackpad from "./Views/Trackpad";
 
 let hidergod : Hidergod = new Hidergod();
 
@@ -26,6 +27,10 @@ function App() {
 				{
 					view === "display" &&
 					<Display />
+				}
+				{
+					view == "trackpad" &&
+					<Trackpad />
 				}
 			</div>
 		</div>

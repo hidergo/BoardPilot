@@ -26,7 +26,7 @@ const topBarButton : React.CSSProperties = {
 type OnChangeViewCallback = (view: string) => any;
 
 export default function TopBar (props: {onChangeView: OnChangeViewCallback}) {
-    
+
     return (
         <div style={TopBarContainer}>
             <div style={{flex: 1, display: 'flex'}}>
@@ -39,9 +39,14 @@ export default function TopBar (props: {onChangeView: OnChangeViewCallback}) {
                             Keymap
                         </p>
                     </div>
-                    <div style={{...topBarButton, ...{borderRight: 'none'}}} onClick={() => {props.onChangeView("display")}}>
+                    <div style={topBarButton} onClick={() => {props.onChangeView("display")}}>
                         <p style={{padding: 0, margin: 0}}>
                             Display
+                        </p>
+                    </div>
+                    <div style={{...topBarButton, ...{borderRight: 'none'}}} onClick={() => {props.onChangeView("trackpad")}}>
+                        <p style={{padding: 0, margin: 0}}>
+                            Trackpad
                         </p>
                     </div>
                 </div>
