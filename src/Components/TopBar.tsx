@@ -26,14 +26,18 @@ const topBarButton : React.CSSProperties = {
 };
 
 type OnChangeViewCallback = (view: string) => any;
+type OnSelectDeviceCallback = (dev: Device | null) => any;
 
-export default function TopBar (props: {onChangeView: OnChangeViewCallback}) {
+
+export default function TopBar (props: {onChangeView: OnChangeViewCallback, onSelectDevice: OnSelectDeviceCallback}) {
 
     const [devices, setDevices] = useState([...Device.devices]);
 
     const [selectedDevice, setSelectedDevice] = useState(null as Device | null);
 
     useEffect(() => {
+        setDevices([...Device.devices]);
+        setSelectedDevice(Device.selectedDevice);
         Device.addDeviceUpdateListener((d) => {
             setDevices([...Device.devices]);
             setSelectedDevice(Device.selectedDevice);
@@ -64,23 +68,31 @@ export default function TopBar (props: {onChangeView: OnChangeViewCallback}) {
                     </div>
                 </div>
             </div>
-            <div style={{flex: 1}}>
-                <InputLabel sx={{color: 'white'}} id="device-select-label">Device</InputLabel>
-                <Select
-                    label="Device"
-                    labelId="device-select-label"
-                    value={selectedDevice?.deviceInfo.device.serial}
-                    sx={{height: 30, color: 'white'}}
-                >
-                    {
-                        devices.map((e, i) => {
-                            return <MenuItem value={e.deviceInfo.device.serial} key={"dev-select-" + i}>
-                                {e.deviceInfo.product.product}
-                            </MenuItem>
-                        })
-                    }
-                </Select>
-            </div>
+            {
+                devices.length > 0 &&
+                <div style={{flex: 1}}>
+                    <InputLabel sx={{color: 'white'}} id="device-select-label">Device</InputLabel>
+                    <Select
+                        label="Device"
+                        labelId="device-select-label"
+                        value={selectedDevice?.deviceInfo.device.serial}
+                        sx={{height: 30, color: 'white'}}
+                        onChange={(e) => {
+                            const _dev = devices.find(d => d.deviceInfo.device.serial === e.target.value) || null;
+                            setSelectedDevice(_dev);
+                            props.onSelectDevice(_dev);
+                        }}
+                    >
+                        {
+                            devices.map((e, i) => {
+                                return <MenuItem value={e.deviceInfo.device.serial} key={"dev-select-" + i}>
+                                    {e.deviceInfo.product.product}
+                                </MenuItem>
+                            })
+                        }
+                    </Select>
+                </div>
+            }
             
         </div>
     )

@@ -64,7 +64,7 @@ export default class Device {
         }
     }
 
-    private static triggerDeviceUpdateListeners (device: Device | Device[]) {
+    static triggerDeviceUpdateListeners (device: Device | Device[]) {
         Device.deviceUpdateCallbacks.forEach(e => {
             e.callback(device);
         })
@@ -92,6 +92,9 @@ export default class Device {
                         Device.selectedDevice = Device.devices[0];
                     }
                 }
+
+                if(Device.devices.length === 0)
+                    Device.selectedDevice = null;
 
                 Device.triggerDeviceUpdateListeners(Device.devices);
             }

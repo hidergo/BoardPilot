@@ -14,7 +14,20 @@ export enum HidergodCmd {
     APICMD_EVENT =          0x80
 }
 
+export enum ApiEventType {
+    APIEVENT_NONE,
+    APIEVENT_DEVICE_CONNECTED,
+    APIEVENT_DEVICE_DISCONNECTED
+};
+
 export type AuthenticationResponse = {cmd: HidergodCmd.APICMD_REGISTER, status: boolean};
+
+export type EventResponse = {
+    cmd: HidergodCmd.APICMD_EVENT,
+    type: number,
+    device: DeviceInfo,
+    reqid: number
+};
 
 export type DevicesResponse = {
     cmd: 0x10,
@@ -120,6 +133,41 @@ export default class Hidergod {
                     if(r.reqid === jsn.reqid) {
                         r.callback(jsn);
                         this._requests.splice(i, 1);
+                        break;
+                    }
+                }
+            }
+
+            if(jsn.cmd === HidergodCmd.APICMD_EVENT) {
+                const msg = jsn as EventResponse;
+                switch(msg.type) {
+                    case ApiEventType.APIEVENT_NONE:
+                        console.log("Unknown event");
+                        break;
+                    case ApiEventType.APIEVENT_DEVICE_CONNECTED:
+                    {
+                        let dev = Device.findDevice(msg.device.device.serial);
+                        if(dev) {
+                            dev.deviceInfo = { ...msg.device };
+                        }
+                        else {
+                            dev = new Device({...msg.device});
+                        }
+                        Device.triggerDeviceUpdateListeners(dev);
+                        break;
+                    }
+                    case ApiEventType.APIEVENT_DEVICE_DISCONNECTED:
+                    {
+                        const dev = Device.findDevice(msg.device.device.serial);
+                        if(dev) {
+                            let ix = Device.devices.indexOf(dev);
+                            if(ix >= 0) {
+                                Device.devices.splice(ix, 1);
+                            }
+                        }
+                        if(Device.devices.length === 0)
+                            Device.selectedDevice = null;
+                        Device.triggerDeviceUpdateListeners(Device.devices);
                         break;
                     }
                 }
