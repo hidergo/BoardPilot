@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api";
 import { listen } from "@tauri-apps/api/event";
+import Device, { DeviceInfo } from "./Device";
 
 export type OnResponseCallback = (data: object | null) => any;
 
@@ -13,7 +14,13 @@ export enum HidergodCmd {
     APICMD_EVENT =          0x80
 }
 
-type AuthenticationResponse = {cmd: HidergodCmd.APICMD_REGISTER, status: boolean};
+export type AuthenticationResponse = {cmd: HidergodCmd.APICMD_REGISTER, status: boolean};
+
+export type DevicesResponse = {
+    cmd: 0x10,
+    devices: DeviceInfo[],
+    reqid: number
+};
 
 export default class Hidergod {
 
@@ -69,10 +76,10 @@ export default class Hidergod {
             reqid: _req_id
         };
 
-        invoke("hidergod_send", {message: JSON.stringify(nmsg)});
         if(onResponse) {
             this._requests.push({reqid: _req_id, callback: onResponse});
         }
+        invoke("hidergod_send", {message: JSON.stringify(nmsg)});
         return true;
     }
 
@@ -89,6 +96,8 @@ export default class Hidergod {
             
             if(data && resp.status) {
                 console.log("Logged in to the API");
+                // Fetch devices
+                Device.fetchDevices();
             }
             else {
                 console.warn("Could not connect to API. Check service");
@@ -105,7 +114,7 @@ export default class Hidergod {
     private onMessage (data: string) {
         try {
             const jsn = JSON.parse(data);
-            if(jsn.reqid) {
+            if(jsn.reqid !== undefined) {
                 for(let i = 0; i < this._requests.length; i++) {
                     let r = this._requests[i];
                     if(r.reqid === jsn.reqid) {
@@ -117,7 +126,8 @@ export default class Hidergod {
             }
         }
         catch(e) {
-
+            console.log(e);
+            console.log(data);
         }
     }
 

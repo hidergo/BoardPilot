@@ -1,6 +1,7 @@
 import { Button, Card, Checkbox, Input, Slider, TextField, Tooltip, Typography } from "@mui/material";
 import { Box, Container } from "@mui/system";
 import React from "react";
+import Device from "../Device";
 import Hidergod, { HidergodCmd } from "../Hidergod";
 
 /*
@@ -47,6 +48,33 @@ import Hidergod, { HidergodCmd } from "../Hidergod";
 
     regconf.initScrollDistance =        25;
 */
+
+type TrackpadRegsMessage = {
+    cmd:    0x40,
+    device: string,
+    save:   boolean,
+    regs: {
+        activeRefreshRate?:         number,
+        idleRefreshRate?:           number,
+        singleFingerGestureMask?:   number,
+        multiFingerGestureMask?:    number,
+        tapTime?:                   number,
+        tapDistance?:               number,
+        touchMultiplier?:           number,
+        debounce?:                  number,
+        i2cTimeout?:                number,
+        filterSettings?:            number,
+        filterDynBottomBeta?:       number,
+        filterDynLowerSpeed?:       number,
+        filterDynUpperSpeed?:       number
+    }
+}
+
+type TrackpadRegsResponse = {
+    cmd:    0x40,
+    status: boolean,
+    reqid:  number
+}
 
 type TrackpadConfValue = {
     name: string, 
@@ -107,19 +135,115 @@ const TrackpadConfValuesRaw : TrackpadConfValue[] = [
             max: 300
         },
         default: 150
+    },
+    {
+        name:       "tapDistance",
+        title:      "Tap distance (u16)",
+        type:       "slider",
+        tooltip:    "Maximum distance for finger to travel when tapping",
+        range: {
+            min: 5,
+            max: 100
+        },
+        default: 25
+    },
+    {
+        name:       "touchMultiplier",
+        title:      "Touch multiplier (u8)",
+        type:       "slider",
+        tooltip:    "Multiplier for touch sensitivity(?)",
+        range: {
+            min: 0,
+            max: 100
+        },
+        default: 0
+    },
+    {
+        name:       "debounce",
+        title:      "Debounce (u8)",
+        type:       "slider",
+        tooltip:    "Proximity debounce value",
+        range: {
+            min: 0,
+            max: 100
+        },
+        default: 0
+    },
+    {
+        name:       "i2cTimeout",
+        title:      "I2C timeout (u8)",
+        type:       "slider",
+        tooltip:    "Timeout for i2c in ms",
+        range: {
+            min: 0,
+            max: 100
+        },
+        default: 4
+    },
+    {
+        name:       "filterSettings",
+        title:      "Filter settings (u8)",
+        type:       "checkboxgroup",
+        tooltip:    "Touch filter options",
+        default:    0b11, // MAV, IIR
+        labels: ["IIR Dynamic", "MAV Filter", "IIR Static", "ALP Count"]
+    },
+    {
+        name:       "filterDynBottomBeta",
+        title:      "Dynamic bottom beta (u8)",
+        type:       "slider",
+        tooltip:    "IIR filter bottom beta",
+        range: {
+            min: 0,
+            max: 255
+        },
+        default: 5
+    },
+    {
+        name:       "filterDynLowerSpeed",
+        title:      "Dynamic lower speed (u8)",
+        type:       "slider",
+        tooltip:    "IIR filter minimum speed",
+        range: {
+            min: 0,
+            max: 255
+        },
+        default: 5
+    },
+    {
+        name:       "filterDynUpperSpeed",
+        title:      "Dynamic upper speed (u16)",
+        type:       "slider",
+        tooltip:    "IIR filter maximum speed",
+        range: {
+            min: 0,
+            max: 768
+        },
+        default: 512
+    },
+    {
+        name:       "initScrollDistance",
+        title:      "Initial scroll distance",
+        type:       "slider",
+        tooltip:    "Minimum distance travelled until scrolling",
+        range: {
+            min: 0,
+            max: 255
+        },
+        default: 25
     }
 ];
 
 export default function Trackpad () {
 
-    const [rawValues, setRawValues] = React.useState(TrackpadConfValuesRaw.map(e => e.default));
+    const [rawValues, setRawValues] = React.useState(TrackpadConfValuesRaw.map(e => {return {name: e.name, value: e.default}}));
 
 
-    function handleRawValueChange (index: number, newValue: number) {
+    function handleRawValueChange (name: string, newValue: number) {
 
         const newRawValues = rawValues.map((v, i) => {
-            if(i === index) {
-                return newValue;
+            if(v.name === name) {
+                return {name: name, value: newValue};
             }
             else {
                 return v;
@@ -129,11 +253,11 @@ export default function Trackpad () {
         setRawValues(newRawValues);
     }
 
-    function handleRawValueChangeBit (index: number, newValue: number, bit: number) {
+    function handleRawValueChangeBit (name: string, newValue: number, bit: number) {
 
         const newRawValues = rawValues.map((v, i) => {
-            if(i === index) {
-                return newValue === 0 ? (v & ~(1 << bit)) : (v | (1 << bit));
+            if(v.name === name) {
+                return {name: name, value: newValue === 0 ? (v.value & ~(1 << bit)) : (v.value | (1 << bit))};
             }
             else {
                 return v;
@@ -144,11 +268,19 @@ export default function Trackpad () {
     }
 
     function saveValues (saveNvm: boolean = false) {
+        if(Device.selectedDevice === null)
+            return;
+
+        let regs : { [key: string]: number } = {};
+        rawValues.forEach((e, i) => {
+            regs[e.name] = e.value;
+        })
         Hidergod.instance?.request({
             cmd: HidergodCmd.APICMD_SET_IQS_REGS,
-            device: null, // TODO:
-            values: rawValues
-        }, (data) => {
+            device: Device.selectedDevice?.deviceInfo.device.serial,
+            save: saveNvm,
+            regs: regs
+        } as TrackpadRegsMessage, (data) => {
             // Response
         })
     }
@@ -167,8 +299,8 @@ export default function Trackpad () {
                         {
                             z.type === "checkbox" &&
                             <Checkbox 
-                                checked={e === 1} 
-                                onChange={(x) => {handleRawValueChange(i, x.target.checked ? 1 : 0)}} 
+                                checked={e.value === 1} 
+                                onChange={(x) => {handleRawValueChange(e.name, x.target.checked ? 1 : 0)}} 
                             />
                         }
                         {
@@ -180,8 +312,8 @@ export default function Trackpad () {
                                         return <Box key={"checkbox-" + le} sx={{marginRight: 1}}>
                                             <Typography variant="subtitle2">{le}</Typography>
                                             <Checkbox 
-                                                checked={((e >> li) & 1) === 1} 
-                                                onChange={(x) => {handleRawValueChangeBit(i, x.target.checked ? 1 : 0, li)}} />
+                                                checked={((e.value >> li) & 1) === 1} 
+                                                onChange={(x) => {handleRawValueChangeBit(e.name, x.target.checked ? 1 : 0, li)}} />
                                         </Box>
                                     })
                                 }
@@ -191,34 +323,35 @@ export default function Trackpad () {
                         {
                             z.type === "number" &&
                             <TextField 
-                                value={e} 
+                                value={e.value} 
                                 type={"number"} 
                                 inputProps={{min: z.range?.min || 0, max: z.range?.max || 0, step: 1}} 
-                                onChange={(x) => {handleRawValueChange(i, parseInt(x.target.value))}}
+                                onChange={(x) => {handleRawValueChange(e.name, parseInt(x.target.value))}}
                             />
                         }
                         {
                             z.type === "slider" &&
                             <Box sx={{display: 'inline-flex', width: '100%'}}>
                                 <Slider 
-                                    value={e} 
+                                    value={e.value} 
                                     step={1} 
                                     min={z.range?.min || 0} 
                                     max={z.range?.max || 0} 
                                     sx={{marginRight: 1}}
-                                    onChange={(_x, n) => {handleRawValueChange(i, n as number)}}
+                                    onChange={(_x, n) => {handleRawValueChange(e.name, n as number)}}
                                 />
                                 <TextField 
-                                    value={e} 
+                                    value={e.value} 
                                     type={"number"} 
                                     inputProps={{min: z.range?.min || 0, max: z.range?.max || 0, step: 1}} 
-                                    onChange={(x) => {handleRawValueChange(i, parseInt(x.target.value))}}
+                                    onChange={(x) => {handleRawValueChange(e.name, parseInt(x.target.value))}}
                                 />
                             </Box>
                         }
                     </Box>
                 })
             }
+            <Button onClick={() => {saveValues(false)}}>Apply</Button>
         </Card>
     </Container>;
 }
