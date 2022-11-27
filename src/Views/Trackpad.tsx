@@ -1,55 +1,10 @@
 import { Button, Card, Checkbox, Input, Slider, TextField, Tooltip, Typography } from "@mui/material";
 import { Box, Container } from "@mui/system";
-import React from "react";
+import React, { useEffect } from "react";
 import Device from "../Device";
 import Hidergod, { HidergodCmd } from "../Hidergod";
 
-/*
-    // Refresh rate when the device is active (ms interval)
-    uint16_t    activeRefreshRate;
-    // Refresh rate when the device is idling (ms interval)
-    uint16_t    idleRefreshRate;
-    // Which single finger gestures will be enabled
-    uint8_t     singleFingerGestureMask;
-    // Which multi finger gestures will be enabled
-    uint8_t     multiFingerGestureMask;
-    // Tap time in ms
-    uint16_t    tapTime;
-    // Tap distance in pixels
-    uint16_t    tapDistance;
-    // Touch multiplier
-    uint8_t     touchMultiplier;
-    // Prox debounce value
-    uint8_t     debounce;
-    // i2c timeout in ms
-    uint8_t     i2cTimeout;
-    // Filter settings
-    uint8_t     filterSettings;
-    uint8_t     filterDynBottomBeta;
-    uint8_t     filterDynLowerSpeed;
-    uint16_t    filterDynUpperSpeed;
-
-    // Initial scroll distance (px)
-    uint16_t    initScrollDistance;
-
-    regconf.activeRefreshRate =         10;
-    regconf.idleRefreshRate =           50;
-    regconf.singleFingerGestureMask =   GESTURE_SINGLE_TAP | GESTURE_TAP_AND_HOLD;
-    regconf.multiFingerGestureMask =    GESTURE_TWO_FINGER_TAP | GESTURE_SCROLLG;
-    regconf.tapTime =                   150;
-    regconf.tapDistance =               25;
-    regconf.touchMultiplier =           0;
-    regconf.debounce =                  0;
-    regconf.i2cTimeout =                4; 
-    regconf.filterSettings =            MAV_FILTER | IIR_FILTER;
-    regconf.filterDynBottomBeta =        5;
-    regconf.filterDynLowerSpeed =        6;
-    regconf.filterDynUpperSpeed =        512;
-
-    regconf.initScrollDistance =        25;
-*/
-
-type TrackpadRegsMessage = {
+type TrackpadSetRegsMessage = {
     cmd:    0x40,
     device: string,
     save:   boolean,
@@ -66,11 +21,35 @@ type TrackpadRegsMessage = {
         filterSettings?:            number,
         filterDynBottomBeta?:       number,
         filterDynLowerSpeed?:       number,
-        filterDynUpperSpeed?:       number
+        filterDynUpperSpeed?:       number,
+        initScrollDistance?:        number
     }
 }
 
-type TrackpadRegsResponse = {
+type TrackpadGetRegsResponse = {
+    cmd:    0x41,
+    status:   boolean,
+    regs?: {
+        activeRefreshRate?:         number,
+        idleRefreshRate?:           number,
+        singleFingerGestureMask?:   number,
+        multiFingerGestureMask?:    number,
+        tapTime?:                   number,
+        tapDistance?:               number,
+        touchMultiplier?:           number,
+        debounce?:                  number,
+        i2cTimeout?:                number,
+        filterSettings?:            number,
+        filterDynBottomBeta?:       number,
+        filterDynLowerSpeed?:       number,
+        filterDynUpperSpeed?:       number,
+        initScrollDistance?:        number
+
+    },
+    reqid:  number
+}
+
+type TrackpadSetRegsResponse = {
     cmd:    0x40,
     status: boolean,
     reqid:  number
@@ -280,10 +259,44 @@ export default function Trackpad () {
             device: Device.selectedDevice?.deviceInfo.device.serial,
             save: saveNvm,
             regs: regs
-        } as TrackpadRegsMessage, (data) => {
+        } as TrackpadSetRegsMessage, (data) => {
             // Response
         })
     }
+
+    function getValues () {
+        if(Device.selectedDevice === null) 
+            return;
+
+        Hidergod.instance?.request({
+            cmd: HidergodCmd.APICMD_GET_IQS_REGS,
+            device: Device.selectedDevice?.deviceInfo.device.serial
+        }, (data) => {
+            const msg = data as TrackpadGetRegsResponse;
+            const newRawValues = [...rawValues];
+            if(msg.status) {
+
+                if(msg.regs) {
+                    Object.keys(msg.regs).forEach(key => {
+                        if(msg.regs) {
+                            let value = msg.regs[key as keyof typeof msg.regs];
+                            if(value !== undefined) {
+                                let vindex = newRawValues.findIndex(e => e.name === key); 
+                                if(vindex >= 0) {
+                                    newRawValues[vindex].value = value;
+                                }
+                                setRawValues(newRawValues);
+                            }
+                        }
+                    });
+                }
+            }
+        })
+    }
+
+    useEffect(() => {
+        getValues();
+    }, []);
 
     return <Container sx={{paddingTop: 1}}>
         <Card sx={{padding: 2}}>

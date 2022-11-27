@@ -22,15 +22,14 @@ fn hidergod_recv_thread (mut stream: TcpStream, window: Window) {
             Ok(size) => {
                 if size == 0 {
                     window.emit("api_onclose", Payload { message: "".into() }).unwrap();
-                    buffer.fill(0);
                     return;
                 }
                 else {
                     let msg = String::from_utf8_lossy(&buffer);
                     let trimmed = msg.trim_matches(char::from(0));
                     window.emit("api_onmessage", Payload { message: trimmed.to_string() }).unwrap();
-                    buffer.fill(0);
                 }
+                buffer.fill(0);
             },
             Err(_err) => {
                 return;

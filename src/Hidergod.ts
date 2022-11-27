@@ -9,6 +9,7 @@ export enum HidergodCmd {
     APICMD_DEVICES =        0x10,
 
     APICMD_SET_IQS_REGS =   0x40,
+    APICMD_GET_IQS_REGS =   0x41,
 
     // Events
     APICMD_EVENT =          0x80
