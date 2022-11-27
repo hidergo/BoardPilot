@@ -15,8 +15,8 @@ use tauri::Window;
 static mut tcp_stream: Option<TcpStream> = None;
 
 fn hidergod_recv_thread (mut stream: TcpStream, window: Window) {
+    window.emit("api_onopen", Payload { message: "".into() }).unwrap();
     let mut buffer = [0u8; 1024];
-    
     loop {
         match stream.read(&mut buffer) {
             Ok(size) => {
@@ -47,7 +47,6 @@ fn hidergod_connect (window: Window, port: u16) -> bool {
 
     match stream {
         Ok(strm) => {
-            window.emit("api_onopen", Payload { message: "".into() }).unwrap();
             let _handle = std::thread::spawn(move || {
                 let nstrm = strm.try_clone().unwrap();
                 unsafe {
@@ -55,9 +54,11 @@ fn hidergod_connect (window: Window, port: u16) -> bool {
                 }
                 hidergod_recv_thread(strm, window);
             });
+            println!("Connected to server");
             return true;
         },
         Err(_err) => {
+            println!("{}", _err);
             return false;
         }
     };
