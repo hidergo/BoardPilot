@@ -54,9 +54,11 @@ fn hidergod_connect (window: Window, port: u16) -> bool {
                 }
                 hidergod_recv_thread(strm, window);
             });
+            println!("Connected to server");
             return true;
         },
         Err(_err) => {
+            println!("{}", _err);
             return false;
         }
     };

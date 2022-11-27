@@ -83,8 +83,9 @@ button {
 }
 
 @font-face {
-	font-family: 'AlumniSansPinstripe';
-	src: local('AlumniSansPinstripe'), url(./assets/AlumniSansPinstripe-Regular.ttf) format('truetype');
+
+	font-family: 'Inter';
+	src: local('Inter'), url(./assets/Inter-Regular.ttf) format('truetype');
 	/* other formats include: 'woff2', 'truetype, 'opentype',
 							  'embedded-opentype', and 'svg' */
   }

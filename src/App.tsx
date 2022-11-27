@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
@@ -11,16 +11,19 @@ import Hidergod from "./Hidergod";
 import Display from "./Views/Display";
 import Trackpad from "./Views/Trackpad";
 import Device from "./Device";
-import { Typography } from "@mui/material";
+import { Button, CircularProgress, Typography } from "@mui/material";
 
-let hidergod : Hidergod = new Hidergod();
+let hidergod: Hidergod = new Hidergod();
 
 function App() {
 	const [view, setView] = useState("keymapeditor");
 	const [selectedDevice, setSelectedDevice] = useState(Device.selectedDevice);
+	const [refreshing, setRefreshing] = useState(false);
+	const [errorMsg, setErrorMsg] = useState("");
 
 	useEffect(() => {
-        setSelectedDevice(Device.selectedDevice);
+		console.log("Connecting to device...");
+		setSelectedDevice(Device.selectedDevice);
         Device.addDeviceUpdateListener((d) => {
             setSelectedDevice(Device.selectedDevice);
         })
@@ -28,31 +31,43 @@ function App() {
 
 	return (
 		<div className="container">
-			<TopBar onChangeView={(view) => {setView(view)}} onSelectDevice={(dev) => {setSelectedDevice(dev)}} />
 			{
 				selectedDevice === null &&
-				<Typography variant="h1">Select a device to continue</Typography>
+				<div style={{flex: 1, display: "flex", flexDirection: "column", width: "100vw", height: "100vh", justifyContent: "space-around"}}>
+					<div>
+					<Typography variant="h4" style={{textAlign: "center"}}>Connect a device to continue</Typography>
+					<div style={{textAlign: "center", paddingTop: 40}}>
+						<Button variant="contained" onClick={() => { window.location.reload();}}>Refresh</Button>
+					</div>
+					<div style={{textAlign: "center", paddingTop: 40, minHeight: 100}}>
+						{refreshing && <CircularProgress />}
+					</div>
+					</div>
+				</div>
 			}
 			{
 				selectedDevice !== null &&
-				<div className="content-container">
-					{
-						view === "keymapeditor" &&
-						<KeymapEditor />
-					}
-					{
-						view === "display" &&
-						<Display />
-					}
-					{
-						view == "trackpad" &&
-						<Trackpad />
-					}
-				</div>
+				<Fragment>
+					<TopBar onChangeView={(view) => { setView(view) }} onSelectDevice={(dev) => { setSelectedDevice(dev) }} />
+					<div className="content-container">
+						{
+							view === "keymapeditor" &&
+							<KeymapEditor />
+						}
+						{
+							view === "display" &&
+							<Display />
+						}
+						{
+							view == "trackpad" &&
+							<Trackpad />
+						}
+					</div>
+				</Fragment>
 			}
 		</div>
-		
-  	);
+
+	);
 }
 
 export default App;

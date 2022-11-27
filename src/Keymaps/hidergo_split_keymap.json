@@ -7,36 +7,44 @@
             {
                 "name": "esc",
                 "dsp": "ESC",
-                "size": 1
+                "dsp2": "§",
+                "size": 1,
+                "fontSize": 0.8
             },
             {
                 "name": "1",
                 "dsp": "1",
+                "dsp2": "F1",
                 "size": 1
             },
             {
                 "name": "2",
                 "dsp": "2",
+                "dsp2": "F2",
                 "size": 1
             },
             {
                 "name": "3",
                 "dsp": "3",
+                "dsp2": "F3",
                 "size": 1
             },
             {
                 "name": "4",
                 "dsp": "4",
+                "dsp2": "F4",
                 "size": 1
             },
             {
                 "name": "5",
                 "dsp": "5",
+                "dsp2": "F5",
                 "size": 1
             },
             {
                 "name": "6",
                 "dsp": "6",
+                "dsp2": "F6",
                 "size": 1
             }
         ],
@@ -44,26 +52,32 @@
             {
                 "name": "tab",
                 "dsp": "TAB",
-                "size": 1.5
+                "dsp2": "Clear BT",
+                "size": 1.5,
+                "fontSize": 0.8
             },
             {
                 "name": "q",
                 "dsp": "Q",
+                "dsp2": "BT 1",
                 "size": 1
             },
             {
                 "name": "w",
                 "dsp": "W",
+                "dsp2": "BT 2",
                 "size": 1
             },
             {
                 "name": "e",
                 "dsp": "E",
+                "dsp2": "BT 3",
                 "size": 1
             },
             {
                 "name": "r",
                 "dsp": "R",
+                "dsp2": "RESET",
                 "size": 1
             },
             {
@@ -76,7 +90,9 @@
             {
                 "name": "mod",
                 "dsp": "MOD",
-                "size": 1.75
+                "dsp2": "CAPS LOCK",
+                "size": 1.75,
+                "fontSize": 0.8
             },
             {
                 "name": "a",
@@ -109,7 +125,7 @@
                 "name": "lshift",
                 "dsp": "SHIFT",
                 "size": 1.25,
-                "fontSize": 0.9
+                "fontSize": 0.8
             },
             {
                 "name": "lt",
@@ -129,16 +145,19 @@
             {
                 "name": "c",
                 "dsp": "C",
+                "dsp2": "Back",
                 "size": 1
             },
             {
                 "name": "v",
                 "dsp": "V",
+                "dsp2": "Play",
                 "size": 1
             },
             {
-                "name": "b",
+                "name": "b_left",
                 "dsp": "B",
+                "dsp2": "Next",
                 "size": 1
             }
         ],
@@ -146,31 +165,36 @@
             {
                 "name": "lctrl",
                 "dsp": "CTRL",
-                "size": 1.25
+                "size": 1.25,
+                "fontSize": 0.8
             },
             {
                 "name": "super",
                 "dsp": "SUPER",
                 "size": 1.25,
-                "fontSize": 0.75
+                "fontSize": 0.8
             },
             {
                 "name": "lalt",
                 "dsp": "ALT",
-                "size": 1.25
+                "size": 1.25,
+                "fontSize": 0.8
             },
             {
                 "name": "tog",
                 "dsp": "TO",
-                "size": 1
+                "size": 1,
+                "fontSize": 0.8
             },
             {
                 "name": "lbspace",
                 "dsp": "BACK",
+                "dsp2": "DEL",
                 "size": 2,
                 "rot": -45,
                 "offX": -0.3,
-                "offY": 1.5
+                "offY": 1.5,
+                "fontSize": 0.8
             },
             {
                 "name": "lspace",
@@ -178,16 +202,18 @@
                 "size": 2,
                 "rot": -45,
                 "offX": -1.5,
-                "offY": 2.3
+                "offY": 2.3,
+                "fontSize": 0.8
             },
             {
                 "name": "lenter",
-                "dsp": "ENTER",
+                "dsp": "ENT",
+                "dsp2": "INS",
                 "size": 1,
                 "rot": -45,
                 "offX": -2,
                 "offY": 0.8,
-                "fontSize": 0.5
+                "fontSize": 0.8
             }
         ]
         
@@ -197,36 +223,44 @@
             {
                 "name": "rbspace",
                 "dsp": "BACK",
-                "size": 2
+                "dsp2": "DEL",
+                "size": 2,
+                "fontSize": 0.8
             },
             {
                 "name": "acute",
                 "dsp": "´",
+                "dsp2": "F12",
                 "size": 1
             },
             {
                 "name": "plus",
                 "dsp": "+",
+                "dsp2": "F11",
                 "size": 1
             },
             {
                 "name": "0",
                 "dsp": "0",
+                "dsp2": "F10",
                 "size": 1
             },
             {
                 "name": "9",
                 "dsp": "9",
+                "dsp2": "F9",
                 "size": 1
             },
             {
                 "name": "8",
                 "dsp": "8",
+                "dsp2": "F8",
                 "size": 1
             },
             {
                 "name": "7",
                 "dsp": "7",
+                "dsp2": "F7",
                 "size": 1
             }
         ],
@@ -234,21 +268,26 @@
             {
                 "name": "renter",
                 "dsp": "ENTER",
-                "size": 1.5
+                "dsp2": "INS",
+                "size": 1.5,
+                "fontSize": 0.8
             },
             {
                 "name": "caret",
                 "dsp": "^",
+                "dsp2": "PGUP",
                 "size": 1
             },
             {
                 "name": "å",
                 "dsp": "Å",
+                "dsp2": "HOME",
                 "size": 1
             },
             {
                 "name": "p",
                 "dsp": "P",
+                "dsp2": "INS",
                 "size": 1
             },
             {
@@ -269,6 +308,7 @@
             {
                 "name": "y",
                 "dsp": "Y",
+                "dsp2": "RESET",
                 "size": 1
             }
         ],
@@ -276,42 +316,50 @@
             {
                 "name": "renter",
                 "dsp": "ENTER",
+                "dsp2": "INS",
                 "size": 1.25,
                 "fontSize": 0.8
             },
             {
                 "name": "squote",
                 "dsp": "'",
+                "dsp2": "PrtSc",
                 "size": 1
             },
             {
                 "name": "ä",
                 "dsp": "Ä",
+                "dsp2": "PGDN",
                 "size": 1
             },
             {
                 "name": "ö",
                 "dsp": "Ö",
+                "dsp2": "END",
                 "size": 1
             },
             {
                 "name": "l",
                 "dsp": "L",
+                "dsp2": "RIGHT",
                 "size": 1
             },
             {
                 "name": "k",
                 "dsp": "K",
+                "dsp2": "UP",
                 "size": 1
             },
             {
                 "name": "j",
                 "dsp": "J",
+                "dsp2": "DOWN",
                 "size": 1
             },
             {
                 "name": "h",
                 "dsp": "H",
+                "dsp2": "LEFT",
                 "size": 1
             }
         ],
@@ -319,11 +367,13 @@
             {
                 "name": "rshift",
                 "dsp": "SHIFT",
-                "size": 2.75
+                "size": 2.75,
+                "fontSize": 0.8
             },
             {
                 "name": "dash",
                 "dsp": "-",
+                "dsp2": "UP",
                 "size": 1
             },
             {
@@ -347,33 +397,38 @@
                 "size": 1
             },
             {
-                "name": "b",
+                "name": "b_right",
                 "dsp": "B",
                 "size": 1
             }
         ],
         [
             {
-                "name": "rctrl",
-                "dsp": "CTRL",
-                "size": 1.5
+                "name": "FN_right",
+                "dsp": "FN",
+                "size": 1.5,
+                "fontSize": 0.8
             },
             {
-                "name": "fn",
-                "dsp": "Fn",
-                "size": 1.25
+                "name": "rctrl",
+                "dsp": "CTRL",
+                "dsp2": "RIGHT",
+                "size": 1.25,
+                "fontSize": 0.8
             },
             {
                 "name": "menu",
                 "dsp": "MENU",
+                "dsp2": "DOWN",
                 "size": 1,
-                "fontSize": 0.6
+                "fontSize": 0.8
             },
             {
                 "name": "rsuper",
                 "dsp": "SUPER",
+                "dsp2": "LEFT",
                 "size": 1.25,
-                "fontSize": 0.7
+                "fontSize": 0.8
             },
             {
                 "name": "ralt",
@@ -384,7 +439,8 @@
             {
                 "name": "rspace",
                 "dsp": "SPACE",
-                "size": 2
+                "size": 2,
+                "fontSize": 0.8
             }
         ]
     ]
