@@ -33,9 +33,9 @@ type OnSelectDeviceCallback = (dev: Device | null) => any;
 
 export default function TopBar(props: { onChangeView: OnChangeViewCallback, onSelectDevice: OnSelectDeviceCallback }) {
 
-    const [devices, setDevices] = useState([...Device.devices]);
+    const [devices, setDevices] = useState<Device[]>([]);
 
-    const [selectedDevice, setSelectedDevice] = useState(null as Device | null);
+    const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
 
     useEffect(() => {
         setDevices([...Device.devices]);
