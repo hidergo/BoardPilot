@@ -213,6 +213,8 @@ const TrackpadConfValuesRaw : TrackpadConfValue[] = [
     }
 ];
 
+const TrackpadConfDefault = TrackpadConfValuesRaw.map(e => {return {name: e.name, value: e.default}});
+
 export default function Trackpad () {
 
     const [rawValues, setRawValues] = React.useState(TrackpadConfValuesRaw.map(e => {return {name: e.name, value: e.default}}));
@@ -301,6 +303,7 @@ export default function Trackpad () {
     return <Container sx={{paddingTop: 1}}>
         <Card sx={{padding: 2}}>
             <Typography variant="h5" sx={{paddingBottom: 3}}>IQS5XX raw register values</Typography>
+            <Button onClick={() => {setRawValues([...TrackpadConfDefault])}}>Reset to default</Button>
 
             {
                 rawValues.map((e, i) => {
@@ -365,6 +368,8 @@ export default function Trackpad () {
                 })
             }
             <Button onClick={() => {saveValues(false)}}>Apply</Button>
+            <Button onClick={() => {saveValues(true)}}>Apply and save</Button>
+
         </Card>
     </Container>;
 }
