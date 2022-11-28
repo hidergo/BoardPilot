@@ -17,12 +17,13 @@ static mut tcp_stream: Option<TcpStream> = None;
 fn hidergod_recv_thread (mut stream: TcpStream, window: Window) {
     let mut buffer = [0u8; 1024];
     window.emit("api_onopen", Payload { message: "".into() }).unwrap();
+    let mut err = 0;
     loop {
         match stream.read(&mut buffer) {
             Ok(size) => {
                 if size == 0 {
                     window.emit("api_onclose", Payload { message: "".into() }).unwrap();
-                    return;
+                    err = 1;
                 }
                 else {
                     let msg = String::from_utf8_lossy(&buffer);
@@ -32,14 +33,34 @@ fn hidergod_recv_thread (mut stream: TcpStream, window: Window) {
                 buffer.fill(0);
             },
             Err(_err) => {
-                return;
+                err = 1;
             }
         };
+        if err == 1 {
+            break;
+        }
     }
+    println!("Listen thread exit");
 } 
 
 #[tauri::command]
 fn hidergod_connect (window: Window, port: u16) -> bool {
+    println!("Connecting to server...");
+    unsafe {
+        if tcp_stream.is_some() {
+            match &tcp_stream {
+                None => {
+    
+                }
+                Some(s) => {
+                    s.shutdown(std::net::Shutdown::Both);
+                    println!("Shutdown old Tcp stream");
+                }
+            }
+            
+        }
+    }
+
     let stream = TcpStream::connect(
             format!("{}{}", "127.0.0.1:", port.to_string())
     );
@@ -66,7 +87,6 @@ fn hidergod_connect (window: Window, port: u16) -> bool {
 
 #[tauri::command]
 fn hidergod_send (message: String) {
-    
     unsafe {
         match &tcp_stream {
             None => {
