@@ -15,7 +15,7 @@ use tauri::Window;
 static mut tcp_stream: Option<TcpStream> = None;
 
 fn hidergod_recv_thread (mut stream: TcpStream, window: Window) {
-    let mut buffer = [0u8; 1024];
+    let mut buffer = [0u8; 4096];
     window.emit("api_onopen", Payload { message: "".into() }).unwrap();
     let mut err = 0;
     loop {

@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
+import Device from "../Device";
+import Hidergod, { HidergodCmd } from "../Hidergod";
 import hidergo_split_keymap from '../Keymaps/hidergo_split_keymap.json'
 
 type CustomKeyType = "isoenter" | "pot";
@@ -29,6 +31,12 @@ type KeymapJsonFormat = {
     fontSize?: number
 }
 
+type GetKeymapResponse = {
+    cmd:      0x21,
+    status:   boolean,
+    keymap: number[][][],
+    reqid:  number
+}
 
 const keySelectedColor = '#aaa';
 
@@ -148,6 +156,8 @@ export default function KeymapEditor() {
 
     const [selectedKey, setSelectedKey] = useState<string | null>(null);
 
+    const [keymap, setKeymap] = useState<number[][][]>([]);
+
     useEffect(() => {
         function handleResize() {
             if (ref.current) {
@@ -156,8 +166,40 @@ export default function KeymapEditor() {
             }
         }
         window.addEventListener('resize', handleResize)
-    })
 
+        getKeymap();
+        
+    }, [])
+
+    function getKeymap () {
+        if(Device.selectedDevice !== null) {
+            Hidergod.instance?.request({
+                cmd: HidergodCmd.APICMD_GET_KEYMAP,
+                device: Device.selectedDevice.deviceInfo.device.serial
+            }, (data) => {
+                let msg = data as GetKeymapResponse;
+                
+                setKeymap(msg.keymap);
+
+            })
+        }
+    }
+    
+    function saveKeymap (save: boolean) {
+        if(Device.selectedDevice !== null) {
+            console.log(keymap);
+            Hidergod.instance?.request({
+                cmd: HidergodCmd.APICMD_SET_KEYMAP,
+                device: Device.selectedDevice.deviceInfo.device.serial,
+                save: save,
+                keymap: keymap
+            }, (data) => {
+                // Check status TODO:
+            })
+
+        }
+    }
+    
     return (
         <div style={{ width: '100vw', height: '100%', boxSizing: 'border-box', padding: 10, display: 'flex', flexDirection: 'column' }} ref={ref}>
             <div style={{ minHeight: 450 }}>

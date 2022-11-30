@@ -8,6 +8,9 @@ export enum HidergodCmd {
     APICMD_REGISTER =       0x01,
     APICMD_DEVICES =        0x10,
 
+    APICMD_SET_KEYMAP =     0x20,
+    APICMD_GET_KEYMAP =     0x21,
+
     APICMD_SET_IQS_REGS =   0x40,
     APICMD_GET_IQS_REGS =   0x41,
 
