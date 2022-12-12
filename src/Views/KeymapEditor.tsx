@@ -1,16 +1,17 @@
+import { MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Box } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react"
 import Device from "../Device";
 import Hidergod, { HidergodCmd } from "../Hidergod";
 import hidergo_split_keymap from '../Keymaps/hidergo_split_keymap.json'
+import { getKeymapDeviceId, getKeymapDeviceName, keymapBehaviour } from "../misc/KeymapDefs";
 
 type CustomKeyType = "isoenter" | "pot";
 
-type SelectKeyCallback = (key: string | null) => any;
+type SelectKeyCallback = (key: KeymapJsonFormat | null) => any;
 
 type EditorKeyProps = {
-    name: string,
-    text: string,
-    subText: string,
+    keyObject: KeymapJsonFormat,
     x: number,
     y: number,
     selected: boolean,
@@ -28,7 +29,10 @@ type KeymapJsonFormat = {
     rot?: number,
     offX?: number,
     offY?: number,
-    fontSize?: number
+    fontSize?: number,
+    // Position in keymap (index)
+    pos: number,
+    hidden?: boolean
 }
 
 type GetKeymapResponse = {
@@ -56,7 +60,7 @@ const EditorKey = (props: EditorKeyProps) => {
                 <rect x={0} y={0} width={keyBaseSize * keySize} height={keyBaseSize} rx={keyBaseSize * 0.1}
                     fill={props.selected ? keySelectedColor : 'white'} stroke={'black'} onClick={() => {
                         if (props.onSelect)
-                            props.onSelect(props.selected ? null : props.name);
+                            props.onSelect(props.selected ? null : props.keyObject);
                     }}>
 
                 </rect>
@@ -64,17 +68,17 @@ const EditorKey = (props: EditorKeyProps) => {
 
                 </rect>
                 <text x={8} y={18} fontFamily='Inter' fontSize={fontSize} fill="black" pointerEvents={'none'}>
-                    {props.text}
+                    {props.keyObject.dsp}
                 </text>
                 <text x={48*keySize} y={40} fontFamily='Inter' fontSize={fontSize*0.8} fill="black" pointerEvents={'none'} text-anchor="end">
-                    {props.subText}
+                    {props.keyObject.dsp2 || ''}
                 </text>
             </g>
         </g>
     )
 }
 
-const Keyboard_hidergo_split = (props: { width: number, height: number, selected: string | null, onSelect?: SelectKeyCallback }) => {
+const Keyboard_hidergo_split = (props: { width: number, height: number, selected: KeymapJsonFormat | null, onSelect?: SelectKeyCallback }) => {
     let offsetY = 0;
     const k_left = <g>
         {
@@ -83,16 +87,17 @@ const Keyboard_hidergo_split = (props: { width: number, height: number, selected
                 let offsetX = 0;
                 // Cols
                 const ky = row.map((v, x) => {
+                    if(v.hidden === true) {
+                        return null;
+                    }
                     const kx = <EditorKey
-                        text={v.dsp}
-                        subText={v.dsp2 || ''}
+                        keyObject={v}
                         x={offsetX + keyBaseSize * (v.offX || 0)}
                         y={offsetY + keyBaseSize * (v.offY || 0)}
                         keyType={v.size}
-                        name={v.name}
                         key={"LK" + x + "_" + y}
                         rotation={v.rot}
-                        selected={props.selected === v.name}
+                        selected={props.selected?.name === v.name}
                         onSelect={(key) => {
                             if (props.onSelect)
                                 props.onSelect(key)
@@ -115,16 +120,17 @@ const Keyboard_hidergo_split = (props: { width: number, height: number, selected
                 let offsetX = 0;
                 // Cols
                 const ky = row.map((v, x) => {
+                    if(v.hidden === true) {
+                        return null;
+                    }
                     const kx = <EditorKey
-                        text={v.dsp}
-                        subText={v.dsp2 || ''}
+                    keyObject={v}
                         x={props.width - (offsetX + keyBaseSize * (v.offX || 0) + (keyBaseSize * v.size))}
                         y={offsetY + keyBaseSize * (v.offY || 0)}
                         keyType={v.size}
-                        name={v.name}
                         key={"RK" + x + "_" + y}
                         rotation={v.rot}
-                        selected={props.selected === v.name}
+                        selected={props.selected?.name === v.name}
                         onSelect={(key) => {
                             if (props.onSelect)
                                 props.onSelect(key)
@@ -146,6 +152,12 @@ const Keyboard_hidergo_split = (props: { width: number, height: number, selected
     </g>;
 }
 
+const layerNames = [
+    "Default",
+    "Arrow",
+    "Bottom"
+];
+
 
 export default function KeymapEditor() {
 
@@ -154,7 +166,9 @@ export default function KeymapEditor() {
     const [height, setHeight] = useState(0);
     const [width, setWidth] = useState(0);
 
-    const [selectedKey, setSelectedKey] = useState<string | null>(null);
+    const [selectedKey, setSelectedKey] = useState<KeymapJsonFormat | null>(null);
+
+    const [layer, setLayer] = useState<number>(0);
 
     const [keymap, setKeymap] = useState<number[][][]>([]);
 
@@ -199,9 +213,47 @@ export default function KeymapEditor() {
 
         }
     }
+
+    function getKeymapBehaviour (index: number, layer: number) : ({ behaviour: string, value: number } | undefined) {
+        if(layer < 0 || layer > keymap.length || index < 0 || index > keymap[layer].length) {
+            return undefined;
+        }
+        const behaviour = getKeymapDeviceName(keymap[layer][index][0]);
+        const value = keymap[layer][index][1];
+
+        return { behaviour: behaviour || "", value };
+    }
+
+    let selBehaviour = undefined;
+    if(selectedKey)
+        selBehaviour = keymapBehaviour[getKeymapDeviceName(keymap[layer][selectedKey.pos][0]) || "TRANS"];
+
+    let selValue = undefined;
+    if(selBehaviour && selectedKey) {
+        selValue = selBehaviour.values.find((e) => {
+            if(e.val2) {
+                return (keymap[layer][selectedKey.pos][1] & 0xFFFF) === e.value;
+            }
+            else {
+                return keymap[layer][selectedKey.pos][1] === e.value;
+            }
+        });
+    }
     
     return (
         <div style={{ width: '100vw', height: '100%', boxSizing: 'border-box', padding: 10, display: 'flex', flexDirection: 'column' }} ref={ref}>
+            <Box sx={{display: 'inline-flex', width: '100%'}}>
+                <Typography>Layer: </Typography>
+                <Select onChange={(e) => { setLayer(e.target.value as number) }} value={layer}>
+                    {
+                        layerNames.map((e, i) => {
+                            return <MenuItem value={i} key={"LAYER-SELECT" + i}>
+                                {e}
+                            </MenuItem>;
+                        })
+                    }
+                </Select>
+            </Box>
             <div style={{ minHeight: 450 }}>
                 <svg width={window.innerWidth - 20} height={'100%'} viewBox={"0 0 " + String(window.innerWidth) + String(window.innerHeight)} xmlns="http://www.w3.org/2000/svg">
                     <Keyboard_hidergo_split width={window.innerWidth - 20} height={450} selected={selectedKey} onSelect={(key) => { setSelectedKey(key) }} />
@@ -220,7 +272,40 @@ export default function KeymapEditor() {
                     selectedKey &&
                     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                         <div style={{ color: "#444", minHeight: 40, fontFamily: 'Inter', fontSize: '1em' }}>
-                            Key: {selectedKey}
+                            Key: {selectedKey.name}
+                        </div>
+                        <div style={{ color: "#444", minHeight: 40, fontFamily: 'Inter', fontSize: '1em' }}>
+                            Position: {selectedKey.pos}
+                        </div>
+                        <div style={{ color: "#444", minHeight: 40, fontFamily: 'Inter', fontSize: '1em' }}>
+                            Current: {getKeymapDeviceName(keymap[layer][selectedKey.pos][0])} ({keymap[layer][selectedKey.pos][0]}), {keymap[layer][selectedKey.pos][1]}
+                        </div>
+                        <div style={{ color: "#444", minHeight: 40, fontFamily: 'Inter', fontSize: '1em' }}>
+                            <Select value={keymap[layer][selectedKey.pos][0] & 0x7F}>
+                                {
+                                    Object.keys(keymapBehaviour).map((e, i) => {
+                                        return <MenuItem value={getKeymapDeviceId(e) || 0} key={"BEH-SELECT" + i}>
+                                            {keymapBehaviour[e].display}
+                                        </MenuItem>;
+                                    })
+                                }
+                            </Select>
+                            {
+                                (selBehaviour && selBehaviour.values.length > 0) &&
+                                <Select value={selValue && selValue.val2 ? keymap[layer][selectedKey.pos][1] & 0xFFFF : keymap[layer][selectedKey.pos][1]}>
+                                    {
+                                        keymapBehaviour[getKeymapDeviceName(keymap[layer][selectedKey.pos][0]) || "TRANS"].values.map((e, i) => {
+                                            return <MenuItem value={e.value} key={"VAL-SELECT" + i}>
+                                                {e.name}
+                                            </MenuItem>;
+                                        })
+                                    }
+                                </Select>
+                            }
+                            {
+                                (selValue && selValue.val2) &&
+                                <TextField type={'number'} value={keymap[layer][selectedKey.pos][1] >> 16} />
+                            }
                         </div>
                         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
 

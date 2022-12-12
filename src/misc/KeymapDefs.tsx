@@ -40,8 +40,8 @@ export const CONF_ID_DEVICE = [
  * @returns Keymap device name or undefined
  */
 export const getKeymapDeviceName = (id: number) : string | undefined => {
-    if(id >= 0 && id < CONF_ID_DEVICE.length) {
-        return CONF_ID_DEVICE[id];
+    if((id & 0x7F) >= 0 && (id & 0x7F) < CONF_ID_DEVICE.length) {
+        return CONF_ID_DEVICE[(id & 0x7F)];
     }
 
     return undefined;
@@ -58,4 +58,33 @@ export const getKeymapDeviceId = (name: string) : number | undefined => {
         return ix;
 
     return undefined;
+}
+
+type keymapBehaviourValue = { name: string, description?: string, value: number, val2?: boolean };
+
+type keymapBehaviourType = { display: string, description: string, values: keymapBehaviourValue[] };
+
+export const keymapBehaviour : {[key: string]: keymapBehaviourType} = {
+    TRANS: {
+        display: "Transparent",
+        description: "Button press is passed to next layer",
+        values: []
+    },
+    BLUETOOTH: {
+        display: "Bluetooth",
+        description: "Bluetooth actions",
+        values: [
+            { name: "Clear", description: "Clears the bluetooth pairings", value: 0 },
+            { name: "Next", description: "Selects next bluetooth profile", value: 1 },
+            { name: "Prev", description: "Selects previous bluetooth profile", value: 2 },
+            { name: "Select", description: "Selects a bluetooth profile", value: 3, val2: true }, // Uses val2!!!
+        ]
+    },
+    KEY_PRESS: {
+        display: "Key press",
+        description: "Key press handler",
+        values: [
+
+        ]
+    }
 }
