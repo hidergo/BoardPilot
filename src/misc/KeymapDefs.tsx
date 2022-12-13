@@ -84,6 +84,34 @@ export const keymapBehaviour : {[key: string]: keymapBehaviourType} = {
         display: "Key press",
         description: "Key press handler",
         values: [
+            { name: "A", value: 0x00070004 },
+            { name: "B", value: 0x00070005 },
+            { name: "C", value: 0x00070006 },
+            { name: "D", value: 0x00070007 },
+            { name: "E", value: 0x00070008 },
+            { name: "F", value: 0x00070009 },
+            { name: "G", value: 0x0007000A },
+            { name: "H", value: 0x0007000B },
+            { name: "I", value: 0x0007000C },
+            { name: "J", value: 0x0007000D },
+            { name: "K", value: 0x0007000E },
+            { name: "L", value: 0x0007000F },
+            { name: "M", value: 0x00070010 },
+            { name: "N", value: 0x00070011 },
+            { name: "O", value: 0x00070012 },
+            { name: "P", value: 0x00070013 },
+            { name: "Q", value: 0x00070014 },
+            { name: "R", value: 0x00070015 },
+            { name: "S", value: 0x00070016 },
+            { name: "T", value: 0x00070017 },
+            { name: "U", value: 0x00070018 },
+            { name: "V", value: 0x00070019 },
+            { name: "W", value: 0x0007001A },
+            { name: "X", value: 0x0007001B },
+            { name: "Y", value: 0x0007001C },
+            { name: "Z", value: 0x0007001D },
+
+
 
         ]
     }
