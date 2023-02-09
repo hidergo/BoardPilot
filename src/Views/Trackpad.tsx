@@ -55,6 +55,19 @@ type TrackpadSetRegsResponse = {
     reqid:  number
 }
 
+type TrackpadSetSensitivityResponse = {
+    cmd:    0x24,
+    status: boolean,
+    reqid: number
+}
+
+type TrackpadGetSensitivityResponse = {
+    cmd:    0x25,
+    status: boolean,
+    sensitivity: number,
+    reqid: number
+}
+
 type TrackpadConfValue = {
     name: string, 
     title: string, 
@@ -219,6 +232,7 @@ export default function Trackpad () {
 
     const [rawValues, setRawValues] = React.useState(TrackpadConfValuesRaw.map(e => {return {name: e.name, value: e.default}}));
 
+    const [sensitivity, setSensitivity] = React.useState(128);
 
     function handleRawValueChange (name: string, newValue: number) {
 
@@ -266,6 +280,32 @@ export default function Trackpad () {
         })
     }
 
+    function saveSensitivity (saveNvm: boolean = false) {
+        Hidergod.instance?.request({
+            cmd: HidergodCmd.APICMD_SET_MOUSE_SENS,
+            device: Device.selectedDevice?.deviceInfo.device.serial,
+            sensitivity: sensitivity,
+            save: saveNvm
+        }, (data) => {
+            const msg = data as TrackpadSetSensitivityResponse;
+            if(msg.status) {
+                
+            }
+        })
+    }
+
+    function getSensitivity () {
+        Hidergod.instance?.request({
+            cmd: HidergodCmd.APICMD_GET_MOUSE_SENS,
+            device: Device.selectedDevice?.deviceInfo.device.serial
+        }, (data) => {
+            const msg = data as TrackpadGetSensitivityResponse;
+            if(msg.status) {
+                setSensitivity(msg.sensitivity);
+            }
+        })
+    }
+
     function getValues () {
         if(Device.selectedDevice === null) 
             return;
@@ -294,13 +334,37 @@ export default function Trackpad () {
                 }
             }
         })
+
+        
     }
 
     useEffect(() => {
         getValues();
+        getSensitivity();
     }, []);
 
     return <Container sx={{paddingTop: 1}}>
+        <Card>
+            <Typography variant="h5" sx={{paddingBottom: 3}}>Touchpad sensitivity</Typography>
+            <Box sx={{display: 'inline-flex', width: '100%'}}>
+                <Slider 
+                    value={sensitivity} 
+                    step={1} 
+                    min={0} 
+                    max={255} 
+                    sx={{marginRight: 1}}
+                    onChange={(_x, n) => {setSensitivity(n as number)}}
+                />
+                <TextField 
+                    value={sensitivity} 
+                    type={"number"} 
+                    inputProps={{min: 0, max: 255}} 
+                    onChange={(x) => {setSensitivity(parseInt(x.target.value))}}
+                />
+            </Box>
+            <Button onClick={() => {saveSensitivity(false)}}>Apply</Button>
+            <Button onClick={() => {saveSensitivity(true)}}>Apply and save</Button>
+        </Card>
         <Card sx={{padding: 2}}>
             <Typography variant="h5" sx={{paddingBottom: 3}}>IQS5XX raw register values</Typography>
             <Button onClick={() => {setRawValues([...TrackpadConfDefault])}}>Reset to default</Button>
@@ -371,5 +435,6 @@ export default function Trackpad () {
             <Button onClick={() => {saveValues(true)}}>Apply and save</Button>
 
         </Card>
+        
     </Container>;
 }
