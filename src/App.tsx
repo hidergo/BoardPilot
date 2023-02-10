@@ -12,6 +12,7 @@ import Display from "./Views/Display";
 import Trackpad from "./Views/Trackpad";
 import Device from "./Device";
 import { Button, CircularProgress, Typography } from "@mui/material";
+import HDLDisplay from "./hdl/HDLDisplay";
 
 let hidergod: Hidergod = new Hidergod();
 
@@ -23,6 +24,7 @@ function App() {
 
 	useEffect(() => {
 		console.log("Connecting to device...");
+		
 		setSelectedDevice(Device.selectedDevice);
         Device.addDeviceUpdateListener((d) => {
             setSelectedDevice(Device.selectedDevice);

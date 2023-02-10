@@ -1,0 +1,3 @@
+[submodule "src/hdl-core"]
+	path = src/hdl-core
+	url = https://github.com/osmakari/hdl-core
