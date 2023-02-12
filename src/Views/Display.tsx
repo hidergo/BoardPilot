@@ -2,6 +2,7 @@ import { Box, Button, Card, CircularProgress, SxProps } from "@mui/material";
 import { open } from "@tauri-apps/api/dialog";
 import { readBinaryFile, readTextFile } from "@tauri-apps/api/fs";
 import HDLCompiler, { FileReaderInterface } from "hdl-cmp-ts/src/HDLCompiler";
+import { dirname } from "path-browserify";
 import { createRef, useEffect, useRef, useState } from "react";
 import HDLDisplay from "../hdl/HDLDisplay";
 
@@ -45,6 +46,15 @@ export default function Display () {
     const canv = createRef<HTMLCanvasElement>();
     const canvasContainer = createRef<HTMLDivElement>();
 
+    const fileReaderInterface : FileReaderInterface = (path, type) => {
+        if(type === "text") {
+            return readTextFile(path);
+        }
+        else if(type === "binary") {
+            return readBinaryFile(path);
+        }
+    }
+
 
     async function openFileDialog () {
         const file = await open({
@@ -62,8 +72,17 @@ export default function Display () {
                     bytes = await readBinaryFile(file as string);
                     break;
                 case "hdl":
+                    console.log(file as string);
                     const txt = await readTextFile(file as string);
-                    //const cmp = new HDLCompiler(txt);
+                    const cmp = new HDLCompiler(fileReaderInterface);
+                    cmp.basePath = dirname(file as string) + "/";
+                    let ok = await cmp.load(txt);
+                    if(!ok) {
+                        console.log("Failed to parse file");
+                        return;
+                    }
+                    bytes = cmp.compile();
+
                     break;
                 default:
                     console.log("Unknown extension");

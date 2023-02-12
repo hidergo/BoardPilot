@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <string.h>
+#include <math.h>
 #include "../hdl-core/hdl.h"
 
 #define HDL_MAX_SIZE 1024
@@ -105,6 +106,22 @@ void _f_text (int16_t x, int16_t y, const char *text, uint8_t fontSize) {
     }
 }
 
+#define PI 3.14159265
+
+void _f_arc(int16_t xc, int16_t yc, int16_t radius, uint16_t start_angle, uint16_t end_angle) {
+    int x, y, d;
+    double angle;
+
+    // Iterate through the angles from start_angle to end_angle
+    for (angle = start_angle; angle < end_angle; angle += 1) {
+        x = xc + radius * cos(angle * PI / 180.0);
+        y = yc + radius * sin(angle * PI / 180.0);
+
+        // Plot the point (x, y)
+        _f_pixel(x, y);
+    }
+}
+
 uint8_t *getScreenBuffer () {
     return _screen_buffer;
 }
@@ -131,6 +148,7 @@ uint8_t buildHDL (uint16_t width, uint16_t height, uint8_t *data, uint32_t len) 
     _hdl_interface.f_render = _f_render;
     _hdl_interface.f_renderPart = _f_render_part;
     _hdl_interface.f_text = _f_text;
+    _hdl_interface.f_arc = _f_arc;
 
     _hdl_initialized = 1;
     
