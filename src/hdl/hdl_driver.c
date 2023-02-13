@@ -150,6 +150,9 @@ uint8_t buildHDL (uint16_t width, uint16_t height, uint8_t *data, uint32_t len) 
     _hdl_interface.f_text = _f_text;
     _hdl_interface.f_arc = _f_arc;
 
+    _hdl_interface.textHeight = 6;
+    _hdl_interface.textWidth = 4;
+
     _hdl_initialized = 1;
     
     int err = HDL_Build(&_hdl_interface, data, len);

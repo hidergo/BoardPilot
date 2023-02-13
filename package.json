@@ -14,10 +14,13 @@
     "@emotion/styled": "^11.10.5",
     "@mui/material": "^5.10.15",
     "@tauri-apps/api": "^1.0.2",
+    "@types/prismjs": "^1.26.0",
     "@types/three": "^0.143.1",
     "hdl-cmp-ts": "file:src/hdl-cmp-ts",
+    "prismjs": "^1.29.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-simple-code-editor": "^0.13.1",
     "three": "^0.143.0"
   },
   "devDependencies": {

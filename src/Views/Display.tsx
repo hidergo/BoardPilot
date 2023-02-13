@@ -1,10 +1,12 @@
 import { Box, Button, Card, CircularProgress, SxProps } from "@mui/material";
 import { open } from "@tauri-apps/api/dialog";
-import { readBinaryFile, readTextFile } from "@tauri-apps/api/fs";
+import { readBinaryFile, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import HDLCompiler, { FileReaderInterface } from "hdl-cmp-ts/src/HDLCompiler";
 import { dirname } from "path-browserify";
 import { createRef, useEffect, useRef, useState } from "react";
+import Editor from "react-simple-code-editor";
 import HDLDisplay from "../hdl/HDLDisplay";
+import { highlight, languages } from "prismjs";
 
 const loadingBoxStyle : SxProps = {
     display: "flex",
@@ -28,6 +30,8 @@ const editorBoxStyle : SxProps = {
     flex: 1
 }
 
+let hdlBasePath = "./";
+
 export default function Display () {
     
     useEffect(() => {
@@ -42,7 +46,9 @@ export default function Display () {
     }, []);
 
     const [hdlLoaded, setHdlLoaded] = useState(false);
-
+    const [code, setCode] = useState("");
+    const [currentFilePath, setCurrentFilePath] = useState<string|null>(null);
+    
     const canv = createRef<HTMLCanvasElement>();
     const canvasContainer = createRef<HTMLDivElement>();
 
@@ -55,6 +61,64 @@ export default function Display () {
         }
     }
 
+    async function loadHDLCode (code: string, basePath: string) {
+        const cmp = new HDLCompiler(fileReaderInterface);
+        cmp.basePath = basePath;
+        setCode(code);
+        let ok = await cmp.load(code);
+        if(!ok) {
+            console.log("Failed to parse file");
+            return;
+        }
+        const bytes = cmp.compile();
+
+        buildHDL(bytes);
+    }
+
+    function buildHDL (bytes: Uint8Array) {
+        let err = HDLDisplay.buildHDL(80, 128, Array.from(bytes), bytes.length);
+        if(err !== 0) {
+            console.warn("Failed to build HDL " + err);
+            return;
+        }
+        err = HDLDisplay.updateHDL();
+        if(err !== 0) {
+            console.warn("Failed to update HDL " + err);
+            return;
+        }
+        const addr = HDLDisplay.getScreenBuffer();
+        console.log("ADDR: " + addr);
+        console.log(HDLDisplay.driver)
+        if(canv.current) {
+            if(HDLDisplay.driver) {
+                const arr = new Uint8Array(HDLDisplay.driver.HEAP8.buffer, addr, 80 * 128 / 8);
+                const ctx = canv.current.getContext("2d");
+                
+                if(ctx) {
+                    ctx.imageSmoothingEnabled = false;
+                    for(let i = 0; i < 80 * 128 / 8; i++) {
+                        for(let p = 0; p < 8; p++) {
+                            const _x = (Math.floor(i * 8) + p) % 80;
+                            const _y = (Math.floor(i * 8 / 80));
+                            if((arr[i] >> (7 - p)) & 1) {
+                                ctx.fillStyle = "white";
+                            }
+                            else {
+                                ctx.fillStyle = "black";
+                            }
+                            ctx.fillRect(_x, _y, 1, 1);
+                        }
+                    }
+                }
+                else {
+                    console.log("NO CTX");
+                }
+            }
+        }
+        else {
+            console.log("NO CURRENT CANVAS");
+        }
+    }
 
     async function openFileDialog () {
         const file = await open({
@@ -75,7 +139,10 @@ export default function Display () {
                     console.log(file as string);
                     const txt = await readTextFile(file as string);
                     const cmp = new HDLCompiler(fileReaderInterface);
+                    setCode(txt);
                     cmp.basePath = dirname(file as string) + "/";
+                    hdlBasePath = cmp.basePath;
+                    setCurrentFilePath(file as string);
                     let ok = await cmp.load(txt);
                     if(!ok) {
                         console.log("Failed to parse file");
@@ -88,50 +155,7 @@ export default function Display () {
                     console.log("Unknown extension");
                     return; 
             }
-            
-            
-            let err = HDLDisplay.buildHDL(80, 128, Array.from(bytes), bytes.length);
-            if(err !== 0) {
-                console.warn("Failed to build HDL " + err);
-                return;
-            }
-            err = HDLDisplay.updateHDL();
-            if(err !== 0) {
-                console.warn("Failed to update HDL " + err);
-                return;
-            }
-            const addr = HDLDisplay.getScreenBuffer();
-            console.log("ADDR: " + addr);
-            console.log(HDLDisplay.driver)
-            if(canv.current) {
-                if(HDLDisplay.driver) {
-                    const arr = new Uint8Array(HDLDisplay.driver.HEAP8.buffer, addr, 80 * 128 / 8);
-                    const ctx = canv.current.getContext("2d");
-                    
-                    if(ctx) {
-                        ctx.imageSmoothingEnabled = false;
-                        for(let i = 0; i < 80 * 128 / 8; i++) {
-                            for(let p = 0; p < 8; p++) {
-                                const _x = (Math.floor(i * 8) + p) % 80;
-                                const _y = (Math.floor(i * 8 / 80));
-                                if((arr[i] >> (7 - p)) & 1) {
-                                    ctx.fillStyle = "white";
-                                }
-                                else {
-                                    ctx.fillStyle = "black";
-                                }
-                                ctx.fillRect(_x, _y, 1, 1);
-                            }
-                        }
-                    }
-                    else {
-                        console.log("NO CTX");
-                    }
-                }
-            }
-            else {
-                console.log("NO CURRENT CANVAS");
-            }
+            buildHDL(bytes);
 
         }
 
@@ -166,8 +190,32 @@ export default function Display () {
                 </Box>
             </Box>
             <Box sx={editorBoxStyle}>
-                <Card elevation={4} sx={{width: '100%', height: '100%', boxSizing: 'border-box'}}>
-                    <Button onClick={openFileDialog} variant="contained">Open file</Button>
+                <Card elevation={4} sx={{width: '100%', boxSizing: 'border-box'}}>
+                    <Box style={{flex: 1}}>
+                        <Button  onClick={openFileDialog} variant="contained">Open file</Button>
+                    </Box>
+                    <Box style={{flex: 7, maxHeight: "85vh", overflow: "auto"}}>
+                        <Editor 
+                            value={code}
+                            onValueChange={c => setCode(c)}
+                            highlight={c => highlight(c, languages.xml, "xml")}
+                            onKeyDown={(e) => {
+                                if(e.ctrlKey && e.key === 's') {
+                                    if(currentFilePath === null)
+                                        return;
+
+                                    e.preventDefault();
+                                    loadHDLCode(code, hdlBasePath);
+
+                                    writeTextFile(currentFilePath, code);
+                                }
+                            }}
+                            style={{
+                                fontFamily: 'monaco, monospace',
+                                width: '100%'
+                            }}
+                        />
+                    </Box>
                 </Card>
             </Box>
     </Box>;
