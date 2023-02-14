@@ -3,7 +3,7 @@
 #include <math.h>
 #include "../hdl-core/hdl.h"
 
-#define HDL_MAX_SIZE 1024
+#define HDL_MAX_SIZE 4096
 #define HDL_SCREEN_BUFFER_MAX_SIZE (80 * 128 / 8)
 
 struct HDL_Interface _hdl_interface = { 0 };
@@ -114,6 +114,7 @@ void _f_arc(int16_t xc, int16_t yc, int16_t radius, uint16_t start_angle, uint16
 
     // Iterate through the angles from start_angle to end_angle
     for (angle = start_angle; angle < end_angle; angle += 1) {
+
         x = xc + radius * cos(angle * PI / 180.0);
         y = yc + radius * sin(angle * PI / 180.0);
 

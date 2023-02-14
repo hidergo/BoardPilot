@@ -1,0 +1,55 @@
+<!-- Load images -->
+<imgdef src="kb-icons.bmp" name="ICONS" sw="24" sh="24" />
+<imgdef src="kb-icons-big.bmp" name="BIGICONS" sw="48" sh="48" />
+
+<!-- Sleep switch -->
+<switch value="0">
+  <!-- Normal view -->
+  <box flexdir="col">
+    <!-- Top info -->
+    <box flexdir="row">
+      <!-- Time and date-->
+      <box flex="10">
+        <!-- Clock -->
+        <box align="bottom center" size="2">
+          16:51
+        </box>
+        <!-- Date -->
+        <box align="top center">
+          14.2
+        </box>
+      </box>
+      <!-- Connection -->
+      <box flex="7" padding="6">
+        <box border="1" radius="5">
+          <box img="ICONS" sprite="0" padding="1" />
+          <box img="ICONS" sprite="3" padding="1" />
+        </box>
+      </box>
+    </box>
+    
+    <!-- Bottom info -->
+    <box>
+      <box padding="4">
+        <box border="1" size="2" radius="5">
+          Default
+        </box>
+      </box>
+      <box flexdir="row">
+        <box padding="5" flex="2">
+          <box border="1" radius="5" flexdir="row">
+            <box img="ICONS" sprite="10" />
+            <box align="middle left">
+              78%
+            </box>
+          </box>
+        </box>
+        <box img="ICONS" sprite="6" />
+      </box>
+    </box>
+  </box>
+  <!-- Sleep view -->
+  <box>
+    <box img="BIGICONS" sprite="0" />
+  </box>
+</switch>

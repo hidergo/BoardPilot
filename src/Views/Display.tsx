@@ -1,5 +1,5 @@
 import { Box, Button, Card, CircularProgress, SxProps } from "@mui/material";
-import { open } from "@tauri-apps/api/dialog";
+import { open, save } from "@tauri-apps/api/dialog";
 import { readBinaryFile, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import HDLCompiler, { FileReaderInterface } from "hdl-cmp-ts/src/HDLCompiler";
 import { dirname } from "path-browserify";
@@ -30,8 +30,6 @@ const editorBoxStyle : SxProps = {
     flex: 1
 }
 
-let hdlBasePath = "./";
-
 export default function Display () {
     
     useEffect(() => {
@@ -48,6 +46,7 @@ export default function Display () {
     const [hdlLoaded, setHdlLoaded] = useState(false);
     const [code, setCode] = useState("");
     const [currentFilePath, setCurrentFilePath] = useState<string|null>(null);
+    const [hdlBasePath, setHDLBasePath] = useState("./");
     
     const canv = createRef<HTMLCanvasElement>();
     const canvasContainer = createRef<HTMLDivElement>();
@@ -59,20 +58,6 @@ export default function Display () {
         else if(type === "binary") {
             return readBinaryFile(path);
         }
-    }
-
-    async function loadHDLCode (code: string, basePath: string) {
-        const cmp = new HDLCompiler(fileReaderInterface);
-        cmp.basePath = basePath;
-        setCode(code);
-        let ok = await cmp.load(code);
-        if(!ok) {
-            console.log("Failed to parse file");
-            return;
-        }
-        const bytes = cmp.compile();
-
-        buildHDL(bytes);
     }
 
     function buildHDL (bytes: Uint8Array) {
@@ -127,38 +112,79 @@ export default function Display () {
                 extensions: ['hdl', 'bin']
             }]
         })
-        onViewResize();
         if(file) {
-            
-            let bytes = new Uint8Array(0);
-            switch((file as string).split(".").pop()) {
-                case "bin":
-                    bytes = await readBinaryFile(file as string);
-                    break;
-                case "hdl":
-                    console.log(file as string);
-                    const txt = await readTextFile(file as string);
-                    const cmp = new HDLCompiler(fileReaderInterface);
-                    setCode(txt);
-                    cmp.basePath = dirname(file as string) + "/";
-                    hdlBasePath = cmp.basePath;
-                    setCurrentFilePath(file as string);
-                    let ok = await cmp.load(txt);
-                    if(!ok) {
-                        console.log("Failed to parse file");
-                        return;
-                    }
-                    bytes = cmp.compile();
-
-                    break;
-                default:
-                    console.log("Unknown extension");
-                    return; 
-            }
-            buildHDL(bytes);
-
+            await readHDLFile(file as string);
         }
+    }
 
+    async function writeFileDialog () {
+        const file = await save({
+            filters: [{
+                name: 'HDL file (.hdl)',
+                extensions: ['hdl']
+            }]
+        })
+        if(file) {
+            await writeTextFile(file, code);
+            setCurrentFilePath(file);
+            setHDLBasePath(dirname(file) + "/");
+        }
+    }
+
+    async function readHDLFile (file: string) {
+        onViewResize();
+        let bytes = new Uint8Array(0);
+        switch((file).split(".").pop()) {
+            case "bin":
+                bytes = await readBinaryFile(file);
+                break;
+            case "hdl":
+                const txt = await readTextFile(file);
+                const cmp = new HDLCompiler(fileReaderInterface);
+                setCode(txt);
+                cmp.basePath = dirname(file) + "/";
+                setHDLBasePath(cmp.basePath);
+                setCurrentFilePath(file);
+                let ok = await cmp.load(txt);
+                if(!ok) {
+                    console.log("Failed to parse file");
+                    return;
+                }
+                bytes = cmp.compile();
+
+                break;
+            default:
+                console.log("Unknown extension");
+                return; 
+        }
+        buildHDL(bytes);
+    }
+    
+    async function loadHDLCode (code: string, basePath: string) {
+        const cmp = new HDLCompiler(fileReaderInterface);
+        cmp.basePath = basePath;
+        setCode(code);
+        let ok = await cmp.load(code);
+        if(!ok) {
+            console.log("Failed to parse file");
+            return;
+        }
+        const bytes = cmp.compile();
+
+        buildHDL(bytes);
+    }
+
+    async function onSaveFile () {
+        if(currentFilePath === null) {
+            // Show save file dialog
+            await writeFileDialog();
+        }
+        else {
+            // Save file on current path
+            await writeTextFile(currentFilePath, code);
+        }
+        // Reload HDL
+        await loadHDLCode(code, hdlBasePath);
     }
 
     function onViewResize () {
@@ -166,9 +192,13 @@ export default function Display () {
             const ratio = 80 / 128;
             canv.current.style.height = canvasContainer.current.clientHeight + "px";
             canv.current.style.width = (canvasContainer.current.clientHeight * ratio) + "px";
-
-
         }
+    }
+
+    function newFile () {
+        setCode("");
+        setCurrentFilePath(null);
+        setHDLBasePath("./");
     }
 
     // Waiting for WASM to load
@@ -190,29 +220,32 @@ export default function Display () {
                 </Box>
             </Box>
             <Box sx={editorBoxStyle}>
-                <Card elevation={4} sx={{width: '100%', boxSizing: 'border-box'}}>
+                <Card elevation={4} sx={{width: '100%', height: '100%', boxSizing: 'border-box'}}>
                     <Box style={{flex: 1}}>
                         <Button  onClick={openFileDialog} variant="contained">Open file</Button>
+                        <Button  onClick={newFile} variant="contained">New file</Button>
                     </Box>
-                    <Box style={{flex: 7, maxHeight: "85vh", overflow: "auto"}}>
+                    <Box style={{flex: 7, height: "85vh", overflow: "auto"}}>
                         <Editor 
+                            
                             value={code}
                             onValueChange={c => setCode(c)}
                             highlight={c => highlight(c, languages.xml, "xml")}
                             onKeyDown={(e) => {
-                                if(e.ctrlKey && e.key === 's') {
-                                    if(currentFilePath === null)
-                                        return;
-
-                                    e.preventDefault();
-                                    loadHDLCode(code, hdlBasePath);
-
-                                    writeTextFile(currentFilePath, code);
+                                if(e.ctrlKey) {
+                                    if(e.key === 's') {
+                                        onSaveFile();
+                                    }
+                                    else if(e.key === 'n') {
+                                        newFile();
+                                    }
                                 }
+                                
                             }}
                             style={{
                                 fontFamily: 'monaco, monospace',
-                                width: '100%'
+                                width: '100%',
+                                minHeight: '100%'
                             }}
                         />
                     </Box>
