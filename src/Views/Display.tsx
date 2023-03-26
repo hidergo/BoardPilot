@@ -7,6 +7,7 @@ import { createRef, useEffect, useRef, useState } from "react";
 import Editor from "react-simple-code-editor";
 import HDLDisplay from "../hdl/HDLDisplay";
 import { highlight, languages } from "prismjs";
+import { basename } from "@tauri-apps/api/path";
 
 const loadingBoxStyle : SxProps = {
     display: "flex",
@@ -117,6 +118,46 @@ export default function Display () {
         }
     }
 
+    async function exportFile () {
+        const file = await save({
+            filters: [{
+                name: 'C source file',
+                extensions: ['c']
+            }]
+        })
+        if(file) {
+            const cmp = new HDLCompiler(fileReaderInterface);
+            cmp.basePath = hdlBasePath
+            let ok = await cmp.load(code);
+            if(!ok) {
+                console.log("Failed to parse file");
+                return;
+            }
+            const bytes = cmp.compile();
+            const escapedName = (await basename(file)).replace("-", "_");
+let content = `
+// HDL output file
+// Original size: ${code.length}B, Compiled size: ${bytes.length}B
+            
+// HDL output size
+const unsigned long HDL_PAGE_SIZE_${escapedName} = ${bytes.length};
+// Output
+unsigned char HDL_PAGE_${escapedName}[] = {
+`;
+            for(let x = 0; x < bytes.length; x++) {
+                if(x % 16 === 0 && x !== 1) {
+                    content += '\n';
+                }
+                content += "0x" + bytes[x].toString(16);
+                if(x !== bytes.length - 1) {
+                    content += ", ";
+                }
+            }
+content += `};`;
+            await writeTextFile(file, content);
+        }
+    }
+
     async function writeFileDialog () {
         const file = await save({
             filters: [{
@@ -224,6 +265,8 @@ export default function Display () {
                     <Box style={{flex: 1}}>
                         <Button  onClick={openFileDialog} variant="contained">Open file</Button>
                         <Button  onClick={newFile} variant="contained">New file</Button>
+                        <Button  onClick={exportFile} variant="contained">Export</Button>
+
                     </Box>
                     <Box style={{flex: 7, height: "85vh", overflow: "auto"}}>
                         <Editor 
