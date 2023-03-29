@@ -127,7 +127,34 @@ uint8_t *getScreenBuffer () {
     return _screen_buffer;
 }
 
+enum dsp_view {
+    VIEW_MAIN,
+    VIEW_SLEEP
+};
+
+
+// Bound values
+struct {
+
+    // View
+    enum dsp_view view;
+    // Battery percentage
+    int batt_percent;
+    // Battery sprite
+    int batt_sprite;
+    // Charging
+    int charge;
+
+    // Displayed time and date strings
+    char conf_time_dsp[16];
+    char conf_date_dsp[16];
+
+} dsp_binds;
+
 uint8_t buildHDL (uint16_t width, uint16_t height, uint8_t *data, uint32_t len) {
+
+    strcpy(dsp_binds.conf_date_dsp, "--/--");
+    strcpy(dsp_binds.conf_time_dsp, "--:--");
 
     // HDL File too large
     if(len > HDL_MAX_SIZE)
@@ -155,6 +182,14 @@ uint8_t buildHDL (uint16_t width, uint16_t height, uint8_t *data, uint32_t len) 
     _hdl_interface.textWidth = 4;
 
     _hdl_initialized = 1;
+
+    // Create bindings
+    HDL_SetBinding(&_hdl_interface, "VIEW",          1, &dsp_binds.view, HDL_TYPE_I8);
+    HDL_SetBinding(&_hdl_interface, "BATT_PERCENT",  2, &dsp_binds.batt_percent, HDL_TYPE_I8);
+    HDL_SetBinding(&_hdl_interface, "BATT_SPRITE",   3, &dsp_binds.batt_sprite, HDL_TYPE_I8);
+    HDL_SetBinding(&_hdl_interface, "CHRG",          4, &dsp_binds.charge, HDL_TYPE_BOOL);
+    HDL_SetBinding(&_hdl_interface, "TIME",          5, &dsp_binds.conf_time_dsp, HDL_TYPE_STRING);
+    HDL_SetBinding(&_hdl_interface, "DATE",          6, &dsp_binds.conf_date_dsp, HDL_TYPE_STRING);
     
     int err = HDL_Build(&_hdl_interface, data, len);
 

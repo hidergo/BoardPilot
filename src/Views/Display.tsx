@@ -123,7 +123,8 @@ export default function Display () {
             filters: [{
                 name: 'C source file',
                 extensions: ['c']
-            }]
+            }],
+            defaultPath: "$DOCUMENT/hdl-output.c"
         })
         if(file) {
             const cmp = new HDLCompiler(fileReaderInterface);
@@ -134,7 +135,7 @@ export default function Display () {
                 return;
             }
             const bytes = cmp.compile();
-            const escapedName = (await basename(file)).replace("-", "_");
+            const escapedName = (await basename(file)).replace("-", "_").replace(".", "_");
 let content = `
 // HDL output file
 // Original size: ${code.length}B, Compiled size: ${bytes.length}B
