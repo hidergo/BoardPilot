@@ -68,7 +68,7 @@ export default function Display () {
             return;
         }
         err = HDLDisplay.updateHDL();
-        if(err !== 0) {
+        if(err === 0) {
             console.warn("Failed to update HDL " + err);
             return;
         }

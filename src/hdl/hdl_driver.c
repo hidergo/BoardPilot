@@ -2,6 +2,7 @@
 #include <string.h>
 #include <math.h>
 #include "../hdl-core/hdl.h"
+#include "compiled/hdl-compiled.h"
 
 #define HDL_MAX_SIZE 4096
 #define HDL_SCREEN_BUFFER_MAX_SIZE (80 * 128 / 8)
@@ -115,8 +116,8 @@ void _f_arc(int16_t xc, int16_t yc, int16_t radius, uint16_t start_angle, uint16
     // Iterate through the angles from start_angle to end_angle
     for (angle = start_angle; angle < end_angle; angle += 1) {
 
-        x = xc + radius * cos(angle * PI / 180.0);
-        y = yc + radius * sin(angle * PI / 180.0);
+        x = xc + radius * cos(angle * PI / 180.0) - 0.5;
+        y = yc + radius * sin(angle * PI / 180.0) - 0.5;
 
         // Plot the point (x, y)
         _f_pixel(x, y);
@@ -139,11 +140,11 @@ struct {
     // View
     enum dsp_view view;
     // Battery percentage
-    int batt_percent;
+    uint8_t batt_percent;
     // Battery sprite
-    int batt_sprite;
+    uint8_t batt_sprite;
     // Charging
-    int charge;
+    uint8_t charge;
 
     // Displayed time and date strings
     char conf_time_dsp[16];
@@ -151,10 +152,52 @@ struct {
 
 } dsp_binds;
 
+// Sprite offset for battery icons
+#define SPRITES_OFFSET_BATTERY  9
+#define SPRITES_BATTERY_CHARGE  SPRITES_OFFSET_BATTERY + 6
+#define SPRITES_BATTERY_EMPTY   SPRITES_OFFSET_BATTERY + 4
+#define SPRITES_BATTERY_1_4     SPRITES_OFFSET_BATTERY + 3
+#define SPRITES_BATTERY_2_4     SPRITES_OFFSET_BATTERY + 2
+#define SPRITES_BATTERY_3_4     SPRITES_OFFSET_BATTERY + 1
+#define SPRITES_BATTERY_FULL    SPRITES_OFFSET_BATTERY + 0
+
+// Battery sprite count
+#define SPRITES_BATTERY_COUNT   5
+
+// Updates battery sprite index 
+void update_battery_sprite () {
+    // Set correct battery percentage
+    uint8_t b = dsp_binds.batt_percent;
+    dsp_binds.charge = 0;
+    if(b <= 10) {
+        dsp_binds.batt_sprite = SPRITES_BATTERY_EMPTY;
+    }
+    else if(b > 10 && b <= 30) {
+        dsp_binds.batt_sprite = SPRITES_BATTERY_1_4;
+    }
+    else if(b > 30 && b <= 60) {
+        dsp_binds.batt_sprite = SPRITES_BATTERY_2_4;
+    }
+    else if(b > 60 && b <= 85) {
+        dsp_binds.batt_sprite = SPRITES_BATTERY_3_4;
+    }
+    else if(b > 85) {
+        dsp_binds.batt_sprite = SPRITES_BATTERY_FULL;
+    }
+}
+
+
 uint8_t buildHDL (uint16_t width, uint16_t height, uint8_t *data, uint32_t len) {
 
-    strcpy(dsp_binds.conf_date_dsp, "--/--");
-    strcpy(dsp_binds.conf_time_dsp, "--:--");
+    strcpy(dsp_binds.conf_date_dsp, "30/03");
+    strcpy(dsp_binds.conf_time_dsp, "12:13");
+    dsp_binds.view = VIEW_MAIN;
+    dsp_binds.batt_percent = 65;
+    update_battery_sprite();
+    dsp_binds.charge = 1;
+    if(dsp_binds.charge) {
+        dsp_binds.batt_sprite = SPRITES_BATTERY_CHARGE;
+    }
 
     // HDL File too large
     if(len > HDL_MAX_SIZE)
@@ -165,7 +208,7 @@ uint8_t buildHDL (uint16_t width, uint16_t height, uint8_t *data, uint32_t len) 
         return 2;
 
     if(_hdl_initialized)
-        HDL_Free(&_hdl_initialized);
+        HDL_Free(&_hdl_interface);
 
     _hdl_interface = HDL_CreateInterface(width, height, HDL_COLORS_MONO, HDL_FEAT_TEXT | HDL_FEAT_LINE_HV | HDL_FEAT_BITMAP);
 
@@ -190,6 +233,13 @@ uint8_t buildHDL (uint16_t width, uint16_t height, uint8_t *data, uint32_t len) 
     HDL_SetBinding(&_hdl_interface, "CHRG",          4, &dsp_binds.charge, HDL_TYPE_BOOL);
     HDL_SetBinding(&_hdl_interface, "TIME",          5, &dsp_binds.conf_time_dsp, HDL_TYPE_STRING);
     HDL_SetBinding(&_hdl_interface, "DATE",          6, &dsp_binds.conf_date_dsp, HDL_TYPE_STRING);
+
+    // Add preloaded images
+    // Preloaded images' id's must have the MSb as 1 (>0x8000)
+    // Normal icons
+    HDL_PreloadBitmap(&_hdl_interface, 0x8001, (uint8_t*)HDL_IMG_kb_icons_bmp_c, HDL_IMG_SIZE_kb_icons_bmp_c);
+    // Big icons
+    HDL_PreloadBitmap(&_hdl_interface, 0x8002, (uint8_t*)HDL_IMG_kb_icons_big_bmp_c, HDL_IMG_SIZE_kb_icons_big_bmp_c);
     
     int err = HDL_Build(&_hdl_interface, data, len);
 
@@ -201,5 +251,5 @@ uint8_t buildHDL (uint16_t width, uint16_t height, uint8_t *data, uint32_t len) 
 
 uint8_t updateHDL () {
 
-    return HDL_Update(&_hdl_interface);
+    return HDL_Update(&_hdl_interface, 0);
 }
