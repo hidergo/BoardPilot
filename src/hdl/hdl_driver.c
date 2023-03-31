@@ -26,7 +26,7 @@ void _f_clear_screen (int16_t x, int16_t y, uint16_t w, uint16_t h) {
 // Horizontal line
 void _f_h_line (int16_t x, int16_t y, int16_t len) {
     if((uint16_t)len + (uint16_t)x >= _hdl_interface.width) {
-        len = _hdl_interface.width - x - 1;
+        len = _hdl_interface.width - x;
     }
     // Don't draw outside bounds
     if(x >= _hdl_interface.width || y < 0 || y >= _hdl_interface.height)
