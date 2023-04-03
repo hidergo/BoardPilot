@@ -5,8 +5,10 @@
 <bind name="BATT_SPRITE" id="3" />
 <bind name="CHARGING" id="4" />
 <bind name="RSSI" id="5" />
-
 <bind name="SENSITIVITY" id="6" />
+<bind name="LAYER" id="7" />
+<bind name="BTPROFILE" id="8" />
+<bind name="SPLITCONNECTED" id="9" />
 
 <bind name="HASTIME" id="20" />
 <bind name="HOURS" id="21" />
