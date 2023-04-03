@@ -1,0 +1,44 @@
+<!-- HDL template -->
+<!-- Bindings -->
+<bind name="VIEW" id="1" />
+<bind name="BATT_PERCENT" id="2" />
+<bind name="BATT_SPRITE" id="3" />
+<bind name="CHARGING" id="4" />
+<bind name="RSSI" id="5" />
+
+<bind name="SENSITIVITY" id="6" />
+
+<bind name="HASTIME" id="20" />
+<bind name="HOURS" id="21" />
+<bind name="MINUTES" id="22" />
+<bind name="YEAR" id="23" />
+<bind name="MONTH" id="24" />
+<bind name="DAY" id="25" />
+<bind name="WEEKDAY" id="26" />
+
+<!-- Built in images -->
+<imgdef name="ICONS" preload="0x8001" />
+<imgdef name="BIGICONS" preload="0x8002" />
+
+<!-- Insert layout inside this element -->
+<box padding="4">
+  <box border="1" radius="5">
+    <box bind="[$HOURS, $MINUTES]" size="2">
+      %02i:%02i
+    </box>
+    <box bind="[$MONTH, $DAY]" size="1">
+      %02i/%02i
+    </box>
+  </box>
+  <box border="1" radius="5">
+    <box flexdir="row">
+      <box img="ICONS" sprite="$BATT_SPRITE" />
+      <box bind="$BATT_PERCENT">
+        %i\%
+      </box>
+    </box>
+    <box size="1" bind="$SENSITIVITY">
+      Sens:%03i/255
+    </box>
+  </box>
+</box>

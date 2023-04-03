@@ -145,10 +145,23 @@ struct {
     uint8_t batt_sprite;
     // Charging
     uint8_t charge;
+    // RSSI
+    int8_t rssi;
 
-    // Displayed time and date strings
-    char conf_time_dsp[16];
-    char conf_date_dsp[16];
+    uint16_t sensitivity;
+    
+    // Time and date
+    uint8_t hasTime;
+    
+    uint8_t hours;
+    uint8_t minutes;
+
+    uint16_t year;
+    uint8_t month;
+    uint8_t day;
+    
+    // 0 = monday
+    uint8_t weekDay;
 
 } dsp_binds;
 
@@ -189,8 +202,16 @@ void update_battery_sprite () {
 
 uint8_t buildHDL (uint16_t width, uint16_t height, uint8_t *data, uint32_t len) {
 
-    strcpy(dsp_binds.conf_date_dsp, "30/03");
-    strcpy(dsp_binds.conf_time_dsp, "12:13");
+    dsp_binds.hours = 14;
+    dsp_binds.minutes = 36;
+    dsp_binds.year = 2023;
+    dsp_binds.month = 4;
+    dsp_binds.day = 1;
+    dsp_binds.weekDay = 5;
+    dsp_binds.hasTime = 1;
+    dsp_binds.rssi = 0;
+    dsp_binds.sensitivity = 128;
+
     dsp_binds.view = VIEW_MAIN;
     dsp_binds.batt_percent = 65;
     update_battery_sprite();
@@ -231,8 +252,20 @@ uint8_t buildHDL (uint16_t width, uint16_t height, uint8_t *data, uint32_t len) 
     HDL_SetBinding(&_hdl_interface, "BATT_PERCENT",  2, &dsp_binds.batt_percent, HDL_TYPE_I8);
     HDL_SetBinding(&_hdl_interface, "BATT_SPRITE",   3, &dsp_binds.batt_sprite, HDL_TYPE_I8);
     HDL_SetBinding(&_hdl_interface, "CHRG",          4, &dsp_binds.charge, HDL_TYPE_BOOL);
-    HDL_SetBinding(&_hdl_interface, "TIME",          5, &dsp_binds.conf_time_dsp, HDL_TYPE_STRING);
-    HDL_SetBinding(&_hdl_interface, "DATE",          6, &dsp_binds.conf_date_dsp, HDL_TYPE_STRING);
+    HDL_SetBinding(&_hdl_interface, "RSSI",          5, &dsp_binds.rssi, HDL_TYPE_I8);
+
+    HDL_SetBinding(&_hdl_interface, "SENSITIVITY",   6, &dsp_binds.sensitivity, HDL_TYPE_I16);
+
+    // Time and date
+    HDL_SetBinding(&_hdl_interface, "HASTIME",       20, &dsp_binds.hasTime, HDL_TYPE_BOOL);
+    HDL_SetBinding(&_hdl_interface, "HOURS",         21, &dsp_binds.hours, HDL_TYPE_I8);
+    HDL_SetBinding(&_hdl_interface, "MINUTES",       22, &dsp_binds.minutes, HDL_TYPE_I8);
+    
+    HDL_SetBinding(&_hdl_interface, "YEAR",          23, &dsp_binds.year, HDL_TYPE_I16);
+    HDL_SetBinding(&_hdl_interface, "MONTH",         24, &dsp_binds.month, HDL_TYPE_I8);
+    HDL_SetBinding(&_hdl_interface, "DAY",           25, &dsp_binds.day, HDL_TYPE_I8);
+    HDL_SetBinding(&_hdl_interface, "WEEKDAY",       26, &dsp_binds.weekDay, HDL_TYPE_I8);
+
 
     // Add preloaded images
     // Preloaded images' id's must have the MSb as 1 (>0x8000)
