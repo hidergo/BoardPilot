@@ -39,8 +39,8 @@
         %i\%
       </box>
     </box>
-    <box size="1" bind="$SENSITIVITY">
-      Sens:%03i/255
+    <box bind="[$BTPROFILE, $LAYER, $SPLITCONNECTED]">
+      %i %i %i
     </box>
   </box>
 </box>
