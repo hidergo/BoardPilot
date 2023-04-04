@@ -8,6 +8,9 @@ import Editor from "react-simple-code-editor";
 import HDLDisplay from "../hdl/HDLDisplay";
 import { highlight, languages } from "prismjs";
 import { basename } from "@tauri-apps/api/path";
+import Hidergod, { HidergodCmd } from "../Hidergod";
+import Device from "../Device";
+import { bytesToHex, ConfigFields } from "../misc/ConfigFields";
 
 const loadingBoxStyle : SxProps = {
     display: "flex",
@@ -243,6 +246,34 @@ content += `};`;
         setHDLBasePath("./");
     }
 
+    async function uploadFile () {
+        const cmp = new HDLCompiler(fileReaderInterface);
+        cmp.basePath = hdlBasePath
+        let ok = await cmp.load(code);
+        if(!ok) {
+            console.log("Failed to parse file");
+            return;
+        }
+        const bytes = cmp.compile();
+        if(bytes.length > 1024 || bytes.length === 0) {
+            console.error("Maximum length 1024");
+            return;
+        }
+        if(!Device.selectedDevice)
+            return;
+
+        const actualBytes = new Uint8Array(1024);
+        actualBytes.set(bytes);
+
+        Hidergod.instance?.request({
+            cmd: HidergodCmd.APICMD_ZMK_CONTROL_WRITE,
+            device: Device.selectedDevice.deviceInfo.device.serial,
+            field: ConfigFields.ZMK_CONFIG_KEY_DISPLAY_CODE,
+            save: false,
+            bytes: bytesToHex(actualBytes)
+        })
+    }
+
     // Waiting for WASM to load
     if(!hdlLoaded) {
         return <Box sx={loadingBoxStyle}>
@@ -267,6 +298,7 @@ content += `};`;
                         <Button  onClick={openFileDialog} variant="contained">Open file</Button>
                         <Button  onClick={newFile} variant="contained">New file</Button>
                         <Button  onClick={exportFile} variant="contained">Export</Button>
+                        <Button  onClick={uploadFile} variant="contained">Upload</Button>
 
                     </Box>
                     <Box style={{flex: 7, height: "85vh", overflow: "auto"}}>
