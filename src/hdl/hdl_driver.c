@@ -89,10 +89,10 @@ void _f_text (int16_t x, int16_t y, const char *text, uint8_t fontSize) {
 		}
 		
 		for (int py = 0; py < 8; py++) {
-			for (int px = 0; px < 5; px++) {
+			for (int px = 0; px < 6; px++) {
 				if ((HDL_FONT[text[g] * 8 + py] >> (7 - px)) & 1) {
-                    int rx = x + (px + acol * 5) * fontSize;
-                    int ry = y + (py + line * 6) * fontSize;
+                    int rx = x + (px + acol * 6) * fontSize;
+                    int ry = y + (py + line * 8) * fontSize;
 
                     for(int sy = 0; sy < fontSize; sy++) {
                         for(int sx = 0; sx < fontSize; sx++) {
@@ -220,7 +220,7 @@ uint8_t buildHDL (uint16_t width, uint16_t height, uint8_t *data, uint32_t len) 
     dsp_binds.splitConnected = 1;
 
     dsp_binds.view = VIEW_MAIN;
-    dsp_binds.batt_percent = 65;
+    dsp_binds.batt_percent = 100;
     update_battery_sprite();
     dsp_binds.charge = 1;
     if(dsp_binds.charge) {
@@ -250,7 +250,7 @@ uint8_t buildHDL (uint16_t width, uint16_t height, uint8_t *data, uint32_t len) 
     _hdl_interface.f_arc = _f_arc;
 
     _hdl_interface.textHeight = 6;
-    _hdl_interface.textWidth = 4;
+    _hdl_interface.textWidth = 5;
 
     _hdl_initialized = 1;
 
