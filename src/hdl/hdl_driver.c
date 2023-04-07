@@ -153,6 +153,9 @@ struct {
     uint8_t layer;
     uint8_t btProfile;
     uint8_t splitConnected;
+    uint8_t wpm;
+    uint8_t connectionStatus;
+    uint8_t hostDisconnected;
     
     // Time and date
     uint8_t hasTime;
@@ -218,7 +221,9 @@ uint8_t buildHDL (uint16_t width, uint16_t height, uint8_t *data, uint32_t len) 
     dsp_binds.layer = 0;
     dsp_binds.btProfile = 0;
     dsp_binds.splitConnected = 1;
-
+    dsp_binds.hostDisconnected = 1
+    dsp_binds.wpm = 0;
+    dsp_binds.connectionStatus = 0;
     dsp_binds.view = VIEW_MAIN;
     dsp_binds.batt_percent = 100;
     update_battery_sprite();
@@ -266,6 +271,10 @@ uint8_t buildHDL (uint16_t width, uint16_t height, uint8_t *data, uint32_t len) 
     HDL_SetBinding(&_hdl_interface, "LAYER",   7, &dsp_binds.layer, HDL_TYPE_I8);
     HDL_SetBinding(&_hdl_interface, "BTPROFILE",   8, &dsp_binds.btProfile, HDL_TYPE_I8);
     HDL_SetBinding(&_hdl_interface, "SPLITCONNECTED",   9, &dsp_binds.splitConnected, HDL_TYPE_BOOL);
+    HDL_SetBinding(&_hdl_interface, "WPM",   10, &dsp_binds.wpm, HDL_TYPE_I8);
+    HDL_SetBinding(&_hdl_interface, "CONNECTION_STATUS", 11, &dsp_binds.connectionStatus, HDL_TYPE_I8);
+    HDL_SetBinding(&_hdl_interface, "HOST_DISCONNECTED", 12, &dsp_binds.hostDisconnected, HDL_TYPE_BOOL);
+
 
     // Time and date
     HDL_SetBinding(&_hdl_interface, "HASTIME",       20, &dsp_binds.hasTime, HDL_TYPE_BOOL);
