@@ -1,25 +1,42 @@
 <!-- HDL template -->
 <!-- Bindings -->
+<!-- View 0 or 1. View 0 is slee
 <bind name="VIEW" id="1" />
+<!-- Battery % value from 0 to 100 -->
 <bind name="BATT_PERCENT" id="2" />
+<!-- Image binding for battery icon. Use like this: <image img="ICONS" sprite="$BATT_SPRITE" /> -->
 <bind name="BATT_SPRITE" id="3" />
+<!-- 0 - false, 1 - true -->
 <bind name="CHARGING" id="4" />
 <!-- Not implemented yet in firmware
 <bind name="RSSI" id="5" />
  -->
+<!-- Trackpad sensitivity value from 0 to 255 -->
 <bind name="SENSITIVITY" id="6" />
+<!-- 0 - Default layer, 1 - Arrow layer, 2 - FN Layer -->
 <bind name="LAYER" id="7" />
+<!-- Bluetooth profiles, integer 0,1 or 2 -->
 <bind name="BTPROFILE" id="8" />
+<!-- 0 - false, 1 -true -->
 <bind name="SPLITCONNECTED" id="9" />
+<!-- Word per minutes, 16bit integer -->
 <bind name="WPM" id="10" />
+<!-- 0 - disconnected/error, 1 - USB, 2 - Bluetooth -->
 <bind name="CONNECTION_STATUS" id="11" />
+<!-- 0 - false, 1 - true -->
 <bind name="HOST_DISCONNECTED" id="12" />
 <!-- Time and date bindings -->
+<!-- 0 - false, 1 - true -->
 <bind name="HASTIME" id="20" />
+<!-- Integer 0-23 -->
 <bind name="HOURS" id="21" />
+<!-- Number from 0-59 -->
 <bind name="MINUTES" id="22" />
+<!-- Integer -->
 <bind name="YEAR" id="23" />
+<!-- Number from 1-12 -->
 <bind name="MONTH" id="24" />
+<!-- Number from 1-31 -->
 <bind name="DAY" id="25" />
 <!-- Integer from 0 to 6 -->
 <bind name="WEEKDAY" id="26" />
@@ -92,31 +109,41 @@
       </switch>
       <box border="1" radius="5" flexdir="row">
         <image flex="1" align="middle center" img="ICONS" sprite="$BATT_SPRITE" />
-        <switch value="$LAYER">
-          <!-- Default layer; show split connection status -->
-          <switch flex="1" value="$SPLITCONNECTED">
-            <image align="middle center" size="1" img="ICONS" sprite="6" />
-            <image align="middle center" size="1" img="ICONS" sprite="16" />
-          </switch>
-          <!-- Arrow layer; show split connection status -->
-          <switch flex="1" value="$SPLITCONNECTED">
-            <image align="middle center" size="1" img="ICONS" sprite="6" />
-            <image align="middle center" size="1" img="ICONS" sprite="16" />
-          </switch>
-          <!-- FN layer -->
-          <switch value="$HASTIME">
-            <!-- If does not have time; show battery percentage -->
-
-            <!-- If has time, show BT profile -->
-            <switch value="$BTPROFILE">
-              <image align="middle center" size="1" img="ICONS" sprite="1" />
-              <image align="middle center" size="1" img="ICONS" sprite="2" />
-              <image align="middle center" size="1" img="ICONS" sprite="3" />
-            </switch>
-            <text align="middle center" size="1" padding="[-5,0]" bind="$BATT_PERCENT">
-              %i\%
+        <switch value="$CONNECTION_STATUS">
+          <text>
+           ?
+          </text>
+          <switch value="$LAYER">
+            <text>
+             USB
             </text>
+            <text>
+             USB
+            </text>
+            <switch flex="1" value="$SPLITCONNECTED">
+              <image align="middle center" size="1" img="ICONS" sprite="6" />
+              <image align="middle center" size="1" img="ICONS" sprite="16" />
+            </switch>
           </switch>
+          <switch value="$LAYER">
+            <!-- Default layer; show split connection status -->
+              <switch value="$BTPROFILE">
+                <image align="middle center" size="1" img="ICONS" sprite="1" />
+                <image align="middle center" size="1" img="ICONS" sprite="2" />
+                <image align="middle center" size="1" img="ICONS" sprite="0" />
+              </switch>
+            <!-- Arrow layer; show split connection status -->
+              <switch value="$BTPROFILE">
+                <image align="middle center" size="1" img="ICONS" sprite="1" />
+                <image align="middle center" size="1" img="ICONS" sprite="2" />
+                <image align="middle center" size="1" img="ICONS" sprite="0" />
+              </switch>
+            <!-- FN layer -->
+              <switch flex="1" value="$SPLITCONNECTED">
+                <image align="middle center" size="1" img="ICONS" sprite="6" />
+                <image align="middle center" size="1" img="ICONS" sprite="16" />
+              </switch>
+            </switch>
         </switch>
       </box>
     </box>
@@ -128,7 +155,7 @@
     <switch value="$BTPROFILE">
       <image align="middle center" size="1" img="ICONS" sprite="1" />
       <image align="middle center" size="1" img="ICONS" sprite="2" />
-      <image align="middle center" size="1" img="ICONS" sprite="3" />
+      <image align="middle center" size="1" img="ICONS" sprite="0" />
     </switch>
     <switch flex="1" value="$SPLITCONNECTED">
       <image align="middle center" size="1" img="ICONS" sprite="6" />
