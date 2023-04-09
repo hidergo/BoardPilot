@@ -53,13 +53,13 @@
             </text>
             <box align="top center" size="1" flexdir="row">
               <switch value="$WEEKDAY">
+                <text padding="[4,-4]">Sun</text>
                 <text padding="[4,-4]">Mon</text>
                 <text padding="[4,-4]">Tue</text>
                 <text padding="[4,-4]">Wed</text>
                 <text padding="[4,-4]">Thu</text>
                 <text padding="[4,-4]">Fri</text>
-                <text padding="[4,-4]">Sat</text>
-                <text padding="[4,-4]">Sun</text>
+                <text padding="[4,-4]">Sat</text>    
               </switch>
               <text padding="[-8,-4]" bind="[$DAY,$MONTH]">
                 %02i/%02i
