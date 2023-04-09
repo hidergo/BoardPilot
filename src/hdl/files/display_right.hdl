@@ -48,7 +48,7 @@
 
 <!-- Insert layout inside this element -->
 <switch value="$VIEW">
-  <switch value="$HOST_DISCONNECTED">
+    <switch value="$HOST_DISCONNECTED">
     <box padding="0" radius="6" border="1">
       <box border="1" flexdir="row" radius="2" padding="8">
         <switch value="$HASTIME">
@@ -120,7 +120,7 @@
               </text>
               <text>
                USB
-              </text>s
+              </text>
               <switch flex="1" value="$SPLITCONNECTED">
                 <image align="middle center" size="1" img="ICONS" sprite="6" />
                 <image align="middle center" size="1" img="ICONS" sprite="16" />
