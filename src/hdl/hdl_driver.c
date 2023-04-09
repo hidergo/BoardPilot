@@ -222,9 +222,9 @@ uint8_t buildHDL (uint16_t width, uint16_t height, uint8_t *data, uint32_t len) 
     dsp_binds.layer = 0;
     dsp_binds.btProfile = 0;
     dsp_binds.splitConnected = 1;
-    dsp_binds.hostDisconnected = 1;
+    dsp_binds.hostDisconnected = 0;
     dsp_binds.wpm = 0;
-    dsp_binds.connectionStatus = 0;
+    dsp_binds.connectionStatus = 2;
     dsp_binds.view = VIEW_MAIN;
     dsp_binds.batt_percent = 100;
     update_battery_sprite();
