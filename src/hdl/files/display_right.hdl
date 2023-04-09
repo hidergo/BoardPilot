@@ -47,119 +47,122 @@
 
 
 <!-- Insert layout inside this element -->
-<switch value="$HOST_DISCONNECTED">
-  <box padding="0" radius="6" border="1">
-    <box border="1" flexdir="row" radius="2" padding="8">
-      <switch value="$HASTIME">
-        <!-- NOT CONNECTED TO SERVICE -->
-        <box flexdir="row">
-          <box border="1" flex="2" flexdir="col">
-            <text size="3" flex="2" align="bottom center" padding="[0,5]" bind="$WPM">
-              %03i
-            </text>
-            <text size="1" flex="1" align="top center" padding="[0,3]">
-              WPM
-            </text>
-          </box>
-        </box>
-        <!-- CONNECTED TO SERVICE; SHOW TIME AND DATE -->
-        <box flex="2" radius="6" border="1" flexdir="col">
-          <box flexdir="col">
-            <text align="top center" size="2" padding="[0,19]" bind="[$HOURS,$MINUTES]">
-              %02i:%02i
-            </text>
-            <box align="top center" size="1" flexdir="row">
-              <switch value="$WEEKDAY">
-                <text padding="[4,-4]">Sun</text>
-                <text padding="[4,-4]">Mon</text>
-                <text padding="[4,-4]">Tue</text>
-                <text padding="[4,-4]">Wed</text>
-                <text padding="[4,-4]">Thu</text>
-                <text padding="[4,-4]">Fri</text>
-                <text padding="[4,-4]">Sat</text>    
-              </switch>
-              <text padding="[-8,-4]" bind="[$DAY,$MONTH]">
-                %02i/%02i
+<switch value="$VIEW">
+  <switch value="$HOST_DISCONNECTED">
+    <box padding="0" radius="6" border="1">
+      <box border="1" flexdir="row" radius="2" padding="8">
+        <switch value="$HASTIME">
+          <!-- NOT CONNECTED TO SERVICE -->
+          <box flexdir="row">
+            <box border="1" flex="2" flexdir="col">
+              <text size="3" flex="2" align="bottom center" padding="[0,5]" bind="$WPM">
+                %03i
+              </text>
+              <text size="1" flex="1" align="top center" padding="[0,3]">
+                WPM
               </text>
             </box>
           </box>
-        </box>
-      </switch>
-    </box>
-    <box border="1">
-      <switch value="$LAYER">
-        <!-- Default layer -->
-        <box flexdir="row">
-          <image flex="1" padding="[3,0]" img="ICONS" sprite="17" />
-          <text flex="2" padding="[5,0]" align="middle left">
-            Default
-          </text>
-        </box>
-        <!-- Arrow layer -->
-        <box flexdir="row">
-          <image flex="1" padding="[3,0]" img="ICONS" sprite="17" />
-          <text flex="2" padding="[0,0]" align="middle center">
-            Arrow
-          </text>
-        </box>
-        <!-- FN Layer -->
-        <text bind="$SENSITIVITY">
-          Sens:%i/255
-        </text>
-      </switch>
-      <box border="1" radius="5" flexdir="row">
-        <image flex="1" align="middle center" img="ICONS" sprite="$BATT_SPRITE" />
-        <switch value="$CONNECTION_STATUS">
-          <text>
-           ?
-          </text>
-          <switch value="$LAYER">
-            <text>
-             USB
+          <!-- CONNECTED TO SERVICE; SHOW TIME AND DATE -->
+          <box flex="2" radius="6" border="1" flexdir="col">
+            <box flexdir="col">
+              <text align="top center" size="2" padding="[0,19]" bind="[$HOURS,$MINUTES]">
+                %02i:%02i
+              </text>
+              <box align="top center" size="1" flexdir="row">
+                <switch value="$WEEKDAY">
+                  <text padding="[4,-4]">Sun</text>
+                  <text padding="[4,-4]">Mon</text>
+                  <text padding="[4,-4]">Tue</text>
+                  <text padding="[4,-4]">Wed</text>
+                  <text padding="[4,-4]">Thu</text>
+                  <text padding="[4,-4]">Fri</text>
+                  <text padding="[4,-4]">Sat</text>    
+                </switch>
+                <text padding="[-8,-4]" bind="[$DAY,$MONTH]">
+                  %02i/%02i
+                </text>
+              </box>
+            </box>
+          </box>
+        </switch>
+      </box>
+      <box border="1">
+        <switch value="$LAYER">
+          <!-- Default layer -->
+          <box flexdir="row">
+            <image flex="1" padding="[3,0]" img="ICONS" sprite="17" />
+            <text flex="2" padding="[5,0]" align="middle left">
+              Default
             </text>
-            <text>
-             USB
+          </box>
+          <!-- Arrow layer -->
+          <box flexdir="row">
+            <image flex="1" padding="[3,0]" img="ICONS" sprite="17" />
+            <text flex="2" padding="[0,0]" align="middle center">
+              Arrow
             </text>
-            <switch flex="1" value="$SPLITCONNECTED">
-              <image align="middle center" size="1" img="ICONS" sprite="6" />
-              <image align="middle center" size="1" img="ICONS" sprite="16" />
-            </switch>
-          </switch>
-          <switch value="$LAYER">
-            <!-- Default layer; show split connection status -->
-              <switch value="$BTPROFILE">
-                <image align="middle center" size="1" img="ICONS" sprite="1" />
-                <image align="middle center" size="1" img="ICONS" sprite="2" />
-                <image align="middle center" size="1" img="ICONS" sprite="0" />
-              </switch>
-            <!-- Arrow layer; show split connection status -->
-              <switch value="$BTPROFILE">
-                <image align="middle center" size="1" img="ICONS" sprite="1" />
-                <image align="middle center" size="1" img="ICONS" sprite="2" />
-                <image align="middle center" size="1" img="ICONS" sprite="0" />
-              </switch>
-            <!-- FN layer -->
+          </box>
+          <!-- FN Layer -->
+          <text bind="$SENSITIVITY">
+            Sens:%i/255
+          </text>
+        </switch>
+        <box border="1" radius="5" flexdir="row">
+          <image flex="1" align="middle center" img="ICONS" sprite="$BATT_SPRITE" />
+          <switch value="$CONNECTION_STATUS">
+            <text>
+             ?
+            </text>
+            <switch value="$LAYER">
+              <text>
+               USB
+              </text>
+              <text>
+               USB
+              </text>s
               <switch flex="1" value="$SPLITCONNECTED">
                 <image align="middle center" size="1" img="ICONS" sprite="6" />
                 <image align="middle center" size="1" img="ICONS" sprite="16" />
               </switch>
             </switch>
-        </switch>
+            <switch value="$LAYER">
+              <!-- Default layer; show split connection status -->
+                <switch value="$BTPROFILE">
+                  <image align="middle center" size="1" img="ICONS" sprite="1" />
+                  <image align="middle center" size="1" img="ICONS" sprite="2" />
+                  <image align="middle center" size="1" img="ICONS" sprite="0" />
+                </switch>
+              <!-- Arrow layer; show split connection status -->
+                <switch value="$BTPROFILE">
+                  <image align="middle center" size="1" img="ICONS" sprite="1" />
+                  <image align="middle center" size="1" img="ICONS" sprite="2" />
+                  <image align="middle center" size="1" img="ICONS" sprite="0" />
+                </switch>
+              <!-- FN layer -->
+                <switch flex="1" value="$SPLITCONNECTED">
+                  <image align="middle center" size="1" img="ICONS" sprite="6" />
+                  <image align="middle center" size="1" img="ICONS" sprite="16" />
+                </switch>
+              </switch>
+          </switch>
+        </box>
       </box>
     </box>
-  </box>
-  <box>
-    <text>
-      NOT\nCONNECTED
-    </text>
-    <switch value="$BTPROFILE">
-      <image align="middle center" size="1" img="ICONS" sprite="1" />
-      <image align="middle center" size="1" img="ICONS" sprite="2" />
-      <image align="middle center" size="1" img="ICONS" sprite="0" />
-    </switch>
-    <switch flex="1" value="$SPLITCONNECTED">
-      <image align="middle center" size="1" img="ICONS" sprite="6" />
-      <image align="middle center" size="1" img="ICONS" sprite="16" />
-    </switch>
-  </box>
+    <box>
+      <text>
+        NOT\nCONNECTED
+      </text>
+      <switch value="$BTPROFILE">
+        <image align="middle center" size="1" img="ICONS" sprite="1" />
+        <image align="middle center" size="1" img="ICONS" sprite="2" />
+        <image align="middle center" size="1" img="ICONS" sprite="0" />
+      </switch>
+      <switch flex="1" value="$SPLITCONNECTED">
+        <image align="middle center" size="1" img="ICONS" sprite="6" />
+        <image align="middle center" size="1" img="ICONS" sprite="16" />
+      </switch>
+    </box>
+  </switch>
+  <image align="middle center" size="2" img="BIGICONS" sprite="0" padding="[3,0]"/>
 </switch>
