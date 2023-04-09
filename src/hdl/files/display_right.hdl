@@ -95,13 +95,13 @@
         <switch value="$LAYER">
           <!-- Default layer; show split connection status -->
           <switch flex="1" value="$SPLITCONNECTED">
-            <image align="middle center" size="1" img="ICONS" sprite="16" />
             <image align="middle center" size="1" img="ICONS" sprite="6" />
+            <image align="middle center" size="1" img="ICONS" sprite="16" />
           </switch>
           <!-- Arrow layer; show split connection status -->
           <switch flex="1" value="$SPLITCONNECTED">
-            <image align="middle center" size="1" img="ICONS" sprite="16" />
             <image align="middle center" size="1" img="ICONS" sprite="6" />
+            <image align="middle center" size="1" img="ICONS" sprite="16" />
           </switch>
           <!-- FN layer -->
           <switch value="$HASTIME">
@@ -131,8 +131,8 @@
       <image align="middle center" size="1" img="ICONS" sprite="3" />
     </switch>
     <switch flex="1" value="$SPLITCONNECTED">
-      <image align="middle center" size="1" img="ICONS" sprite="16" />
       <image align="middle center" size="1" img="ICONS" sprite="6" />
+      <image align="middle center" size="1" img="ICONS" sprite="16" />
     </switch>
   </box>
 </switch>
