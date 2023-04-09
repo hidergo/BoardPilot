@@ -91,14 +91,14 @@
         <switch value="$LAYER">
           <!-- Default layer -->
           <box flexdir="row">
-            <image flex="1" padding="[3,0]" img="ICONS" sprite="17" />
+            <image padding="[3,0]" img="ICONS" sprite="17" />
             <text flex="2" padding="[5,0]" align="middle left">
               Default
             </text>
           </box>
           <!-- Arrow layer -->
           <box flexdir="row">
-            <image flex="1" padding="[3,0]" img="ICONS" sprite="17" />
+            <image padding="[3,0]" img="ICONS" sprite="17" />
             <text flex="2" padding="[0,0]" align="middle center">
               Arrow
             </text>
@@ -109,7 +109,13 @@
           </text>
         </switch>
         <box border="1" radius="5" flexdir="row">
-          <image flex="1" align="middle center" img="ICONS" sprite="$BATT_SPRITE" />
+          <switch value="$LAYER">
+            <image img="ICONS" sprite="$BATT_SPRITE" />
+            <image img="ICONS" sprite="$BATT_SPRITE" />
+            <text bind="$BATT_PERCENT">
+                %i\%
+            </text>
+          </switch>
           <switch value="$CONNECTION_STATUS">
             <text>
              ?
@@ -121,7 +127,7 @@
               <text>
                USB
               </text>
-              <switch flex="1" value="$SPLITCONNECTED">
+              <switch value="$SPLITCONNECTED">
                 <image align="middle center" size="1" img="ICONS" sprite="6" />
                 <image align="middle center" size="1" img="ICONS" sprite="16" />
               </switch>
@@ -140,9 +146,9 @@
                   <image align="middle center" size="1" img="ICONS" sprite="0" />
                 </switch>
               <!-- FN layer -->
-                <switch flex="1" value="$SPLITCONNECTED">
-                  <image align="middle center" size="1" img="ICONS" sprite="6" />
-                  <image align="middle center" size="1" img="ICONS" sprite="16" />
+                <switch value="$SPLITCONNECTED">
+                  <image align="middle center" img="ICONS" sprite="6" />
+                  <image align="middle center" img="ICONS" sprite="16" />
                 </switch>
               </switch>
           </switch>
@@ -154,13 +160,13 @@
         NOT\nCONNECTED
       </text>
       <switch value="$BTPROFILE">
-        <image align="middle center" size="1" img="ICONS" sprite="1" />
-        <image align="middle center" size="1" img="ICONS" sprite="2" />
-        <image align="middle center" size="1" img="ICONS" sprite="0" />
+        <image align="middle center" img="ICONS" sprite="1" />
+        <image align="middle center" img="ICONS" sprite="2" />
+        <image align="middle center" img="ICONS" sprite="0" />
       </switch>
       <switch flex="1" value="$SPLITCONNECTED">
-        <image align="middle center" size="1" img="ICONS" sprite="6" />
-        <image align="middle center" size="1" img="ICONS" sprite="16" />
+        <image align="middle center" img="ICONS" sprite="6" />
+        <image align="middle center" img="ICONS" sprite="16" />
       </switch>
     </box>
   </switch>
