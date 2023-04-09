@@ -86,6 +86,7 @@ void _f_text (int16_t x, int16_t y, const char *text, uint8_t fontSize) {
 		}
 		else if (text[g] == ' ') {
 			acol++;
+            continue;
 		}
 		
 		for (int py = 0; py < 8; py++) {
@@ -221,7 +222,7 @@ uint8_t buildHDL (uint16_t width, uint16_t height, uint8_t *data, uint32_t len) 
     dsp_binds.layer = 0;
     dsp_binds.btProfile = 0;
     dsp_binds.splitConnected = 1;
-    dsp_binds.hostDisconnected = 1
+    dsp_binds.hostDisconnected = 1;
     dsp_binds.wpm = 0;
     dsp_binds.connectionStatus = 0;
     dsp_binds.view = VIEW_MAIN;
