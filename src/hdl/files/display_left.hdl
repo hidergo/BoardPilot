@@ -1,0 +1,72 @@
+<!-- HDL template -->
+<!-- Bindings -->
+<bind name="VIEW" id="1" />
+<bind name="BATT_PERCENT" id="2" />
+<bind name="BATT_SPRITE" id="3" />
+<bind name="CHARGING" id="4" />
+<!-- Not implemented yet in firmware
+<bind name="RSSI" id="5" />
+ -->
+<bind name="SENSITIVITY" id="6" />
+<bind name="LAYER" id="7" />
+<bind name="BTPROFILE" id="8" />
+<bind name="SPLITCONNECTED" id="9" />
+<bind name="WPM" id="10" />
+<bind name="CONNECTION_STATUS" id="11" />
+<bind name="HOST_DISCONNECTED" id="12" />
+<!-- Time and date bindings -->
+<bind name="HASTIME" id="20" />
+<bind name="HOURS" id="21" />
+<bind name="MINUTES" id="22" />
+<bind name="YEAR" id="23" />
+<bind name="MONTH" id="24" />
+<bind name="DAY" id="25" />
+<!-- Integer from 0 to 6 -->
+<bind name="WEEKDAY" id="26" />
+
+<!-- Built in images -->
+<imgdef name="ICONS" preload="0x8001" />
+<imgdef name="BIGICONS" preload="0x8002" />
+
+
+<!-- Insert layout inside this element -->
+<switch value="$VIEW">
+  <box padding="0" radius="6" border="1">
+    <box flex="3" border="1" flexdir="col" radius="2" padding="8">
+      <switch flex="2" value="$SPLITCONNECTED">
+            <image align="middle center" size="2" img="ICONS" sprite="6" />
+            <image align="middle center" size="2" img="ICONS" sprite="16" />
+      </switch>
+      <switch flex="1" value="$SPLITCONNECTED">
+        <box>
+          <text flex="1" padding="[0,-2]">
+            MASTER
+          </text>
+          <text flex="1" padding="[0,-8]">
+            DISCONNECTED!
+          </text>
+        </box>
+        <box>
+          <text flex="1" padding="[0,-2]">
+            MASTER
+          </text>
+          <text flex="1" padding="[0,-8]">
+            CONNECTED
+          </text>
+        </box>
+      </switch>
+    </box>
+    <box border="1">
+      <box flexdir="row">
+        <image flex="1" align="middle center" img="ICONS" sprite="$BATT_SPRITE" />
+            <text align="middle center" size="1" padding="[-5,0]" bind="$BATT_PERCENT">
+              %i\%
+            </text>
+      </box>
+    </box>
+  </box>
+  <box>
+    <image flex="1" size="2" padding="[2,0]" align="middle center" img="BIGICONS" sprite="0" />
+  </box>
+</switch>
+  
