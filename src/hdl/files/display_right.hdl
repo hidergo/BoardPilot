@@ -1,6 +1,6 @@
 <!-- HDL template -->
 <!-- Bindings -->
-<!-- View 0 or 1. View 0 is slee
+<!-- View 0 or 1. View 0 is sleep -->
 <bind name="VIEW" id="1" />
 <!-- Battery % value from 0 to 100 -->
 <bind name="BATT_PERCENT" id="2" />
@@ -109,13 +109,7 @@
           </text>
         </switch>
         <box border="1" radius="5" flexdir="row">
-          <switch value="$LAYER">
-            <image img="ICONS" sprite="$BATT_SPRITE" />
-            <image img="ICONS" sprite="$BATT_SPRITE" />
-            <text bind="$BATT_PERCENT">
-                %i\%
-            </text>
-          </switch>
+          <image img="ICONS" sprite="$BATT_SPRITE" />
           <switch value="$CONNECTION_STATUS">
             <text>
              ?
