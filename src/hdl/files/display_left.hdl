@@ -59,9 +59,14 @@
     <box border="1">
       <box flexdir="row">
         <image flex="1" align="middle center" img="ICONS" sprite="$BATT_SPRITE" />
-            <text align="middle center" size="1" padding="[-5,0]" bind="$BATT_PERCENT">
-              %i\%
-            </text>
+        <switch value="$CHARGING">
+          <text align="middle center" size="1" padding="[-5,0]" bind="$BATT_PERCENT">
+            %i\%
+          </text>
+          <text padding="[-5,0]">
+            CHRG
+          </text>
+        </switch>
       </box>
     </box>
   </box>
