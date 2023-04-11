@@ -146,13 +146,13 @@ let content = `
 // HDL output size
 const unsigned long HDL_PAGE_SIZE_${escapedName} = ${bytes.length};
 // Output
-unsigned char HDL_PAGE_${escapedName}[] = {
+const unsigned char HDL_PAGE_${escapedName}[] = {
 `;
             for(let x = 0; x < bytes.length; x++) {
                 if(x % 16 === 0 && x !== 1) {
                     content += '\n';
                 }
-                content += "0x" + bytes[x].toString(16);
+                content += "0x" + bytes[x].toString(16).padStart(2, '0');
                 if(x !== bytes.length - 1) {
                     content += ", ";
                 }
