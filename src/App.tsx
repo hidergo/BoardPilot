@@ -7,10 +7,10 @@ import TopBar from "./Components/TopBar";
 import KeymapEditor from "./Views/KeymapEditor";
 import Home from "./Views/Home";
 import { listen } from "@tauri-apps/api/event";
-import Hidergod from "./Hidergod";
+import Hidergod from "./misc/Hidergod";
 import Display from "./Views/Display";
 import Trackpad from "./Views/Trackpad";
-import Device from "./Device";
+import Device from "./misc/Device";
 import { Button, CircularProgress, Typography } from "@mui/material";
 import HDLDisplay from "./hdl/HDLDisplay";
 

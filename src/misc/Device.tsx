@@ -1,4 +1,5 @@
-import Hidergod, { DevicesResponse, HidergodCmd } from "./Hidergod";
+import Hidergod from "./Hidergod";
+import { HidergodCmd, HidergodMsg } from "./HidergodMsg";
 
 export type DeviceInfo = {
     product: {
@@ -71,11 +72,12 @@ export default class Device {
     }
 
     static fetchDevices () {
-        Hidergod.instance?.request({
+        const msg : HidergodMsg.devicesRequest = {
             cmd: HidergodCmd.APICMD_DEVICES
-        }, (data) => {
+        }
+        Hidergod.instance?.request(msg, (data) => {
             if(data) {
-                const resp = data as DevicesResponse;
+                const resp = data as HidergodMsg.devicesResponse;
 
                 resp.devices.forEach(e => {
                     let dev = Device.findDevice(e.device.serial);

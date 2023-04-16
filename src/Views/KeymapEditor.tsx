@@ -1,8 +1,8 @@
 import { MenuItem, Select, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react"
-import Device from "../Device";
-import Hidergod, { HidergodCmd } from "../Hidergod";
+import Device from "../misc/Device";
+import Hidergod, { HidergodCmd } from "../misc/Hidergod";
 import hidergo_split_keymap from '../Keymaps/hidergo_split_keymap.json'
 import { getKeymapDeviceId, getKeymapDeviceName, keymapBehaviour } from "../misc/KeymapDefs";
 

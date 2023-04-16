@@ -1,6 +1,6 @@
 
 
-export enum ConfigFields {
+export enum ConfigField {
     // Invalid key
     ZMK_CONFIG_KEY_INVALID =                0x0000,
     // --------------------------------------------------------------

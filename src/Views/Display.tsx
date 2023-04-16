@@ -8,9 +8,9 @@ import Editor from "react-simple-code-editor";
 import HDLDisplay from "../hdl/HDLDisplay";
 import { highlight, languages } from "prismjs";
 import { basename } from "@tauri-apps/api/path";
-import Hidergod, { HidergodCmd } from "../Hidergod";
-import Device from "../Device";
-import { bytesToHex, ConfigFields } from "../misc/ConfigFields";
+import Hidergod, { HidergodCmd } from "../misc/Hidergod";
+import Device from "../misc/Device";
+import { bytesToHex, ConfigField } from "../misc/ConfigFields";
 
 const loadingBoxStyle : SxProps = {
     display: "flex",
@@ -268,7 +268,7 @@ content += `};`;
         Hidergod.instance?.request({
             cmd: HidergodCmd.APICMD_ZMK_CONTROL_WRITE,
             device: Device.selectedDevice.deviceInfo.device.serial,
-            field: ConfigFields.ZMK_CONFIG_KEY_DISPLAY_CODE,
+            field: ConfigField.ZMK_CONFIG_KEY_DISPLAY_CODE,
             save: false,
             bytes: bytesToHex(actualBytes)
         })

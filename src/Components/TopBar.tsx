@@ -1,7 +1,7 @@
 import { InputLabel, MenuItem, Select } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import hidergoLogo from '../assets/hidergo_logo.png';
-import Device from '../Device';
+import Device from '../misc/Device';
 
 const TopBarContainer: React.CSSProperties = {
     background: '#373737',

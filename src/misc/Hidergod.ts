@@ -1,58 +1,14 @@
 import { invoke } from "@tauri-apps/api";
 import { listen } from "@tauri-apps/api/event";
+import { bytesToHex, ConfigField, hexToBytes } from "./ConfigFields";
 import Device, { DeviceInfo } from "./Device";
+import { ApiEventType, HidergodCmd, HidergodMsg } from "./HidergodMsg";
 
 export type OnResponseCallback = (data: object | null) => any;
 
-export enum HidergodCmd {
-    APICMD_REGISTER =       0x01,
-    APICMD_DEVICES =        0x10,
+export type OnReadConfigCallback = (data: {field: ConfigField, device: Device | undefined, status: boolean, data: Uint8Array}) => void;
+export type OnWriteConfigCallback = (data: {field: ConfigField, device: Device | undefined, status: boolean}) => void;
 
-    APICMD_SET_KEYMAP =     0x20,
-    APICMD_GET_KEYMAP =     0x21,
-    APICMD_SET_MOUSE_SENS =     0x24,
-    APICMD_GET_MOUSE_SENS =     0x25,
-
-    // Generic write to the device
-    APICMD_ZMK_CONTROL_WRITE =  0x40,
-    APICMD_ZMK_CONTROL_READ =   0x41,
-
-    APICMD_SET_IQS_REGS =   0x60,
-    APICMD_GET_IQS_REGS =   0x61,
-
-    // Events
-    APICMD_EVENT =          0x80
-}
-
-export enum ApiEventType {
-    APIEVENT_NONE,
-    APIEVENT_DEVICE_CONNECTED,
-    APIEVENT_DEVICE_DISCONNECTED
-};
-
-export type AuthenticationResponse = {cmd: HidergodCmd.APICMD_REGISTER, status: boolean};
-
-export type EventResponse = {
-    cmd: HidergodCmd.APICMD_EVENT,
-    type: number,
-    device: DeviceInfo,
-    reqid: number
-};
-
-export type DevicesResponse = {
-    cmd: 0x10,
-    devices: DeviceInfo[],
-    reqid: number
-};
-
-export type ReadConfigResponse = {
-    cmd: HidergodCmd.APICMD_ZMK_CONTROL_READ,
-    status: boolean,
-    device: string,
-    field: string,
-    data: string,
-    reqid: number
-};
 
 export default class Hidergod {
 
@@ -76,19 +32,19 @@ export default class Hidergod {
 
         // Set events
         listen('api_onopen', (event) => {
-            console.log("ONOPEN");
             this.onConnect(true);
         });
 
         listen('api_onclose', (event) => {
-            console.log("ONCLOSE");
-
             this.onClose(true);
+            // Reconnect after 1s
+            setTimeout(() => {
+                invoke("hidergod_connect", {port: port});
+            }, 1000);
 
         });
     
         listen('api_onmessage', (event) => {
-            console.log("ONMESSAGE");
             this.onMessage((event.payload as {message: string}).message);
         });
 
@@ -96,35 +52,16 @@ export default class Hidergod {
         invoke("hidergod_connect", {port: port});
     }
 
-
-
-    public request (msg: object, onResponse: OnResponseCallback | undefined = undefined) : boolean {
-        if(!this.connected)
-            return false;
-
-        const _req_id = Hidergod.reqid;
-        const nmsg = {
-            ...msg,
-            reqid: _req_id
-        };
-
-        if(onResponse) {
-            this._requests.push({reqid: _req_id, callback: onResponse});
-        }
-        invoke("hidergod_send", {message: JSON.stringify(nmsg)});
-        return true;
-    }
-
     private authenticate () {
 
         console.log("Authenticating...")
-        const msg = {
+        const msg : HidergodMsg.registerRequest = {
             cmd: HidergodCmd.APICMD_REGISTER,
             key: "p*kG462jhJBY166EZLKxf9Du"
-        };
+        }
 
         this.request(msg, (data) => {
-            const resp = data as AuthenticationResponse;
+            const resp = data as HidergodMsg.registerResponse;
             
             if(data && resp.status) {
                 console.log("Logged in to the API");
@@ -158,7 +95,7 @@ export default class Hidergod {
             }
 
             if(jsn.cmd === HidergodCmd.APICMD_EVENT) {
-                const msg = jsn as EventResponse;
+                const msg = jsn as HidergodMsg.eventResponse;
                 switch(msg.type) {
                     case ApiEventType.APIEVENT_NONE:
                         console.log("Unknown event");
@@ -202,4 +139,92 @@ export default class Hidergod {
         this.connected = false;
     }
 
+    /**
+     * @brief Sends a request to hidergod
+     * @param msg 
+     * @param onResponse 
+     * @returns 
+     */
+    public request (msg: object, onResponse?: OnResponseCallback) : boolean {
+        if(!this.connected)
+            return false;
+
+        const _req_id = Hidergod.reqid;
+        const nmsg = {
+            ...msg,
+            reqid: _req_id
+        };
+
+        if(onResponse) {
+            this._requests.push({reqid: _req_id, callback: onResponse});
+        }
+        invoke("hidergod_send", {message: JSON.stringify(nmsg)});
+        return true;
+    }
+
+    /**
+     * @brief Reads a field from config
+     * @param device 
+     * @param field 
+     * @param onResponse 
+     * @returns 
+     */
+    public readConfig (device: Device, field: ConfigField, onResponse?: OnReadConfigCallback) {
+        const msg : HidergodMsg.controlReadRequest = {
+            cmd: HidergodCmd.APICMD_ZMK_CONTROL_READ,
+            field: field,
+            device: device.deviceInfo.device.serial
+        }
+        return this.request(msg, (resp) => {
+            if(resp) {
+                const readResp = resp as HidergodMsg.controlReadResponse;
+
+                const dev = Device.findDevice(readResp.device);
+                const data = hexToBytes(readResp.data);
+
+                if(onResponse) {
+                    onResponse({
+                        field: field,
+                        device: dev,
+                        status: readResp.status,
+                        data: data
+                    });
+                }
+            }
+        });
+    }
+
+    /**
+     * @brief Writes a config field
+     * @param device 
+     * @param field 
+     * @param data 
+     * @param save 
+     * @param onResponse 
+     * @returns 
+     */
+    public writeConfig (device: Device, field: ConfigField, data: Uint8Array, save: boolean, onResponse?: OnWriteConfigCallback) {
+        const msg : HidergodMsg.controlWriteRequest = {
+            cmd: HidergodCmd.APICMD_ZMK_CONTROL_WRITE,
+            field: field,
+            save: save,
+            data: bytesToHex(data),
+            device: device.deviceInfo.device.serial
+        }
+        return this.request(msg, (resp) => {
+            if(resp) {
+                const writeResp = resp as HidergodMsg.controlWriteResponse;
+
+                const dev = Device.findDevice(writeResp.device);
+
+                if(onResponse) {
+                    onResponse({
+                        field: field,
+                        device: dev,
+                        status: writeResp.status
+                    });
+                }
+            }
+        });
+    }
 }

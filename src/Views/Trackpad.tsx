@@ -1,72 +1,10 @@
 import { Button, Card, Checkbox, Input, Slider, TextField, Tooltip, Typography } from "@mui/material";
 import { Box, Container } from "@mui/system";
 import React, { useEffect } from "react";
-import Device from "../Device";
-import Hidergod, { HidergodCmd } from "../Hidergod";
-
-type TrackpadSetRegsMessage = {
-    cmd:    0x40,
-    device: string,
-    save:   boolean,
-    regs: {
-        activeRefreshRate?:         number,
-        idleRefreshRate?:           number,
-        singleFingerGestureMask?:   number,
-        multiFingerGestureMask?:    number,
-        tapTime?:                   number,
-        tapDistance?:               number,
-        touchMultiplier?:           number,
-        debounce?:                  number,
-        i2cTimeout?:                number,
-        filterSettings?:            number,
-        filterDynBottomBeta?:       number,
-        filterDynLowerSpeed?:       number,
-        filterDynUpperSpeed?:       number,
-        initScrollDistance?:        number
-    }
-}
-
-type TrackpadGetRegsResponse = {
-    cmd:    0x41,
-    status:   boolean,
-    regs?: {
-        activeRefreshRate?:         number,
-        idleRefreshRate?:           number,
-        singleFingerGestureMask?:   number,
-        multiFingerGestureMask?:    number,
-        tapTime?:                   number,
-        tapDistance?:               number,
-        touchMultiplier?:           number,
-        debounce?:                  number,
-        i2cTimeout?:                number,
-        filterSettings?:            number,
-        filterDynBottomBeta?:       number,
-        filterDynLowerSpeed?:       number,
-        filterDynUpperSpeed?:       number,
-        initScrollDistance?:        number
-
-    },
-    reqid:  number
-}
-
-type TrackpadSetRegsResponse = {
-    cmd:    0x40,
-    status: boolean,
-    reqid:  number
-}
-
-type TrackpadSetSensitivityResponse = {
-    cmd:    0x24,
-    status: boolean,
-    reqid: number
-}
-
-type TrackpadGetSensitivityResponse = {
-    cmd:    0x25,
-    status: boolean,
-    sensitivity: number,
-    reqid: number
-}
+import { ConfigField } from "../misc/ConfigFields";
+import Device from "../misc/Device";
+import Hidergod from "../misc/Hidergod";
+import { HidergodMsg } from "../misc/HidergodMsg";
 
 type TrackpadConfValue = {
     name: string, 
@@ -248,6 +186,173 @@ export default function Trackpad () {
         setRawValues(newRawValues);
     }
 
+    function getRawValue (name: string) : number {
+        return rawValues.find(e => e.name === name)?.value || 0;
+    }
+
+    function writeConfigIQS5XXRegs (save: boolean) {
+
+        if(!Device.selectedDevice)
+            return;
+
+        let data = new Uint8Array(20);
+        let dv = new DataView(data.buffer);
+
+        // uint16_t    activeRefreshRate;
+        dv.setUint16(0, getRawValue("activeRefreshRate"), true);
+        // uint16_t    idleRefreshRate;
+        dv.setUint16(2, getRawValue("idleRefreshRate"), true);
+        //uint8_t     singleFingerGestureMask;
+        dv.setUint8(4, getRawValue("singleFingerGestureMask"));
+        // uint8_t     multiFingerGestureMask;
+        dv.setUint8(5, getRawValue("multiFingerGestureMask"));
+        // uint16_t    tapTime;
+        dv.setUint16(6, getRawValue("tapTime"), true);
+        // uint16_t    tapDistance;
+        dv.setUint16(8, getRawValue("tapDistance"), true);
+        // uint8_t     touchMultiplier;
+        dv.setUint8(10, getRawValue("touchMultiplier"));
+        // uint8_t     debounce;
+        dv.setUint8(11, getRawValue("debounce"));
+        // uint8_t     i2cTimeout;
+        dv.setUint8(12, getRawValue("i2cTimeout"));
+        // uint8_t     filterSettings;
+        dv.setUint8(13, getRawValue("filterSettings"));
+        // uint8_t     filterDynBottomBeta;
+        dv.setUint8(14, getRawValue("filterDynBottomBeta"));
+        // uint8_t     filterDynLowerSpeed;
+        dv.setUint8(15, getRawValue("filterDynLowerSpeed"));
+        // uint16_t    filterDynUpperSpeed;
+        dv.setUint16(16, getRawValue("filterDynUpperSpeed"), true);
+        // uint16_t    initScrollDistance
+        dv.setUint16(18, getRawValue("initScrollDistance"), true);
+
+
+        Hidergod.instance?.writeConfig(
+            Device.selectedDevice, 
+            ConfigField.ZMK_CONFIG_CUSTOM_IQS5XX_REGS, 
+            data,
+            save,
+            (resp) => {
+                if(resp.status) {
+                    // Ok
+                }
+                else {
+                    // Fail
+                }
+            }
+        );
+    }
+
+    function readConfigIQS5XXRegs () {
+        if(!Device.selectedDevice)
+            return;
+
+        Hidergod.instance?.readConfig(
+            Device.selectedDevice, 
+            ConfigField.ZMK_CONFIG_CUSTOM_IQS5XX_REGS,
+            (resp) => {
+                if(resp.status) {
+                    if(resp.data.length < 20)
+                        return;
+
+                    // Ok
+                    let rv = [...rawValues];
+
+                    const setRv = (name: string, value: number) => {
+                        const i = rv.findIndex(e => e.name === name);
+                        if(i >= 0)
+                            rv[i].value = value;
+                    }
+
+                    let dv = new DataView(resp.data.buffer);
+
+                    // uint16_t    activeRefreshRate;
+                    setRv("activeRefreshRate", dv.getUint16(0, true));
+                    // uint16_t    idleRefreshRate;
+                    setRv("idleRefreshRate", dv.getUint16(2, true));
+                    //uint8_t     singleFingerGestureMask;
+                    setRv("singleFingerGestureMask", dv.getUint8(4));
+                    // uint8_t     multiFingerGestureMask;
+                    setRv("multiFingerGestureMask", dv.getUint8(5));
+                    // uint16_t    tapTime;
+                    setRv("tapTime", dv.getUint16(6, true));
+                    // uint16_t    tapDistance;
+                    setRv("tapDistance", dv.getUint16(8, true));
+                    // uint8_t     touchMultiplier;
+                    setRv("touchMultiplier", dv.getUint8(10));
+                    // uint8_t     debounce;
+                    setRv("debounce", dv.getUint8(11));
+                    // uint8_t     i2cTimeout;
+                    setRv("i2cTimeout", dv.getUint8(12));
+                    // uint8_t     filterSettings;
+                    setRv("filterSettings", dv.getUint8(13));
+                    // uint8_t     filterDynBottomBeta;
+                    setRv("filterDynBottomBeta", dv.getUint8(14));
+                    // uint8_t     filterDynLowerSpeed;
+                    setRv("filterDynLowerSpeed", dv.getUint8(15));
+                    // uint16_t    filterDynUpperSpeed;
+                    setRv("filterDynUpperSpeed", dv.getUint16(16, true));
+                    // uint16_t    initScrollDistance
+                    setRv("initScrollDistance", dv.getUint16(18, true));
+
+                    setRawValues(rv);
+                }
+                else {
+                    // Fail
+                }
+            }
+        );
+    }
+
+    function writeConfigMouseSensitivity (save: boolean) {
+        if(!Device.selectedDevice)
+            return;
+
+        let data = new Uint8Array(1);
+        let dv = new DataView(data.buffer);
+
+        // uint8_t      mouseSensitivity;
+        dv.setUint8(0, sensitivity);
+        
+        Hidergod.instance?.writeConfig(
+            Device.selectedDevice, 
+            ConfigField.ZMK_CONFIG_KEY_MOUSE_SENSITIVITY, 
+            data,
+            save,
+            (resp) => {
+                if(resp.status) {
+                    // Ok
+                }
+                else {
+                    // Fail
+                }
+            }
+        );
+    }
+
+    function readConfigMouseSensitivity () {
+        if(!Device.selectedDevice)
+            return;
+        
+        Hidergod.instance?.readConfig(
+            Device.selectedDevice, 
+            ConfigField.ZMK_CONFIG_KEY_MOUSE_SENSITIVITY, 
+            (resp) => {
+                if(resp.status) {
+                    if(resp.data.length < 1)
+                        return;
+                    // Ok
+                    setSensitivity(resp.data[0]);
+                    
+                }
+                else {
+                    // Fail
+                }
+            }
+        );
+    }
+
     function handleRawValueChangeBit (name: string, newValue: number, bit: number) {
 
         const newRawValues = rawValues.map((v, i) => {
@@ -262,85 +367,9 @@ export default function Trackpad () {
         setRawValues(newRawValues);
     }
 
-    function saveValues (saveNvm: boolean = false) {
-        if(Device.selectedDevice === null)
-            return;
-
-        let regs : { [key: string]: number } = {};
-        rawValues.forEach((e, i) => {
-            regs[e.name] = e.value;
-        })
-        Hidergod.instance?.request({
-            cmd: HidergodCmd.APICMD_SET_IQS_REGS,
-            device: Device.selectedDevice?.deviceInfo.device.serial,
-            save: saveNvm,
-            regs: regs
-        } as TrackpadSetRegsMessage, (data) => {
-            // Response
-        })
-    }
-
-    function saveSensitivity (saveNvm: boolean = false) {
-        Hidergod.instance?.request({
-            cmd: HidergodCmd.APICMD_SET_MOUSE_SENS,
-            device: Device.selectedDevice?.deviceInfo.device.serial,
-            sensitivity: sensitivity,
-            save: saveNvm
-        }, (data) => {
-            const msg = data as TrackpadSetSensitivityResponse;
-            if(msg.status) {
-                
-            }
-        })
-    }
-
-    function getSensitivity () {
-        Hidergod.instance?.request({
-            cmd: HidergodCmd.APICMD_GET_MOUSE_SENS,
-            device: Device.selectedDevice?.deviceInfo.device.serial
-        }, (data) => {
-            const msg = data as TrackpadGetSensitivityResponse;
-            if(msg.status) {
-                setSensitivity(msg.sensitivity);
-            }
-        })
-    }
-
-    function getValues () {
-        if(Device.selectedDevice === null) 
-            return;
-
-        Hidergod.instance?.request({
-            cmd: HidergodCmd.APICMD_GET_IQS_REGS,
-            device: Device.selectedDevice?.deviceInfo.device.serial
-        }, (data) => {
-            const msg = data as TrackpadGetRegsResponse;
-            const newRawValues = [...rawValues];
-            if(msg.status) {
-
-                if(msg.regs) {
-                    Object.keys(msg.regs).forEach(key => {
-                        if(msg.regs) {
-                            let value = msg.regs[key as keyof typeof msg.regs];
-                            if(value !== undefined) {
-                                let vindex = newRawValues.findIndex(e => e.name === key); 
-                                if(vindex >= 0) {
-                                    newRawValues[vindex].value = value;
-                                }
-                                setRawValues(newRawValues);
-                            }
-                        }
-                    });
-                }
-            }
-        })
-
-        
-    }
-
     useEffect(() => {
-        getValues();
-        getSensitivity();
+        readConfigIQS5XXRegs();
+        readConfigMouseSensitivity();
     }, []);
 
     return <Container sx={{paddingTop: 1}}>
@@ -362,8 +391,8 @@ export default function Trackpad () {
                     onChange={(x) => {setSensitivity(parseInt(x.target.value))}}
                 />
             </Box>
-            <Button onClick={() => {saveSensitivity(false)}}>Apply</Button>
-            <Button onClick={() => {saveSensitivity(true)}}>Apply and save</Button>
+            <Button onClick={() => {writeConfigMouseSensitivity(false)}}>Apply</Button>
+            <Button onClick={() => {writeConfigMouseSensitivity(true)}}>Apply and save</Button>
         </Card>
         <Card sx={{padding: 2}}>
             <Typography variant="h5" sx={{paddingBottom: 3}}>IQS5XX raw register values</Typography>
@@ -431,8 +460,8 @@ export default function Trackpad () {
                     </Box>
                 })
             }
-            <Button onClick={() => {saveValues(false)}}>Apply</Button>
-            <Button onClick={() => {saveValues(true)}}>Apply and save</Button>
+            <Button onClick={() => {writeConfigIQS5XXRegs(false)}}>Apply</Button>
+            <Button onClick={() => {writeConfigIQS5XXRegs(true)}}>Apply and save</Button>
 
         </Card>
         

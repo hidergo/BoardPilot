@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Device from "../Device";
-import Hidergod, { HidergodCmd, ReadConfigResponse } from "../Hidergod";
-import { ConfigFields, hexToBytes } from "../misc/ConfigFields";
+import Device from "../misc/Device";
+import Hidergod, { HidergodCmd, ReadConfigResponse } from "../misc/Hidergod";
+import { ConfigField, hexToBytes } from "../misc/ConfigFields";
 
 
 type KeyDef = {
@@ -28,7 +28,7 @@ export default function KeymapEditorNew () {
             Hidergod.instance?.request({
                 cmd: HidergodCmd.APICMD_ZMK_CONTROL_READ,
                 device: Device.selectedDevice.deviceInfo.device.serial,
-                field: ConfigFields.ZMK_CONFIG_KEY_KEYMAP
+                field: ConfigField.ZMK_CONFIG_KEY_KEYMAP
             }, (data) => {
                 let msg = data as ReadConfigResponse;
                 if(msg.status) {
