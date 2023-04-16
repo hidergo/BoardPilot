@@ -11,7 +11,7 @@ import Trackpad from "./Views/Trackpad";
 import Device from "./misc/Device";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import HDLDisplay from "./hdl/HDLDisplay";
-import KeymapEditorNew from "./Views/KeymapEditor";
+import KeymapEditor from "./Views/KeymapEditor";
 
 let hidergod: Hidergod = new Hidergod();
 
@@ -32,40 +32,23 @@ function App() {
 
 	return (
 		<div className="container">
-			{
-				selectedDevice === null &&
-				<div style={{flex: 1, display: "flex", flexDirection: "column", width: "100vw", height: "100vh", justifyContent: "space-around"}}>
-					<div>
-					<Typography variant="h4" style={{textAlign: "center"}}>Connect a device to continue</Typography>
-					<div style={{textAlign: "center", paddingTop: 40}}>
-						<Button variant="contained" onClick={() => { window.location.reload();}}>Refresh</Button>
-					</div>
-					<div style={{textAlign: "center", paddingTop: 40, minHeight: 100}}>
-						{refreshing && <CircularProgress />}
-					</div>
-					</div>
-				</div>
-			}
-			{
-				selectedDevice !== null &&
-				<Fragment>
-					<TopBar onChangeView={(view) => { setView(view) }} onSelectDevice={(dev) => { setSelectedDevice(dev) }} />
-					<Box className="content-container">
-						{
-							view === "keymapeditor" &&
-							<KeymapEditorNew />
-						}
-						{
-							view === "display" &&
-							<Display />
-						}
-						{
-							view == "trackpad" &&
-							<Trackpad />
-						}
-					</Box>
-				</Fragment>
-			}
+			<Fragment>
+				<TopBar onChangeView={(view) => { setView(view) }} onSelectDevice={(dev) => { setSelectedDevice(dev) }} />
+				<Box className="content-container">
+					{
+						view === "keymapeditor" &&
+						<KeymapEditor />
+					}
+					{
+						view === "display" &&
+						<Display />
+					}
+					{
+						view == "trackpad" &&
+						<Trackpad />
+					}
+				</Box>
+			</Fragment>
 		</div>
 
 	);

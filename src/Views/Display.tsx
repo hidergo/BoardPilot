@@ -8,9 +8,10 @@ import Editor from "react-simple-code-editor";
 import HDLDisplay from "../hdl/HDLDisplay";
 import { highlight, languages } from "prismjs";
 import { basename } from "@tauri-apps/api/path";
-import Hidergod, { HidergodCmd } from "../misc/Hidergod";
+import Hidergod from "../misc/Hidergod";
 import Device from "../misc/Device";
 import { bytesToHex, ConfigField } from "../misc/ConfigFields";
+import { HidergodCmd } from "../misc/HidergodMsg";
 
 const loadingBoxStyle : SxProps = {
     display: "flex",

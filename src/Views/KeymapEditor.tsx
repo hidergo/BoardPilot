@@ -9,9 +9,10 @@ import { keymapBehaviours } from "../misc/KeymapDefs";
 import hidergo_disconnect_mk1_keymap from '../Keymaps/hidergo_disconnect_mk1_keymap.json'
 
 
-export default function KeymapEditorNew () {
+export default function KeymapEditor () {
 
     const [reboundKeys, setReboundKeys] = useState<KeyDef[]>([]);
+    const [selectedLayer, setSelectedLayer] = useState(0);
 
     const [editorBehaviour, setEditorBehaviour] = useState("TRANS");
     const [editorAction, setEditorAction] = useState({label: "", group: "", id: {group: 0, action: 0}});
@@ -124,6 +125,8 @@ export default function KeymapEditorNew () {
                         <Select
                             sx={{maxWidth: '200px'}}
                             label="Layer"
+                            onChange={(e) => {setSelectedLayer(Number(e.target.value))}}
+                            value={selectedLayer}
                             >
                         {
                             hidergo_disconnect_mk1_keymap.layers.map((e, i) => {
@@ -170,7 +173,7 @@ export default function KeymapEditorNew () {
                             {
                                 Object.keys(keymapBehaviours).map((k, i) => {
                                     const e = keymapBehaviours[k];
-                                    return <MenuItem value={k}>{e.display}</MenuItem>
+                                    return <MenuItem value={k} key={"keymap-behaviour-" + i}>{e.display}</MenuItem>
                                 })
                             }
                         </Select>

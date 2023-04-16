@@ -38,9 +38,11 @@ export default class Hidergod {
         listen('api_onclose', (event) => {
             this.onClose(true);
             // Reconnect after 1s
+            /*
             setTimeout(() => {
                 invoke("hidergod_connect", {port: port});
             }, 1000);
+            */
 
         });
     
@@ -137,6 +139,7 @@ export default class Hidergod {
 
     private onClose (ok: boolean) {
         this.connected = false;
+        console.log("CLOSED");
     }
 
     /**
