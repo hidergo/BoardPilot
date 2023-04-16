@@ -1,4 +1,4 @@
-import { Alert, Autocomplete, Button, Card, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Alert, Autocomplete, Button, Card, Divider, FormControl, InputLabel, MenuItem, Popover, Select, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { Fragment, useEffect, useState } from "react";
 import Keymap, { KeyDef, KeymapJsonFormat } from "../Components/Keyboard";
@@ -15,9 +15,17 @@ export default function KeymapEditor () {
     const [selectedLayer, setSelectedLayer] = useState(0);
 
     const [editorBehaviour, setEditorBehaviour] = useState("TRANS");
-    const [editorAction, setEditorAction] = useState({label: "", group: "", id: {group: 0, action: 0}});
+    const [editorAction, setEditorAction] = useState({
+        label: "", 
+        group: "", 
+        description: "", 
+        val2IsInput: false,
+        id: {group: 0, action: 0}
+    });
 
     const [selectedKey, setSelectedKey] = useState<KeymapJsonFormat | null>(null);
+    const [selectedTarget, setSelectedTarget] = useState<SVGElement | null>(null);
+
 
     function readConfigKeymap () {
         if(!Device.selectedDevice)
@@ -106,8 +114,10 @@ export default function KeymapEditor () {
     const groupedActions = keymapBehaviours[editorBehaviour].groups.flatMap((e, gi) => {
         return e.values.map((y, i) => {
             return {
-                group: e.name,
                 label: y.name,
+                description: y.description || "",
+                val2IsInput: y.val2IsInput || false,
+                group: e.name,
                 id: { group: gi, action: i}
             }
         })
@@ -119,89 +129,127 @@ export default function KeymapEditor () {
 
     return <Box sx={{boxSizing: 'border-box', height: '100%', padding: 1}}>
         <Box sx={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-            <Card sx={{margin: 1, padding: 1, flex: 3}}>
-                <Box sx={{display: 'flex', flexDirection: 'row', padding: 1}}>
-                    <Box sx={{flex: 2}}>
-                        <Select
-                            sx={{maxWidth: '200px'}}
-                            label="Layer"
-                            onChange={(e) => {setSelectedLayer(Number(e.target.value))}}
-                            value={selectedLayer}
-                            >
-                        {
-                            hidergo_disconnect_mk1_keymap.layers.map((e, i) => {
-                                return <MenuItem value={i} key={"layer-sel-" + i}>{e}</MenuItem>
-                            })
-                        }
-                        </Select>
-                    </Box>
-                    <Box sx={{flex: 1}}>
-                        {
-                            reboundKeys.length < 1 &&
-                            <Alert severity="warning">Could not read current keymap. Bindings will be overwritten on upload!</Alert>
-                        }
-                    </Box>
-                </Box>
-                <svg width={window.innerWidth - 20} viewBox={"0 0 " + String(window.innerWidth) + " 400"} xmlns="http://www.w3.org/2000/svg">
-                    <Keymap 
-                        keymap={hidergo_disconnect_mk1_keymap}
-                        reboundKeys={reboundKeys}
-                        width={window.innerWidth - 20} 
-                        height={window.innerHeight / 2} 
-                        selected={selectedKey} 
-                        onSelect={(key) => { setSelectedKey(key) }} 
-                    />
-                </svg>
-            </Card>
-            <Card sx={{margin: 1, padding: 1, flex: 1}}>
-                <FormControl sx={{flexDirection: 'row'}}>
-                    <Box>
-                        <InputLabel id="key-behaviour-select">Behaviour</InputLabel>
-                        <Select
-                            labelId="key-behaviour-select"
-                            value={editorBehaviour}
-                            label="Behaviour"
-                            onChange={(e) => {
-                                setEditorBehaviour(e.target.value); 
-                                setEditorAction({
-                                    label: keymapBehaviours[e.target.value].groups[0].values[0].name, 
-                                    group: keymapBehaviours[e.target.value].groups[0].name, 
-                                    id: {group: 0, action: 0}
-                                })
-                            }}
-                        >
+            <Card sx={{margin: 1, padding: 1, flex: 3, display: 'flex', flexDirection: 'column'}}>
+                <Box sx={{flex: 4}}>
+                    <Box sx={{display: 'flex', flexDirection: 'row', padding: 1}}>
+                        <Box sx={{flex: 2}}>
+                            <Select
+                                sx={{maxWidth: '200px'}}
+                                label="Layer"
+                                onChange={(e) => {setSelectedLayer(Number(e.target.value))}}
+                                value={selectedLayer}
+                                >
                             {
-                                Object.keys(keymapBehaviours).map((k, i) => {
-                                    const e = keymapBehaviours[k];
-                                    return <MenuItem value={k} key={"keymap-behaviour-" + i}>{e.display}</MenuItem>
+                                hidergo_disconnect_mk1_keymap.layers.map((e, i) => {
+                                    return <MenuItem value={i} key={"layer-sel-" + i}>{e}</MenuItem>
                                 })
                             }
-                        </Select>
-                    </Box>
-                    {
-                        keymapBehaviours[editorBehaviour].groups.length >= 1 &&
-                        <Box>
-                            <Autocomplete
-                                disableClearable
-                                id="key-value-select"
-                                options={groupedActions}
-                                groupBy={(opt) => opt.group}
-                                sx={{ width: 300 }}
-                                getOptionLabel={(opt) => opt.label}
-                                isOptionEqualToValue={(opt, val) => opt.id.group === val.id.group && opt.id.action === val.id.action}
-                                value={editorAction}
-                                onChange={(e, v) => {setEditorAction(v)}}
-                                renderInput={(params) => <TextField {...params} label="Action" />}
-                                />
+                            </Select>
                         </Box>
-                    }
-
-                    <Box>
-                        <Button variant="contained" onClick={() => {writeConfigKeymap(false)}} >Upload keymap</Button>
+                        <Box sx={{flex: 1}}>
+                            {
+                                reboundKeys.length < 1 &&
+                                <Alert severity="warning">Could not read current keymap. Bindings will be overwritten on upload!</Alert>
+                            }
+                        </Box>
+                    </Box>
+                    <svg width={window.innerWidth - 20} viewBox={"0 0 " + String(window.innerWidth) + " 400"} xmlns="http://www.w3.org/2000/svg">
+                        <Keymap 
+                            keymap={hidergo_disconnect_mk1_keymap}
+                            reboundKeys={reboundKeys}
+                            width={window.innerWidth - 20} 
+                            height={window.innerHeight / 2} 
+                            selected={selectedKey} 
+                            onSelect={(key, target) => { 
+                                setSelectedKey(key); 
+                                setSelectedTarget(target);
+                                if(key && key.defaults) {
+                                    setEditorBehaviour(key.defaults[selectedLayer].device);
+                                }
+                                else {
+                                    setEditorBehaviour("TRANS");
+                                }
+                            }} 
+                        />
+                    </svg>
+                </Box>
+                <Divider />
+                <Box sx={{paddingTop: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end'}}>
+                    <Button variant="contained" onClick={() => {writeConfigKeymap(false)}} >Upload keymap</Button>
+                </Box>
+            </Card>
+            
+            <Popover
+                open={selectedKey !== null}
+                anchorEl={selectedTarget}
+                onClose={() => {setSelectedKey(null)}}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+            >
+                <FormControl sx={{display: 'flex', flexDirection: 'column'}}>
+                    <Box sx={{display: 'flex', flexDirection: 'row', padding: 2, paddingBottom: 1}}>
+                        <Fragment>
+                            <TextField
+                                select
+                                value={editorBehaviour}
+                                label="Behaviour"
+                                sx={{minWidth: 200}}
+                                onChange={(e) => {
+                                    setEditorBehaviour(e.target.value); 
+                                    setEditorAction({
+                                        label: keymapBehaviours[e.target.value].groups[0].values[0].name, 
+                                        group: keymapBehaviours[e.target.value].groups[0].name, 
+                                        description: keymapBehaviours[e.target.value].groups[0].values[0].description || "",
+                                        val2IsInput: keymapBehaviours[e.target.value].groups[0].values[0].val2IsInput || false,
+                                        id: {group: 0, action: 0}
+                                    })
+                                }}
+                            >
+                                {
+                                    Object.keys(keymapBehaviours).map((k, i) => {
+                                        const e = keymapBehaviours[k];
+                                        return <MenuItem value={k} key={"keymap-behaviour-" + i}>{e.display}</MenuItem>
+                                    })
+                                }
+                            </TextField>
+                        </Fragment>
+                        {
+                            keymapBehaviours[editorBehaviour].groups.length >= 1 &&
+                            <Fragment>
+                                <Autocomplete
+                                    disableClearable
+                                    id="key-value-select"
+                                    options={groupedActions}
+                                    groupBy={(opt) => opt.group}
+                                    sx={{ minWidth: 200 }}
+                                    getOptionLabel={(opt) => opt.label}
+                                    isOptionEqualToValue={(opt, val) => opt.id.group === val.id.group && opt.id.action === val.id.action}
+                                    value={editorAction}
+                                    onChange={(e, v) => {setEditorAction(v)}}
+                                    renderInput={(params) => <TextField {...params} label="Action" />}
+                                    />
+                            </Fragment>
+                        }
+                        {
+                            editorAction.val2IsInput &&
+                            <Fragment>
+                                <TextField 
+                                    type={'number'}
+                                    sx={{minWidth: 150}}
+                                />
+                            </Fragment>
+                        }
+                    </Box>
+                    <Box sx={{display: 'flex', flexDirection: 'row', padding: 1, paddingTop: 0}}>
+                        <Button variant="contained" sx={{flex: 1, marginRight: 2}}>Reset</Button>
+                        <Typography variant="subtitle2" sx={{flex: 1, color: 'grey'}}>{editorAction.description}</Typography>
                     </Box>
 
                 </FormControl>
-            </Card>
+            </Popover>
+            
         </Box>
     </Box>
 }

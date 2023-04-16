@@ -86,7 +86,7 @@ export const keymapBehaviours : {[key: string]: keymapBehaviourType} = {
             {
                 name: "Default",
                 values: [
-                    { name: "Clear", description: "Clears the bluetooth pairings", value1: 0 },
+                    { name: "Clear", description: "Clears the current bluetooth profile", value1: 0 },
                     { name: "Next", description: "Selects next bluetooth profile", value1: 1 },
                     { name: "Prev", description: "Selects previous bluetooth profile", value1: 2 },
                     { name: "Select", description: "Selects a bluetooth profile", value1: 3, value2: 0, val2IsInput: true }
@@ -151,6 +151,7 @@ export const keymapBehaviours : {[key: string]: keymapBehaviourType} = {
                     { name: "Right Shift", value1: 0x000700E5 },
                     { name: "Right Alt", value1: 0x000700E6 },
                     { name: "Right GUI", value1: 0x000700E7 },
+                    { name: "App", value1: 0x00070065},
                 ]
             },
             {
@@ -193,10 +194,77 @@ export const keymapBehaviours : {[key: string]: keymapBehaviourType} = {
                     { name: "Enter", value1: 0x00070028 },
                     { name: "Escape", value1: 0x00070029 },
                     { name: "Backspace", value1: 0x0007002A },
+                    { name: "Delete", value1: 0x0007004C },
                     { name: "Tab", value1: 0x0007002B },
                     { name: "Space", value1: 0x0007002C },
+                    { name: "Insert", value1: 0x00070049 },
+                ]
+            },
+            {
+                name: "Media",
+                values: [
+                    { name: "Mute", value1: 0x000C00E2},
+                    { name: "Previous", value1: 0x000C00B6},
+                    { name: "Next", value1: 0x000C00B7},
+                    { name: "Play/Pause", value1: 0x000C00CD}
+                ]
+            },
+            {
+                name: "Navigation",
+                values: [
+                    { name: "Home", value1: 0x0007004A},
+                    { name: "End", value1: 0x0007004D},
+                    { name: "Page up", value1: 0x0007004B},
+                    { name: "Page down", value1: 0x0007004E},
+                    { name: "Right arrow", value1: 0x0007004F},
+                    { name: "Left arrow", value1: 0x00070050},
+                    { name: "Down arrow", value1: 0x00070051},
+                    { name: "Up arrow", value1: 0x00070052}
+
                 ]
             }
         ]
-    }
+    },
+    MO: {
+        display: "Momentary layer",
+        description: "Momentarily toggle a layer",
+        groups: [
+            {
+                name: "Default",
+                values: [
+                    { name: "Default", description: "Set default layer", value1: 0 },
+                    { name: "Arrow", description: "Set arrow layer", value1: 1 },
+                    { name: "Bottom", description: "Set bottom layer", value1: 2 },
+
+                ]
+            }
+            
+        ]
+    },
+    RESET: {
+        display: "Reset",
+        description: "Reset",
+        groups: [
+            {
+                name: "Default",
+                values: [
+                    { name: "Reset", description: "Resets the device", value1: 0 },
+                ]
+            }
+            
+        ]
+    },
+    BOOTLOAD: {
+        display: "Bootloader",
+        description: "Bootloader",
+        groups: [
+            {
+                name: "Default",
+                values: [
+                    { name: "Bootloader", description: "Trigger bootloader mode", value1: 0 },
+                ]
+            }
+            
+        ]
+    },
 }

@@ -23,7 +23,8 @@ type EditorKeyProps = {
     rebound?: boolean,
     keyType?: number | CustomKeyType,
     fontSize?: number,
-    rotation?: number
+    rotation?: number,
+    disabled?: boolean
 }
 
 export type KeymapJsonFormat = {
@@ -36,7 +37,13 @@ export type KeymapJsonFormat = {
     offY?: number,
     fontSize?: number,
     hidden?: boolean,
-    pos: number
+    pos: number,
+    disabled?: boolean,
+    defaults?: {
+        device: string, 
+        param1?: string | number,
+        param2?: string | number
+    }[]
 }
 
 export type KeymapDef = {
@@ -54,7 +61,7 @@ export type KeymapDef = {
 
 };
 
-export type SelectKeyCallback = (key: KeymapJsonFormat | null) => any;
+export type SelectKeyCallback = (key: KeymapJsonFormat | null, target: SVGRectElement | null) => any;
 
 export type KeyboardProps = {
     keymap: KeymapDef,
@@ -81,8 +88,10 @@ let keyBaseSize = 55;
 let keyMargin = 2;
 let fontBaseSize = 15;
 
-const keySelectedColor = '#a3a3a3';
+const keySelectedColor = '#a6e3dc';
 const keyReboundColor = '#b6e0d6';
+const keyDisabledColor = '#aaaaaa';
+
 
 
 const EditorKey = (props: EditorKeyProps) => {
@@ -92,7 +101,10 @@ const EditorKey = (props: EditorKeyProps) => {
     const fontSize = props.fontSize ? props.fontSize * fontBaseSize : fontBaseSize;
 
     let color = 'white';
-    if(props.selected) {
+    if(props.disabled) {
+        color = keyDisabledColor;
+    }
+    else if(props.selected) {
         color = keySelectedColor;
     }
     else if(props.rebound) {
@@ -103,9 +115,9 @@ const EditorKey = (props: EditorKeyProps) => {
         <g transform={`translate(${props.x},${props.y})`}>
             <g transform={`rotate(${rot})`}>
                 <rect x={0} y={0} width={keyBaseSize * keySize} height={keyBaseSize} rx={keyBaseSize * 0.1}
-                    fill={color} stroke={'black'} onClick={() => {
+                    fill={color} stroke={'black'} onClick={(e) => {
                         if (props.onSelect)
-                            props.onSelect(props.selected ? null : props.keyObject);
+                            props.onSelect(props.selected ? null : props.keyObject, e.currentTarget);
                     }}>
 
                 </rect>
@@ -133,7 +145,7 @@ function KeyboardSplit (props: KeyboardProps) {
     const k_left = <g>
         {
             // Map rows
-            (props.keymap.keys_left).map((row, y) => {
+            (props.keymap.keys_left as KeymapJsonFormat[][]).map((row, y) => {
                 let offsetX = 0;
                 // Cols
                 const ky = row.map((v, x) => {
@@ -149,9 +161,13 @@ function KeyboardSplit (props: KeyboardProps) {
                         rotation={v.rot}
                         selected={props.selected?.name === v.name}
                         rebound={props.reboundKeys?.find(e => v.pos === e.layer * 70 + e.key) !== undefined}
-                        onSelect={(key) => {
+                        disabled={v.disabled}
+                        onSelect={(key, target) => {
+                            if(v.disabled)
+                                return;
+
                             if (props.onSelect)
-                                props.onSelect(key)
+                                props.onSelect(key, target)
                         }}
                         fontSize={v.fontSize || undefined}
                     />;
@@ -183,9 +199,13 @@ function KeyboardSplit (props: KeyboardProps) {
                         rotation={v.rot}
                         selected={props.selected?.name === v.name}
                         rebound={props.reboundKeys?.find(e => v.pos === e.layer * 70 + e.key) !== undefined}
-                        onSelect={(key) => {
+                        disabled={v.disabled}
+                        onSelect={(key, target) => {
+                            if(v.disabled)
+                                return;
+
                             if (props.onSelect)
-                                props.onSelect(key)
+                                props.onSelect(key, target)
                         }}
                         fontSize={v.fontSize || undefined}
                     />;
