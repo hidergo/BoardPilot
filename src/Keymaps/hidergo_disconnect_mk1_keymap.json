@@ -1,6 +1,11 @@
 {
-    "name": "hid:ergo Split",
+    "name": "hid:ergo Disconnect MK1",
     "type": "SPLITKB",
+    "layers": [
+        "Default",
+        "Arrow",
+        "Bottom"
+    ],
 
     "keys_left": [
         [

@@ -60,59 +60,143 @@ export const getKeymapDeviceId = (name: string) : number | undefined => {
     return undefined;
 }
 
-type keymapBehaviourValue = { name: string, description?: string, value: number, val2?: boolean };
+type keymapBehaviourValue = { name: string, description?: string, value1: number, value2?: number, val1IsInput?: boolean, val2IsInput?: boolean };
 
-type keymapBehaviourType = { display: string, description: string, values: keymapBehaviourValue[] };
+type keymapBehaviourValueGroup = { name: string, groupValue?: number, values: keymapBehaviourValue[] };
 
-export const keymapBehaviour : {[key: string]: keymapBehaviourType} = {
+type keymapBehaviourType = { display: string, description: string, groups: keymapBehaviourValueGroup[] };
+
+export const keymapBehaviours : {[key: string]: keymapBehaviourType} = {
     TRANS: {
         display: "Transparent",
         description: "Button press is passed to next layer",
-        values: []
+        groups: [
+            { 
+                name: "Default", 
+                values: [
+                    { name: "Transparent", description: "Button press is passed to next layer", value1: 0 }
+                ] 
+            }
+        ]
     },
     BLUETOOTH: {
         display: "Bluetooth",
         description: "Bluetooth actions",
-        values: [
-            { name: "Clear", description: "Clears the bluetooth pairings", value: 0 },
-            { name: "Next", description: "Selects next bluetooth profile", value: 1 },
-            { name: "Prev", description: "Selects previous bluetooth profile", value: 2 },
-            { name: "Select", description: "Selects a bluetooth profile", value: 3, val2: true }, // Uses val2!!!
+        groups: [
+            {
+                name: "Default",
+                values: [
+                    { name: "Clear", description: "Clears the bluetooth pairings", value1: 0 },
+                    { name: "Next", description: "Selects next bluetooth profile", value1: 1 },
+                    { name: "Prev", description: "Selects previous bluetooth profile", value1: 2 },
+                    { name: "Select", description: "Selects a bluetooth profile", value1: 3, value2: 0, val2IsInput: true }
+                ]
+            }
+            
         ]
     },
     KEY_PRESS: {
         display: "Key press",
         description: "Key press handler",
-        values: [
-            { name: "A", value: 0x00070004 },
-            { name: "B", value: 0x00070005 },
-            { name: "C", value: 0x00070006 },
-            { name: "D", value: 0x00070007 },
-            { name: "E", value: 0x00070008 },
-            { name: "F", value: 0x00070009 },
-            { name: "G", value: 0x0007000A },
-            { name: "H", value: 0x0007000B },
-            { name: "I", value: 0x0007000C },
-            { name: "J", value: 0x0007000D },
-            { name: "K", value: 0x0007000E },
-            { name: "L", value: 0x0007000F },
-            { name: "M", value: 0x00070010 },
-            { name: "N", value: 0x00070011 },
-            { name: "O", value: 0x00070012 },
-            { name: "P", value: 0x00070013 },
-            { name: "Q", value: 0x00070014 },
-            { name: "R", value: 0x00070015 },
-            { name: "S", value: 0x00070016 },
-            { name: "T", value: 0x00070017 },
-            { name: "U", value: 0x00070018 },
-            { name: "V", value: 0x00070019 },
-            { name: "W", value: 0x0007001A },
-            { name: "X", value: 0x0007001B },
-            { name: "Y", value: 0x0007001C },
-            { name: "Z", value: 0x0007001D },
-
-
-
+        groups: [
+            {
+                name: "Alphanumeric",
+                values: [
+                    { name: "A", value1: 0x00070004 },
+                    { name: "B", value1: 0x00070005 },
+                    { name: "C", value1: 0x00070006 },
+                    { name: "D", value1: 0x00070007 },
+                    { name: "E", value1: 0x00070008 },
+                    { name: "F", value1: 0x00070009 },
+                    { name: "G", value1: 0x0007000A },
+                    { name: "H", value1: 0x0007000B },
+                    { name: "I", value1: 0x0007000C },
+                    { name: "J", value1: 0x0007000D },
+                    { name: "K", value1: 0x0007000E },
+                    { name: "L", value1: 0x0007000F },
+                    { name: "M", value1: 0x00070010 },
+                    { name: "N", value1: 0x00070011 },
+                    { name: "O", value1: 0x00070012 },
+                    { name: "P", value1: 0x00070013 },
+                    { name: "Q", value1: 0x00070014 },
+                    { name: "R", value1: 0x00070015 },
+                    { name: "S", value1: 0x00070016 },
+                    { name: "T", value1: 0x00070017 },
+                    { name: "U", value1: 0x00070018 },
+                    { name: "V", value1: 0x00070019 },
+                    { name: "W", value1: 0x0007001A },
+                    { name: "X", value1: 0x0007001B },
+                    { name: "Y", value1: 0x0007001C },
+                    { name: "Z", value1: 0x0007001D },
+                    { name: "1", value1: 0x0007001E },
+                    { name: "2", value1: 0x0007001F },
+                    { name: "3", value1: 0x00070020 },
+                    { name: "4", value1: 0x00070021 },
+                    { name: "5", value1: 0x00070022 },
+                    { name: "6", value1: 0x00070023 },
+                    { name: "7", value1: 0x00070024 },
+                    { name: "8", value1: 0x00070025 },
+                    { name: "9", value1: 0x00070026 },
+                    { name: "0", value1: 0x00070027 }
+                ],
+            },
+            {
+                name: "Modifier",
+                values: [
+                    { name: "Left Control", value1: 0x000700E0 },
+                    { name: "Left Shift", value1: 0x000700E1 },
+                    { name: "Left Alt", value1: 0x000700E2 },
+                    { name: "Left GUI", value1: 0x000700E3 },
+                    { name: "Right Control", value1: 0x000700E4 },
+                    { name: "Right Shift", value1: 0x000700E5 },
+                    { name: "Right Alt", value1: 0x000700E6 },
+                    { name: "Right GUI", value1: 0x000700E7 },
+                ]
+            },
+            {
+                name: "Function",
+                values: [
+                    { name: "F1", value1: 0x0007003A },
+                    { name: "F2", value1: 0x0007003B },
+                    { name: "F3", value1: 0x0007003C },
+                    { name: "F4", value1: 0x0007003D },
+                    { name: "F5", value1: 0x0007003E },
+                    { name: "F6", value1: 0x0007003F },
+                    { name: "F7", value1: 0x00070040 },
+                    { name: "F8", value1: 0x00070041 },
+                    { name: "F9", value1: 0x00070042 },
+                    { name: "F10", value1: 0x00070043 },
+                    { name: "F11", value1: 0x00070044 },
+                    { name: "F12", value1: 0x00070045 },
+                ]
+            },
+            {
+                name: "Special",
+                values: [
+                    { name: "-", value1: 0x0007002D },
+                    { name: "=", value1: 0x0007002E },
+                    { name: "[", value1: 0x0007002F },
+                    { name: "]", value1: 0x00070030 },
+                    { name: "\\", value1: 0x00070031 },
+                    { name: "#", value1: 0x00070032 },
+                    { name: ";", value1: 0x00070033 },
+                    { name: "'", value1: 0x00070034 },
+                    { name: "`", value1: 0x00070035 },
+                    { name: ",", value1: 0x00070036 },
+                    { name: ".", value1: 0x00070037 },
+                    { name: "/", value1: 0x00070038 },
+                ]
+            },
+            {
+                name: "Editing",
+                values: [
+                    { name: "Enter", value1: 0x00070028 },
+                    { name: "Escape", value1: 0x00070029 },
+                    { name: "Backspace", value1: 0x0007002A },
+                    { name: "Tab", value1: 0x0007002B },
+                    { name: "Space", value1: 0x0007002C },
+                ]
+            }
         ]
     }
 }

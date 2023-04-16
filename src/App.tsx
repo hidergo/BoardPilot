@@ -2,17 +2,16 @@ import { Fragment, useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
-import LayoutView from "./Views/KeymapEditor";
 import TopBar from "./Components/TopBar";
-import KeymapEditor from "./Views/KeymapEditor";
 import Home from "./Views/Home";
 import { listen } from "@tauri-apps/api/event";
 import Hidergod from "./misc/Hidergod";
 import Display from "./Views/Display";
 import Trackpad from "./Views/Trackpad";
 import Device from "./misc/Device";
-import { Button, CircularProgress, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import HDLDisplay from "./hdl/HDLDisplay";
+import KeymapEditorNew from "./Views/KeymapEditor";
 
 let hidergod: Hidergod = new Hidergod();
 
@@ -51,10 +50,10 @@ function App() {
 				selectedDevice !== null &&
 				<Fragment>
 					<TopBar onChangeView={(view) => { setView(view) }} onSelectDevice={(dev) => { setSelectedDevice(dev) }} />
-					<div className="content-container">
+					<Box className="content-container">
 						{
 							view === "keymapeditor" &&
-							<KeymapEditor />
+							<KeymapEditorNew />
 						}
 						{
 							view === "display" &&
@@ -64,7 +63,7 @@ function App() {
 							view == "trackpad" &&
 							<Trackpad />
 						}
-					</div>
+					</Box>
 				</Fragment>
 			}
 		</div>

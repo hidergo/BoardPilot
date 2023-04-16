@@ -1,318 +1,204 @@
-import { MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Alert, Autocomplete, Button, Card, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useEffect, useRef, useState } from "react"
+import { Fragment, useEffect, useState } from "react";
+import Keymap, { KeyDef, KeymapJsonFormat } from "../Components/Keyboard";
 import Device from "../misc/Device";
-import Hidergod, { HidergodCmd } from "../misc/Hidergod";
-import hidergo_split_keymap from '../Keymaps/hidergo_split_keymap.json'
-import { getKeymapDeviceId, getKeymapDeviceName, keymapBehaviour } from "../misc/KeymapDefs";
-
-type CustomKeyType = "isoenter" | "pot";
-
-type SelectKeyCallback = (key: KeymapJsonFormat | null) => any;
-
-type EditorKeyProps = {
-    keyObject: KeymapJsonFormat,
-    x: number,
-    y: number,
-    selected: boolean,
-    onSelect?: SelectKeyCallback,
-    keyType?: number | CustomKeyType,
-    fontSize?: number,
-    rotation?: number
-}
-
-type KeymapJsonFormat = {
-    name: string,
-    dsp: string,
-    dsp2?: string,
-    size: number,
-    rot?: number,
-    offX?: number,
-    offY?: number,
-    fontSize?: number,
-    // Position in keymap (index)
-    pos: number,
-    hidden?: boolean
-}
-
-type GetKeymapResponse = {
-    cmd:      0x21,
-    status:   boolean,
-    keymap: number[][][],
-    reqid:  number
-}
-
-const keySelectedColor = '#aaa';
-
-let keyBaseSize = 55;
-let keyMargin = 2;
-let fontBaseSize = 15;
-
-const EditorKey = (props: EditorKeyProps) => {
-
-    const keySize = (typeof props.keyType === 'string' ? 1 : props.keyType) || 1;
-    const rot = props.rotation || 0;
-    const fontSize = props.fontSize ? props.fontSize * fontBaseSize : fontBaseSize;
-
-    return (
-        <g transform={`translate(${props.x},${props.y})`}>
-            <g transform={`rotate(${rot})`}>
-                <rect x={0} y={0} width={keyBaseSize * keySize} height={keyBaseSize} rx={keyBaseSize * 0.1}
-                    fill={props.selected ? keySelectedColor : 'white'} stroke={'black'} onClick={() => {
-                        if (props.onSelect)
-                            props.onSelect(props.selected ? null : props.keyObject);
-                    }}>
-
-                </rect>
-                <rect x={4} y={0} width={(keyBaseSize * keySize) - 8} height={keyBaseSize - 8} rx={keyBaseSize * 0.1} fill={'none'} stroke={'black'}>
-
-                </rect>
-                <text x={8} y={18} fontFamily='Inter' fontSize={fontSize} fill="black" pointerEvents={'none'}>
-                    {props.keyObject.dsp}
-                </text>
-                <text x={48*keySize} y={40} fontFamily='Inter' fontSize={fontSize*0.8} fill="black" pointerEvents={'none'} text-anchor="end">
-                    {props.keyObject.dsp2 || ''}
-                </text>
-            </g>
-        </g>
-    )
-}
-
-const Keyboard_hidergo_split = (props: { width: number, height: number, selected: KeymapJsonFormat | null, onSelect?: SelectKeyCallback }) => {
-    let offsetY = 0;
-    const k_left = <g>
-        {
-            // Map rows
-            (hidergo_split_keymap.keys_left as KeymapJsonFormat[][]).map((row, y) => {
-                let offsetX = 0;
-                // Cols
-                const ky = row.map((v, x) => {
-                    if(v.hidden === true) {
-                        return null;
-                    }
-                    const kx = <EditorKey
-                        keyObject={v}
-                        x={offsetX + keyBaseSize * (v.offX || 0)}
-                        y={offsetY + keyBaseSize * (v.offY || 0)}
-                        keyType={v.size}
-                        key={"LK" + x + "_" + y}
-                        rotation={v.rot}
-                        selected={props.selected?.name === v.name}
-                        onSelect={(key) => {
-                            if (props.onSelect)
-                                props.onSelect(key)
-                        }}
-                        fontSize={v.fontSize || undefined}
-                    />;
-                    offsetX += keyBaseSize * v.size + keyMargin;
-                    return kx;
-                })
-                offsetY += keyBaseSize + keyMargin;
-                return ky;
-            })
-        }
-    </g>;
-    offsetY = 0;
-    const k_right = <g>
-        {
-            // Map rows
-            (hidergo_split_keymap.keys_right as KeymapJsonFormat[][]).map((row, y) => {
-                let offsetX = 0;
-                // Cols
-                const ky = row.map((v, x) => {
-                    if(v.hidden === true) {
-                        return null;
-                    }
-                    const kx = <EditorKey
-                    keyObject={v}
-                        x={props.width - (offsetX + keyBaseSize * (v.offX || 0) + (keyBaseSize * v.size))}
-                        y={offsetY + keyBaseSize * (v.offY || 0)}
-                        keyType={v.size}
-                        key={"RK" + x + "_" + y}
-                        rotation={v.rot}
-                        selected={props.selected?.name === v.name}
-                        onSelect={(key) => {
-                            if (props.onSelect)
-                                props.onSelect(key)
-                        }}
-                        fontSize={v.fontSize || undefined}
-                    />;
-                    offsetX += keyBaseSize * v.size + keyMargin;
-                    return kx;
-                })
-                offsetY += keyBaseSize + keyMargin;
-                return ky;
-            })
-        }
-    </g>;
-
-    return <g>
-        {k_left}
-        {k_right}
-    </g>;
-}
-
-const layerNames = [
-    "Default",
-    "Arrow",
-    "Bottom"
-];
+import Hidergod from "../misc/Hidergod";
+import { bytesToHex, ConfigField, hexToBytes } from "../misc/ConfigFields";
+import { keymapBehaviours } from "../misc/KeymapDefs";
+import hidergo_disconnect_mk1_keymap from '../Keymaps/hidergo_disconnect_mk1_keymap.json'
 
 
-export default function KeymapEditor() {
+export default function KeymapEditorNew () {
 
-    const ref = useRef<HTMLDivElement>(null);
+    const [reboundKeys, setReboundKeys] = useState<KeyDef[]>([]);
 
-    const [height, setHeight] = useState(0);
-    const [width, setWidth] = useState(0);
+    const [editorBehaviour, setEditorBehaviour] = useState("TRANS");
+    const [editorAction, setEditorAction] = useState({label: "", group: "", id: {group: 0, action: 0}});
 
     const [selectedKey, setSelectedKey] = useState<KeymapJsonFormat | null>(null);
 
-    const [layer, setLayer] = useState<number>(0);
+    function readConfigKeymap () {
+        if(!Device.selectedDevice)
+            return;
 
-    const [keymap, setKeymap] = useState<number[][][]>([]);
+        Hidergod.instance?.readConfig(
+            Device.selectedDevice, 
+            ConfigField.ZMK_CONFIG_KEY_KEYMAP,
+            (resp) => {
+                if(resp.status) {
+                    if(resp.data.length % 11 !== 0)
+                        return;
+                    
+                    let dv = new DataView(resp.data.buffer);
+                    
+                    let rbKeys : KeyDef[] = [];
+                    /*
+                        struct __attribute__((packed)) zmk_config_keymap_item {
+                            uint16_t key;
+                            uint8_t device;
+                            uint32_t param1;
+                            uint32_t param2;
+                        };
+                    */
+                    for(let i = 0; i < dv.byteLength; i += 11) {
+                        const kdef : KeyDef = {
+                            layer: dv.getUint16(i + 0, true) & 0x0F,
+                            key: dv.getUint16(i + 0, true) >> 4,
+                            device: dv.getUint8(i + 2),
+                            param1: dv.getUint32(i + 3, true),
+                            param2: dv.getUint32(i + 7, true),
+                        }
+                        rbKeys.push(kdef);
+                    }
+
+                    setReboundKeys(rbKeys);
+                }
+                else {
+                    // Fail
+                }
+            }
+        );
+    }
+
+    function writeConfigKeymap (save: boolean) {
+        if(!Device.selectedDevice)
+            return;
+
+        const maxRebinds = 64;
+        const structSize = 11;
+        const bytes = new Uint8Array(maxRebinds * structSize);
+        bytes.fill(0xFF);
+
+        const dv = new DataView(bytes.buffer);
+
+        let offset = 0;
+        for(let rk of reboundKeys) {
+            // DEVICE
+            dv.setUint16(offset + 0, rk.layer | (rk.key << 4), true);
+            // KEY_PRESS
+            dv.setUint8(offset + 2, rk.device);
+            // PARAM 1
+            dv.setUint32(offset + 3, rk.param1, true);
+            // PARAM 2
+            dv.setUint32(offset + 7, rk.param2, true);
+
+            offset += 11;
+        }
+
+        Hidergod.instance?.writeConfig(
+            Device.selectedDevice, 
+            ConfigField.ZMK_CONFIG_KEY_KEYMAP,
+            bytes,
+            save,
+            (resp) => {
+                if(resp.status) {
+                    // OK
+                }
+                else {
+                    // Fail
+                }
+            }
+        );
+    }
+
+    const groupedActions = keymapBehaviours[editorBehaviour].groups.flatMap((e, gi) => {
+        return e.values.map((y, i) => {
+            return {
+                group: e.name,
+                label: y.name,
+                id: { group: gi, action: i}
+            }
+        })
+    })
 
     useEffect(() => {
-        function handleResize() {
-            if (ref.current) {
-                setHeight(ref.current.clientHeight);
-                setWidth(ref.current.clientWidth);
-            }
-        }
-        window.addEventListener('resize', handleResize)
-
-        getKeymap();
-        
+        readConfigKeymap();
     }, [])
 
-    function getKeymap () {
-        if(Device.selectedDevice !== null) {
-            Hidergod.instance?.request({
-                cmd: HidergodCmd.APICMD_GET_KEYMAP,
-                device: Device.selectedDevice.deviceInfo.device.serial
-            }, (data) => {
-                let msg = data as GetKeymapResponse;
-                
-                setKeymap(msg.keymap);
-
-            })
-        }
-    }
-    
-    function saveKeymap (save: boolean) {
-        if(Device.selectedDevice !== null) {
-            console.log(keymap);
-            Hidergod.instance?.request({
-                cmd: HidergodCmd.APICMD_SET_KEYMAP,
-                device: Device.selectedDevice.deviceInfo.device.serial,
-                save: save,
-                keymap: keymap
-            }, (data) => {
-                // Check status TODO:
-            })
-
-        }
-    }
-
-    function getKeymapBehaviour (index: number, layer: number) : ({ behaviour: string, value: number } | undefined) {
-        if(layer < 0 || layer > keymap.length || index < 0 || index > keymap[layer].length) {
-            return undefined;
-        }
-        const behaviour = getKeymapDeviceName(keymap[layer][index][0]);
-        const value = keymap[layer][index][1];
-
-        return { behaviour: behaviour || "", value };
-    }
-
-    let selBehaviour = undefined;
-    if(selectedKey)
-        selBehaviour = keymapBehaviour[getKeymapDeviceName(keymap[layer][selectedKey.pos][0]) || "TRANS"];
-
-    let selValue = undefined;
-    if(selBehaviour && selectedKey) {
-        selValue = selBehaviour.values.find((e) => {
-            if(e.val2) {
-                return (keymap[layer][selectedKey.pos][1] & 0xFFFF) === e.value;
-            }
-            else {
-                return keymap[layer][selectedKey.pos][1] === e.value;
-            }
-        });
-    }
-    
-    return (
-        <div style={{ width: '100vw', height: '100%', boxSizing: 'border-box', padding: 10, display: 'flex', flexDirection: 'column' }} ref={ref}>
-            <Box sx={{display: 'inline-flex', width: '100%'}}>
-                <Typography>Layer: </Typography>
-                <Select onChange={(e) => { setLayer(e.target.value as number) }} value={layer}>
-                    {
-                        layerNames.map((e, i) => {
-                            return <MenuItem value={i} key={"LAYER-SELECT" + i}>
-                                {e}
-                            </MenuItem>;
-                        })
-                    }
-                </Select>
-            </Box>
-            <div style={{ minHeight: 450 }}>
-                <svg width={window.innerWidth - 20} height={'100%'} viewBox={"0 0 " + String(window.innerWidth) + String(window.innerHeight)} xmlns="http://www.w3.org/2000/svg">
-                    <Keyboard_hidergo_split width={window.innerWidth - 20} height={450} selected={selectedKey} onSelect={(key) => { setSelectedKey(key) }} />
+    return <Box sx={{boxSizing: 'border-box', height: '100%', padding: 1}}>
+        <Box sx={{height: '100%', display: 'flex', flexDirection: 'column'}}>
+            <Card sx={{margin: 1, padding: 1, flex: 3}}>
+                <Box sx={{display: 'flex', flexDirection: 'row', padding: 1}}>
+                    <Box sx={{flex: 2}}>
+                        <Select
+                            sx={{maxWidth: '200px'}}
+                            label="Layer"
+                            >
+                        {
+                            hidergo_disconnect_mk1_keymap.layers.map((e, i) => {
+                                return <MenuItem value={i} key={"layer-sel-" + i}>{e}</MenuItem>
+                            })
+                        }
+                        </Select>
+                    </Box>
+                    <Box sx={{flex: 1}}>
+                        {
+                            reboundKeys.length < 1 &&
+                            <Alert severity="warning">Could not read current keymap. Bindings will be overwritten on upload!</Alert>
+                        }
+                    </Box>
+                </Box>
+                <svg width={window.innerWidth - 20} viewBox={"0 0 " + String(window.innerWidth) + " 400"} xmlns="http://www.w3.org/2000/svg">
+                    <Keymap 
+                        keymap={hidergo_disconnect_mk1_keymap}
+                        reboundKeys={reboundKeys}
+                        width={window.innerWidth - 20} 
+                        height={window.innerHeight / 2} 
+                        selected={selectedKey} 
+                        onSelect={(key) => { setSelectedKey(key) }} 
+                    />
                 </svg>
-            </div>
-            <div style={{ flex: 1, borderTop: '1px solid #CCC', minHeight: 200 }}>
-                {
-                    !selectedKey &&
-                    <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <div style={{ color: '#444', fontFamily: 'Inter', fontSize: '2em' }}>
-                            Select a key
-                        </div>
-                    </div>
-                }
-                {
-                    selectedKey &&
-                    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                        <div style={{ color: "#444", minHeight: 40, fontFamily: 'Inter', fontSize: '1em' }}>
-                            Key: {selectedKey.name}
-                        </div>
-                        <div style={{ color: "#444", minHeight: 40, fontFamily: 'Inter', fontSize: '1em' }}>
-                            Position: {selectedKey.pos}
-                        </div>
-                        <div style={{ color: "#444", minHeight: 40, fontFamily: 'Inter', fontSize: '1em' }}>
-                            Current: {getKeymapDeviceName(keymap[layer][selectedKey.pos][0])} ({keymap[layer][selectedKey.pos][0]}), {keymap[layer][selectedKey.pos][1]}
-                        </div>
-                        <div style={{ color: "#444", minHeight: 40, fontFamily: 'Inter', fontSize: '1em' }}>
-                            <Select value={keymap[layer][selectedKey.pos][0] & 0x7F}>
-                                {
-                                    Object.keys(keymapBehaviour).map((e, i) => {
-                                        return <MenuItem value={getKeymapDeviceId(e) || 0} key={"BEH-SELECT" + i}>
-                                            {keymapBehaviour[e].display}
-                                        </MenuItem>;
-                                    })
-                                }
-                            </Select>
+            </Card>
+            <Card sx={{margin: 1, padding: 1, flex: 1}}>
+                <FormControl sx={{flexDirection: 'row'}}>
+                    <Box>
+                        <InputLabel id="key-behaviour-select">Behaviour</InputLabel>
+                        <Select
+                            labelId="key-behaviour-select"
+                            value={editorBehaviour}
+                            label="Behaviour"
+                            onChange={(e) => {
+                                setEditorBehaviour(e.target.value); 
+                                setEditorAction({
+                                    label: keymapBehaviours[e.target.value].groups[0].values[0].name, 
+                                    group: keymapBehaviours[e.target.value].groups[0].name, 
+                                    id: {group: 0, action: 0}
+                                })
+                            }}
+                        >
                             {
-                                (selBehaviour && selBehaviour.values.length > 0) &&
-                                <Select value={selValue && selValue.val2 ? keymap[layer][selectedKey.pos][1] & 0xFFFF : keymap[layer][selectedKey.pos][1]}>
-                                    {
-                                        keymapBehaviour[getKeymapDeviceName(keymap[layer][selectedKey.pos][0]) || "TRANS"].values.map((e, i) => {
-                                            return <MenuItem value={e.value} key={"VAL-SELECT" + i}>
-                                                {e.name}
-                                            </MenuItem>;
-                                        })
-                                    }
-                                </Select>
+                                Object.keys(keymapBehaviours).map((k, i) => {
+                                    const e = keymapBehaviours[k];
+                                    return <MenuItem value={k}>{e.display}</MenuItem>
+                                })
                             }
-                            {
-                                (selValue && selValue.val2) &&
-                                <TextField type={'number'} value={keymap[layer][selectedKey.pos][1] >> 16} />
-                            }
-                        </div>
-                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        </Select>
+                    </Box>
+                    {
+                        keymapBehaviours[editorBehaviour].groups.length >= 1 &&
+                        <Box>
+                            <Autocomplete
+                                disableClearable
+                                id="key-value-select"
+                                options={groupedActions}
+                                groupBy={(opt) => opt.group}
+                                sx={{ width: 300 }}
+                                getOptionLabel={(opt) => opt.label}
+                                isOptionEqualToValue={(opt, val) => opt.id.group === val.id.group && opt.id.action === val.id.action}
+                                value={editorAction}
+                                onChange={(e, v) => {setEditorAction(v)}}
+                                renderInput={(params) => <TextField {...params} label="Action" />}
+                                />
+                        </Box>
+                    }
 
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-    )
+                    <Box>
+                        <Button variant="contained" onClick={() => {writeConfigKeymap(false)}} >Upload keymap</Button>
+                    </Box>
+
+                </FormControl>
+            </Card>
+        </Box>
+    </Box>
 }
