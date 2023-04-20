@@ -10,18 +10,24 @@ import hidergo_disconnect_mk1_keymap from '../Keymaps/hidergo_disconnect_mk1_key
 
 
 export default function KeymapEditor () {
+    
 
     const [reboundKeys, setReboundKeys] = useState<KeyDef[]>([]);
     const [selectedLayer, setSelectedLayer] = useState(0);
 
     const [editorBehaviour, setEditorBehaviour] = useState("TRANS");
-    const [editorAction, setEditorAction] = useState({
-        label: "", 
-        group: "", 
-        description: "", 
-        val2IsInput: false,
-        id: {group: 0, action: 0}
-    });
+
+    const [groupedActions, setGroupedActions] = useState(keymapBehaviours[editorBehaviour].groups.flatMap((e, gi) => {
+        return e.values.map((y, i) => {
+            return {
+                ...y,
+                group: e.name
+            }
+        })
+    }))
+
+    const [editorVal, setEditorVal] = useState(groupedActions[0]);
+
 
     const [selectedKey, setSelectedKey] = useState<KeymapJsonFormat | null>(null);
     const [selectedTarget, setSelectedTarget] = useState<SVGElement | null>(null);
@@ -111,17 +117,6 @@ export default function KeymapEditor () {
         );
     }
 
-    const groupedActions = keymapBehaviours[editorBehaviour].groups.flatMap((e, gi) => {
-        return e.values.map((y, i) => {
-            return {
-                label: y.name,
-                description: y.description || "",
-                val2IsInput: y.val2IsInput || false,
-                group: e.name,
-                id: { group: gi, action: i}
-            }
-        })
-    })
 
     useEffect(() => {
         readConfigKeymap();
@@ -164,10 +159,34 @@ export default function KeymapEditor () {
                                 setSelectedKey(key); 
                                 setSelectedTarget(target);
                                 if(key && key.defaults) {
-                                    setEditorBehaviour(key.defaults[selectedLayer].device);
+                                    const defaults = key.defaults[selectedLayer];
+                                    setEditorBehaviour(defaults.device);
+
+                                    const gActions = keymapBehaviours[defaults.device].groups.flatMap((e, gi) => {
+                                        return e.values.map((y, i) => {
+                                            return {
+                                                ...y,
+                                                group: e.name
+                                            }
+                                        })
+                                    })
+
+                                    setGroupedActions(gActions);
+
+                                    setEditorVal(gActions.find(e => e.value1 === Number(defaults.param1)) || gActions[0]);
                                 }
                                 else {
                                     setEditorBehaviour("TRANS");
+                                    const gActions = keymapBehaviours["TRANS"].groups.flatMap((e, gi) => {
+                                        return e.values.map((y, i) => {
+                                            return {
+                                                ...y,
+                                                group: e.name
+                                            }
+                                        })
+                                    })
+                                    setGroupedActions(gActions);
+                                    setEditorVal(gActions[0]);
                                 }
                             }} 
                         />
@@ -182,6 +201,7 @@ export default function KeymapEditor () {
             <Popover
                 open={selectedKey !== null}
                 anchorEl={selectedTarget}
+                
                 onClose={() => {setSelectedKey(null)}}
                 anchorOrigin={{
                   vertical: 'bottom',
@@ -198,13 +218,7 @@ export default function KeymapEditor () {
                                 sx={{minWidth: 200}}
                                 onChange={(e) => {
                                     setEditorBehaviour(e.target.value); 
-                                    setEditorAction({
-                                        label: keymapBehaviours[e.target.value].groups[0].values[0].name, 
-                                        group: keymapBehaviours[e.target.value].groups[0].name, 
-                                        description: keymapBehaviours[e.target.value].groups[0].values[0].description || "",
-                                        val2IsInput: keymapBehaviours[e.target.value].groups[0].values[0].val2IsInput || false,
-                                        id: {group: 0, action: 0}
-                                    })
+                                    setEditorVal({...keymapBehaviours[editorBehaviour].groups[0].values[0], group: e.target.value});
                                 }}
                             >
                                 {
@@ -224,16 +238,16 @@ export default function KeymapEditor () {
                                     options={groupedActions}
                                     groupBy={(opt) => opt.group}
                                     sx={{ minWidth: 200 }}
-                                    getOptionLabel={(opt) => opt.label}
-                                    isOptionEqualToValue={(opt, val) => opt.id.group === val.id.group && opt.id.action === val.id.action}
-                                    value={editorAction}
-                                    onChange={(e, v) => {setEditorAction(v)}}
+                                    getOptionLabel={(opt) => opt.name}
+                                    isOptionEqualToValue={(opt, val) => opt.value1 === val.value1 && opt.group === val.group}
+                                    value={editorVal}
+                                    onChange={(e, v) => {setEditorVal(v)}}
                                     renderInput={(params) => <TextField {...params} label="Action" />}
                                     />
                             </Fragment>
                         }
                         {
-                            editorAction.val2IsInput &&
+                            editorVal.val2IsInput &&
                             <Fragment>
                                 <TextField 
                                     type={'number'}
@@ -244,7 +258,7 @@ export default function KeymapEditor () {
                     </Box>
                     <Box sx={{display: 'flex', flexDirection: 'row', padding: 1, paddingTop: 0}}>
                         <Button variant="contained" sx={{flex: 1, marginRight: 2}}>Reset</Button>
-                        <Typography variant="subtitle2" sx={{flex: 1, color: 'grey'}}>{editorAction.description}</Typography>
+                        <Typography variant="subtitle2" sx={{flex: 1, color: 'grey'}}>{editorVal.description}</Typography>
                     </Box>
 
                 </FormControl>
