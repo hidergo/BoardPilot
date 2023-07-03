@@ -236,7 +236,6 @@ function KeyboardSplit (props: KeyboardProps) {
                     let visibleText = "";
                     console.log(v)
                     console.log("layer", props.layer)
-                    //@ts-ignore
                     if (v.defaults && v.defaults[props.layer] && v.defaults[props.layer].device && v.defaults[props.layer].param1 && v.defaults[props.layer].device != "MO") {
                         console.log("in loop")
                         let found = false;
