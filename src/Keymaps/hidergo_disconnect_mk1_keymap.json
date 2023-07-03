@@ -218,7 +218,7 @@
                 "size": 1,
                 "pos": 32,
                 "defaults": [
-                    {"device": "KEY_PRESS", "param1": "0x00070007"},
+                    {"device": "KEY_PRESS", "param1": "0x00070009"},
                     {"device": "TRANS"},
                     {"device": "TRANS"}
                 ]
