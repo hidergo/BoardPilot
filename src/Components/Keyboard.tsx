@@ -1,4 +1,4 @@
-import { getKeymapDeviceName } from "../misc/KeymapDefs";
+import { getKeymapDeviceName, keymapBehaviours} from "../misc/KeymapDefs";
 
 type CustomKeyType = "isoenter" | "pot";
 
@@ -23,6 +23,7 @@ type EditorKeyProps = {
     onSelect?: SelectKeyCallback,
     rebound?: boolean,
     keyType?: number | CustomKeyType,
+    visibleText?: string,
     fontSize?: number,
     rotation?: number,
     disabled?: boolean
@@ -42,8 +43,8 @@ export type KeymapJsonFormat = {
     disabled?: boolean,
     defaults?: {
         device: string, 
-        param1?: string | number,
-        param2?: string | number
+        param1?: string,
+        param2?: string
     }[]
 }
 
@@ -127,10 +128,7 @@ const EditorKey = (props: EditorKeyProps) => {
 
                 </rect>
                 <text x={8} y={18} fontFamily='Inter' fontSize={fontSize} fill="black" pointerEvents={'none'}>
-                    {props.keyObject.dsp}
-                </text>
-                <text x={48*keySize} y={40} fontFamily='Inter' fontSize={fontSize*0.8} fill="black" pointerEvents={'none'} textAnchor="end">
-                    {props.keyObject.dsp2 || ''}
+                    {props.visibleText}
                 </text>
             </g>
         </g>
@@ -161,8 +159,29 @@ function KeyboardSplit (props: KeyboardProps) {
                     if(rk && v.defaults && v.defaults.length > rk.layer) {
                         v.defaults[rk.layer] = {
                             device: getKeymapDeviceName(rk.device) || "TRANS",
-                            param1: rk.param1,
-                            param2: rk.param2
+                            param1: '0x' + rk.param1.toString(16).padStart(8, '0'), // Convert to hex string
+                            param2: '0x' + rk.param2.toString(16).padStart(8, '0'), // Convert to hex string
+                        }
+                    }
+                    
+                    let visibleText = "";
+                    console.log(v)
+                    console.log("layer", props.layer)
+                    //@ts-ignore
+                    if (v.defaults && v.defaults[props.layer] && v.defaults[props.layer].device && v.defaults[props.layer].param1 && v.defaults[props.layer].device != "MO") {
+                        console.log("in loop")
+                        let found = false;
+                        for (let group of keymapBehaviours[v.defaults[props.layer].device].groups) {
+                            for (let value of group.values) {
+                                //@ts-ignore
+                                console.log(value.value1.toString(16).padStart(8, '0'), v.defaults[props.layer].param1.replace(/^0x/, ''))
+                                if (value.value1.toString(16).padStart(8, '0') === v.defaults[props.layer].param1.replace(/^0x/, '')) {
+                                    visibleText = value.name;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (found) break;
                         }
                     }
                     const kx = <EditorKey
@@ -182,6 +201,7 @@ function KeyboardSplit (props: KeyboardProps) {
                             if (props.onSelect)
                                 props.onSelect(key, target)
                         }}
+                        visibleText={visibleText}
                         fontSize={v.fontSize || undefined}
                     />;
                     offsetX += keyBaseSize * v.size + keyMargin;
@@ -210,8 +230,29 @@ function KeyboardSplit (props: KeyboardProps) {
                     if(rk && v.defaults && v.defaults.length > rk.layer) {
                         v.defaults[rk.layer] = {
                             device: getKeymapDeviceName(rk.device) || "TRANS",
-                            param1: rk.param1,
-                            param2: rk.param2
+                            param1: '0x' + rk.param1.toString(16).padStart(8, '0'), // Convert to hex string
+                            param2: '0x' + rk.param2.toString(16).padStart(8, '0'), // Convert to hex string
+                        }
+                    }
+                    
+                    let visibleText = "";
+                    console.log(v)
+                    console.log("layer", props.layer)
+                    //@ts-ignore
+                    if (v.defaults && v.defaults[props.layer] && v.defaults[props.layer].device && v.defaults[props.layer].param1 && v.defaults[props.layer].device != "MO") {
+                        console.log("in loop")
+                        let found = false;
+                        for (let group of keymapBehaviours[v.defaults[props.layer].device].groups) {
+                            for (let value of group.values) {
+                                //@ts-ignore
+                                console.log(value.value1.toString(16).padStart(8, '0'), v.defaults[props.layer].param1.replace(/^0x/, ''))
+                                if (value.value1.toString(16).padStart(8, '0') === v.defaults[props.layer].param1.replace(/^0x/, '')) {
+                                    visibleText = value.name;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (found) break;
                         }
                     }
                     const kx = <EditorKey
@@ -224,6 +265,7 @@ function KeyboardSplit (props: KeyboardProps) {
                         selected={props.selected?.name === v.name}
                         rebound={rk !== undefined}
                         disabled={v.disabled}
+                        visibleText={visibleText}
                         onSelect={(key, target) => {
                             if(v.disabled)
                                 return;
