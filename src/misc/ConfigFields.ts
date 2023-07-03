@@ -53,7 +53,7 @@ export enum ConfigField {
     
     // hid:ergo device specific fields
     // IQS5XX register configuration
-    ZMK_CONFIG_CUSTOM_IQS5XX_REGS =         0x8001,
+    ZMK_CONFIG_CUSTOM_IQS5XX_REGS =         0x6001,
 }
 
 /**
