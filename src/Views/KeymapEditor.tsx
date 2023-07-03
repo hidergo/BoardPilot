@@ -5,12 +5,34 @@ import Keymap, { KeyDef, KeymapJsonFormat } from "../Components/Keyboard";
 import Device from "../misc/Device";
 import Hidergod from "../misc/Hidergod";
 import { bytesToHex, ConfigField, hexToBytes } from "../misc/ConfigFields";
-import { keymapBehaviours } from "../misc/KeymapDefs";
+import { keymapBehaviours, getKeymapDeviceName, getKeymapDeviceId } from "../misc/KeymapDefs";
 import hidergo_disconnect_mk1_keymap from '../Keymaps/hidergo_disconnect_mk1_keymap.json'
 
 
 export default function KeymapEditor () {
     
+    const [keymap, setKeymap] = useState(hidergo_disconnect_mk1_keymap);
+    const [flatKeymap, setFlatKeymap] = useState(
+        [
+            hidergo_disconnect_mk1_keymap.keys_left,
+            hidergo_disconnect_mk1_keymap.keys_right
+        ].flatMap((e) => e.flatMap(y => y.map(z => z)))
+    );
+
+    const [keymapReadState, setKeymapReadState] = useState(true);
+
+    useEffect(() => {
+        if(keymap.type === "SPLITKB") {
+            setFlatKeymap([
+                keymap.keys_left,
+                keymap.keys_right
+            ].flatMap((e) => e.flatMap(y => y.map(z => z))))
+        }
+        else {
+            //setFlatKeymap(keymap.keys);
+        }
+        
+    }, [keymap])
 
     const [reboundKeys, setReboundKeys] = useState<KeyDef[]>([]);
     const [selectedLayer, setSelectedLayer] = useState(0);
@@ -32,10 +54,82 @@ export default function KeymapEditor () {
     const [selectedKey, setSelectedKey] = useState<KeymapJsonFormat | null>(null);
     const [selectedTarget, setSelectedTarget] = useState<SVGElement | null>(null);
 
+    useEffect(() => {
+        console.log(editorVal);
+    }, [editorVal])
+
+    useEffect(() => {
+        console.log(reboundKeys)
+    }, [reboundKeys])
+
+    function isDefaultKey (key: KeyDef) {
+        const defKey = flatKeymap.find(e => e.pos === key.key);
+        if(defKey && defKey.defaults) {
+            const d = defKey.defaults[key.layer] as {
+                device: string, 
+                param1?: string | number, 
+                param2?: string | number
+            };
+
+            if( getKeymapDeviceName(key.device) === d.device && 
+                (!d.param1 || Number(d.param1) === Number(key.param1)) && 
+                (!d.param2 || Number(d.param2) === Number(key.param2))) {
+                
+                return true;
+            }
+            console.log("NOT DEFAULT KEY: ");
+            console.log(key, d);
+            return false;
+        }
+
+        return false;
+    }
+
+
+    function rebindKey (key: KeyDef) {
+        let i = 0;
+        // Find existing rebind
+        for(let rk of reboundKeys) {
+            if(rk.key === key.key) {
+                // Found existing bind, replace it
+
+                // Check if default
+                if(isDefaultKey(key)) {
+                    // This field can be removed since it's a default value
+                    const rbks = [...reboundKeys];
+                    rbks.splice(i, 1);
+                    setReboundKeys(rbks);
+
+                    return true;
+                }
+                // Change values
+                const rbks = [...reboundKeys];
+                rbks[i] = key;
+                setReboundKeys(rbks);
+
+                return true;
+            }
+            i++;
+        }
+
+        // Can't add more than 64 rebinds
+        if(reboundKeys.length - 1 >= 64) {
+            return false;
+        }
+
+        // Add new rebind
+        const rbks = [...reboundKeys];
+        rbks.push(key);
+        setReboundKeys(rbks);
+
+    }
+
 
     function readConfigKeymap () {
-        if(!Device.selectedDevice)
+        if(!Device.selectedDevice) {
+            setKeymapReadState(false);
             return;
+        }
 
         Hidergod.instance?.readConfig(
             Device.selectedDevice, 
@@ -64,13 +158,18 @@ export default function KeymapEditor () {
                             param1: dv.getUint32(i + 3, true),
                             param2: dv.getUint32(i + 7, true),
                         }
-                        rbKeys.push(kdef);
+                        if(kdef.layer !== 0x0F && kdef.key !== 0xFFF) {
+                            rbKeys.push(kdef);
+                        }
                     }
 
                     setReboundKeys(rbKeys);
+                    setKeymapReadState(true);
+
                 }
                 else {
                     // Fail
+                    setKeymapReadState(false);
                 }
             }
         );
@@ -119,7 +218,10 @@ export default function KeymapEditor () {
 
 
     useEffect(() => {
-        readConfigKeymap();
+        // TODO: Callback on select device
+        setTimeout(() => {
+            readConfigKeymap();
+        }, 100)
     }, [])
 
     return <Box sx={{boxSizing: 'border-box', height: '100%', padding: 1}}>
@@ -135,7 +237,7 @@ export default function KeymapEditor () {
                                 value={selectedLayer}
                                 >
                             {
-                                hidergo_disconnect_mk1_keymap.layers.map((e, i) => {
+                                keymap.layers.map((e, i) => {
                                     return <MenuItem value={i} key={"layer-sel-" + i}>{e}</MenuItem>
                                 })
                             }
@@ -143,18 +245,19 @@ export default function KeymapEditor () {
                         </Box>
                         <Box sx={{flex: 1}}>
                             {
-                                reboundKeys.length < 1 &&
+                                !keymapReadState &&
                                 <Alert severity="warning">Could not read current keymap. Bindings will be overwritten on upload!</Alert>
                             }
                         </Box>
                     </Box>
                     <svg width={window.innerWidth - 20} viewBox={"0 0 " + String(window.innerWidth) + " 400"} xmlns="http://www.w3.org/2000/svg">
                         <Keymap 
-                            keymap={hidergo_disconnect_mk1_keymap}
+                            keymap={keymap}
                             reboundKeys={reboundKeys}
                             width={window.innerWidth - 20} 
                             height={window.innerHeight / 2} 
                             selected={selectedKey} 
+                            layer={selectedLayer}
                             onSelect={(key, target) => { 
                                 setSelectedKey(key); 
                                 setSelectedTarget(target);
@@ -194,7 +297,9 @@ export default function KeymapEditor () {
                 </Box>
                 <Divider />
                 <Box sx={{paddingTop: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end'}}>
-                    <Button variant="contained" onClick={() => {writeConfigKeymap(false)}} >Upload keymap</Button>
+                    <Button variant="contained" onClick={() => {writeConfigKeymap(false)}} >Upload</Button>
+                    <Button variant="contained" onClick={() => {writeConfigKeymap(true)}} >Upload and save</Button>
+
                 </Box>
             </Card>
             
@@ -218,7 +323,25 @@ export default function KeymapEditor () {
                                 sx={{minWidth: 200}}
                                 onChange={(e) => {
                                     setEditorBehaviour(e.target.value); 
-                                    setEditorVal({...keymapBehaviours[editorBehaviour].groups[0].values[0], group: e.target.value});
+                                    const gActions = keymapBehaviours[e.target.value].groups.flatMap((e, gi) => {
+                                        return e.values.map((y, i) => {
+                                            return {
+                                                ...y,
+                                                group: e.name
+                                            }
+                                        })
+                                    })
+                                    setGroupedActions(gActions);
+                                    setEditorVal({...keymapBehaviours[e.target.value].groups[0].values[0], group: e.target.value});
+                                    if(selectedKey) {
+                                        rebindKey({
+                                            layer: selectedLayer,
+                                            key: selectedKey.pos,
+                                            device: getKeymapDeviceId(e.target.value) || 0,
+                                            param1: keymapBehaviours[e.target.value].groups[0].values[0].value1,
+                                            param2: keymapBehaviours[e.target.value].groups[0].values[0].value2 || 0,
+                                        })
+                                    }
                                 }}
                             >
                                 {
@@ -241,7 +364,18 @@ export default function KeymapEditor () {
                                     getOptionLabel={(opt) => opt.name}
                                     isOptionEqualToValue={(opt, val) => opt.value1 === val.value1 && opt.group === val.group}
                                     value={editorVal}
-                                    onChange={(e, v) => {setEditorVal(v)}}
+                                    onChange={(e, v) => {
+                                        setEditorVal(v);
+                                        if(selectedKey) {
+                                            rebindKey({
+                                                layer: selectedLayer,
+                                                key: selectedKey.pos,
+                                                device: getKeymapDeviceId(editorBehaviour) || 0,
+                                                param1: v.value1,
+                                                param2: v.value2 || 0,
+                                            })
+                                        }
+                                    }}
                                     renderInput={(params) => <TextField {...params} label="Action" />}
                                     />
                             </Fragment>

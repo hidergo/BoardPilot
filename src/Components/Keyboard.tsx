@@ -1,3 +1,4 @@
+import { getKeymapDeviceName } from "../misc/KeymapDefs";
 
 type CustomKeyType = "isoenter" | "pot";
 
@@ -69,6 +70,7 @@ export type KeyboardProps = {
     width: number, 
     height: number, 
     selected: KeymapJsonFormat | null, 
+    layer: number,
     onSelect?: SelectKeyCallback
 }
 
@@ -148,9 +150,20 @@ function KeyboardSplit (props: KeyboardProps) {
             (props.keymap.keys_left as KeymapJsonFormat[][]).map((row, y) => {
                 let offsetX = 0;
                 // Cols
-                const ky = row.map((v, x) => {
+                const ky = row.map((nv, x) => {
+                    // Must do a copy so defaults are not overwritten
+                    let v = {...nv, defaults: nv.defaults?.map(g => g)};
+
                     if(v.hidden === true) {
                         return null;
+                    }
+                    const rk = props.reboundKeys?.find(e => v.pos === e.key && e.layer === props.layer);
+                    if(rk && v.defaults && v.defaults.length > rk.layer) {
+                        v.defaults[rk.layer] = {
+                            device: getKeymapDeviceName(rk.device) || "TRANS",
+                            param1: rk.param1,
+                            param2: rk.param2
+                        }
                     }
                     const kx = <EditorKey
                         keyObject={v}
@@ -160,7 +173,7 @@ function KeyboardSplit (props: KeyboardProps) {
                         key={"LK" + x + "_" + y}
                         rotation={v.rot}
                         selected={props.selected?.name === v.name}
-                        rebound={props.reboundKeys?.find(e => v.pos === e.layer * 70 + e.key) !== undefined}
+                        rebound={rk !== undefined}
                         disabled={v.disabled}
                         onSelect={(key, target) => {
                             if(v.disabled)
@@ -186,9 +199,20 @@ function KeyboardSplit (props: KeyboardProps) {
             (props.keymap.keys_right as KeymapJsonFormat[][]).map((row, y) => {
                 let offsetX = 0;
                 // Cols
-                const ky = row.map((v, x) => {
+                const ky = row.map((nv, x) => {
+                    // Must do a copy so defaults are not overwritten
+                    let v = {...nv, defaults: nv.defaults?.map(g => g)};
+
                     if(v.hidden === true) {
                         return null;
+                    }
+                    const rk = props.reboundKeys?.find(e => v.pos === e.key && e.layer === props.layer);
+                    if(rk && v.defaults && v.defaults.length > rk.layer) {
+                        v.defaults[rk.layer] = {
+                            device: getKeymapDeviceName(rk.device) || "TRANS",
+                            param1: rk.param1,
+                            param2: rk.param2
+                        }
                     }
                     const kx = <EditorKey
                     keyObject={v}
@@ -198,7 +222,7 @@ function KeyboardSplit (props: KeyboardProps) {
                         key={"RK" + x + "_" + y}
                         rotation={v.rot}
                         selected={props.selected?.name === v.name}
-                        rebound={props.reboundKeys?.find(e => v.pos === e.layer * 70 + e.key) !== undefined}
+                        rebound={rk !== undefined}
                         disabled={v.disabled}
                         onSelect={(key, target) => {
                             if(v.disabled)
