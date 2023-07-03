@@ -183,7 +183,7 @@ export default class Hidergod {
                 const readResp = resp as HidergodMsg.controlReadResponse;
 
                 const dev = Device.findDevice(readResp.device);
-                const data = hexToBytes(readResp.data);
+                const data = hexToBytes(readResp.bytes);
 
                 if(onResponse) {
                     onResponse({
@@ -211,7 +211,7 @@ export default class Hidergod {
             cmd: HidergodCmd.APICMD_ZMK_CONTROL_WRITE,
             field: field,
             save: save,
-            data: bytesToHex(data),
+            bytes: bytesToHex(data),
             device: device.deviceInfo.device.serial
         }
         return this.request(msg, (resp) => {

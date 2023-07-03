@@ -81,7 +81,7 @@ export namespace HidergodMsg {
         field: ConfigField,
         save: boolean,
         // Sent as hex string
-        data: string
+        bytes: string
     }
     /**
      * @brief Write to zmk_config response
@@ -108,7 +108,7 @@ export namespace HidergodMsg {
         device: string,
         field: ConfigField,
         // Received as hex string
-        data: string
+        bytes: string
     }
 
     /**
