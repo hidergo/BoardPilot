@@ -173,9 +173,7 @@ function KeyboardSplit (props: KeyboardProps) {
                         let found = false;
                         for (let group of keymapBehaviours[v.defaults[props.layer].device].groups) {
                             for (let value of group.values) {
-                                //@ts-ignore
-                                console.log(value.value1.toString(16).padStart(8, '0'), v.defaults[props.layer].param1.replace(/^0x/, ''))
-                                if (value.value1.toString(16).padStart(8, '0') === v.defaults[props.layer].param1.replace(/^0x/, '')) {
+                                if (Number(value.value1) === Number(v.defaults[props.layer].param1)) {
                                     visibleText = value.name;
                                     found = true;
                                     break;
@@ -244,9 +242,8 @@ function KeyboardSplit (props: KeyboardProps) {
                         let found = false;
                         for (let group of keymapBehaviours[v.defaults[props.layer].device].groups) {
                             for (let value of group.values) {
-                                //@ts-ignore
-                                console.log(value.value1.toString(16).padStart(8, '0'), v.defaults[props.layer].param1.replace(/^0x/, ''))
-                                if (value.value1.toString(16).padStart(8, '0') === v.defaults[props.layer].param1.replace(/^0x/, '')) {
+
+                                if (Number(value.value1) === Number(v.defaults[props.layer].param1)) {
                                     visibleText = value.name;
                                     found = true;
                                     break;
