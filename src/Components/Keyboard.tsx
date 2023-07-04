@@ -103,7 +103,7 @@ const EditorKey = (props: EditorKeyProps) => {
     const rot = props.rotation || 0;
     let fontSize = props.fontSize ? props.fontSize * fontBaseSize : fontBaseSize;
 
-    if (props.visibleText.length > 1) {
+    if (props.visibleText && props.visibleText.length > 1) {
         fontSize = fontBaseSize * 0.7
     }
 
@@ -132,7 +132,7 @@ const EditorKey = (props: EditorKeyProps) => {
 
                 </rect>
                 <foreignObject width="200" height="100" pointerEvents={'none'}>
-                    <div xmlns="http://www.w3.org/1999/xhtml" style={{ fontFamily: 'Inter-Bold', color: colorPalette.text, lineHeight: 1, paddingTop: 4, paddingLeft: 7, fontSize: fontSize, width: keyBaseSize * keySize - 15, wordWrap: "break-word" }}>
+                    <div style={{ fontFamily: 'Inter-Bold', color: colorPalette.text, lineHeight: 1, paddingTop: 4, paddingLeft: 7, fontSize: fontSize, width: keyBaseSize * keySize - 15, wordWrap: "break-word" }}>
                         {props.visibleText}
                     </div>
                 </foreignObject>

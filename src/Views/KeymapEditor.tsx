@@ -277,6 +277,7 @@ export default function KeymapEditor () {
                     </Box>
                     <svg style={{cursor: 'pointer',}} width={window.innerWidth * 0.77} viewBox={"0 0 " + window.innerWidth * 0.90 + " 400"} xmlns="http://www.w3.org/2000/svg">
                         <Keymap 
+                            //@ts-ignore
                             keymap={keymap}
                             reboundKeys={reboundKeys}
                             width={window.innerWidth * 0.8}

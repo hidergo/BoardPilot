@@ -4,7 +4,7 @@ type TopBarButtonProps = {
     label: string,
     currentView: string,
     view: string,
-    onButtonClick: OnChangeViewCallback,
+    onButtonClick: any,
 };
 
 const topBarButton: React.CSSProperties = {
