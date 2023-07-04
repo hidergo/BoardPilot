@@ -1,4 +1,5 @@
-import { getKeymapDeviceName, keymapBehaviours} from "../misc/KeymapDefs";
+import { getKeymapDeviceName, keymapBehaviours } from "../misc/KeymapDefs";
+import { colorPalette } from '../Styles/Colors';
 
 type CustomKeyType = "isoenter" | "pot";
 
@@ -42,7 +43,7 @@ export type KeymapJsonFormat = {
     pos: number,
     disabled?: boolean,
     defaults?: {
-        device: string, 
+        device: string,
         param1?: string,
         param2?: string
     }[]
@@ -68,16 +69,16 @@ export type SelectKeyCallback = (key: KeymapJsonFormat | null, target: SVGRectEl
 export type KeyboardProps = {
     keymap: KeymapDef,
     reboundKeys?: KeyDef[],
-    width: number, 
-    height: number, 
-    selected: KeymapJsonFormat | null, 
+    width: number,
+    height: number,
+    selected: KeymapJsonFormat | null,
     layer: number,
     onSelect?: SelectKeyCallback
 }
 
 
-export default function Keymap (props: KeyboardProps) {
-    switch(props.keymap.type) {
+export default function Keymap(props: KeyboardProps) {
+    switch (props.keymap.type) {
         case "KB":
             console.warn("Normal keyboard rendering not supported");
             return null;
@@ -96,21 +97,24 @@ const keyReboundColor = '#b6e0d6';
 const keyDisabledColor = '#aaaaaa';
 
 
-
 const EditorKey = (props: EditorKeyProps) => {
 
     const keySize = (typeof props.keyType === 'string' ? 1 : props.keyType) || 1;
     const rot = props.rotation || 0;
-    const fontSize = props.fontSize ? props.fontSize * fontBaseSize : fontBaseSize;
+    let fontSize = props.fontSize ? props.fontSize * fontBaseSize : fontBaseSize;
+
+    if (props.visibleText.length > 1) {
+        fontSize = fontBaseSize * 0.7
+    }
 
     let color = 'white';
-    if(props.disabled) {
+    if (props.disabled) {
         color = keyDisabledColor;
     }
-    else if(props.selected) {
+    else if (props.selected) {
         color = keySelectedColor;
     }
-    else if(props.rebound) {
+    else if (props.rebound) {
         color = keyReboundColor;
     }
 
@@ -118,26 +122,28 @@ const EditorKey = (props: EditorKeyProps) => {
         <g transform={`translate(${props.x},${props.y})`}>
             <g transform={`rotate(${rot})`}>
                 <rect x={0} y={0} width={keyBaseSize * keySize} height={keyBaseSize} rx={keyBaseSize * 0.1}
-                    fill={color} stroke={'black'} onClick={(e) => {
+                    fill={colorPalette.backgroundLight} stroke={colorPalette.text} onClick={(e) => {
                         if (props.onSelect)
                             props.onSelect(props.selected ? null : props.keyObject, e.currentTarget);
                     }}>
 
                 </rect>
-                <rect x={4} y={0} width={(keyBaseSize * keySize) - 8} height={keyBaseSize - 8} rx={keyBaseSize * 0.1} fill={'none'} stroke={'black'}>
+                <rect x={4} y={0} width={(keyBaseSize * keySize) - 8} height={keyBaseSize - 8} rx={keyBaseSize * 0.1} fill={'none'} stroke={colorPalette.text}>
 
                 </rect>
-                <text x={8} y={18} fontFamily='Inter' fontSize={fontSize} fill="black" pointerEvents={'none'}>
-                    {props.visibleText}
-                </text>
+                <foreignObject width="200" height="100" pointerEvents={'none'}>
+                    <div xmlns="http://www.w3.org/1999/xhtml" style={{ fontFamily: 'Inter-Bold', color: colorPalette.text, lineHeight: 1, paddingTop: 4, paddingLeft: 7, fontSize: fontSize, width: keyBaseSize * keySize - 15, wordWrap: "break-word" }}>
+                        {props.visibleText}
+                    </div>
+                </foreignObject>
             </g>
         </g>
     )
 }
 
-function KeyboardSplit (props: KeyboardProps) {
+function KeyboardSplit(props: KeyboardProps) {
     let offsetY = 0;
-    if(!props.keymap.keys_left || !props.keymap.keys_right) {
+    if (!props.keymap.keys_left || !props.keymap.keys_right) {
         console.warn("Expected split keyboard definition");
         return null;
     }
@@ -150,20 +156,20 @@ function KeyboardSplit (props: KeyboardProps) {
                 // Cols
                 const ky = row.map((nv, x) => {
                     // Must do a copy so defaults are not overwritten
-                    let v = {...nv, defaults: nv.defaults?.map(g => g)};
+                    let v = { ...nv, defaults: nv.defaults?.map(g => g) };
 
-                    if(v.hidden === true) {
+                    if (v.hidden === true) {
                         return null;
                     }
                     const rk = props.reboundKeys?.find(e => v.pos === e.key && e.layer === props.layer);
-                    if(rk && v.defaults && v.defaults.length > rk.layer) {
+                    if (rk && v.defaults && v.defaults.length > rk.layer) {
                         v.defaults[rk.layer] = {
                             device: getKeymapDeviceName(rk.device) || "TRANS",
                             param1: '0x' + rk.param1.toString(16).padStart(8, '0'), // Convert to hex string
                             param2: '0x' + rk.param2.toString(16).padStart(8, '0'), // Convert to hex string
                         }
                     }
-                    
+
                     let visibleText = "";
                     console.log(v)
                     console.log("layer", props.layer)
@@ -193,7 +199,7 @@ function KeyboardSplit (props: KeyboardProps) {
                         rebound={rk !== undefined}
                         disabled={v.disabled}
                         onSelect={(key, target) => {
-                            if(v.disabled)
+                            if (v.disabled)
                                 return;
 
                             if (props.onSelect)
@@ -219,23 +225,21 @@ function KeyboardSplit (props: KeyboardProps) {
                 // Cols
                 const ky = row.map((nv, x) => {
                     // Must do a copy so defaults are not overwritten
-                    let v = {...nv, defaults: nv.defaults?.map(g => g)};
+                    let v = { ...nv, defaults: nv.defaults?.map(g => g) };
 
-                    if(v.hidden === true) {
+                    if (v.hidden === true) {
                         return null;
                     }
                     const rk = props.reboundKeys?.find(e => v.pos === e.key && e.layer === props.layer);
-                    if(rk && v.defaults && v.defaults.length > rk.layer) {
+                    if (rk && v.defaults && v.defaults.length > rk.layer) {
                         v.defaults[rk.layer] = {
                             device: getKeymapDeviceName(rk.device) || "TRANS",
                             param1: '0x' + rk.param1.toString(16).padStart(8, '0'), // Convert to hex string
                             param2: '0x' + rk.param2.toString(16).padStart(8, '0'), // Convert to hex string
                         }
                     }
-                    
+
                     let visibleText = "";
-                    console.log(v)
-                    console.log("layer", props.layer)
                     if (v.defaults && v.defaults[props.layer] && v.defaults[props.layer].device && v.defaults[props.layer].param1 && v.defaults[props.layer].device != "MO") {
                         console.log("in loop")
                         let found = false;
@@ -252,7 +256,7 @@ function KeyboardSplit (props: KeyboardProps) {
                         }
                     }
                     const kx = <EditorKey
-                    keyObject={v}
+                        keyObject={v}
                         x={props.width - (offsetX + keyBaseSize * (v.offX || 0) + (keyBaseSize * v.size))}
                         y={offsetY + keyBaseSize * (v.offY || 0)}
                         keyType={v.size}
@@ -263,7 +267,7 @@ function KeyboardSplit (props: KeyboardProps) {
                         disabled={v.disabled}
                         visibleText={visibleText}
                         onSelect={(key, target) => {
-                            if(v.disabled)
+                            if (v.disabled)
                                 return;
 
                             if (props.onSelect)

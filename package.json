@@ -10,9 +10,10 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.5",
-    "@mui/material": "^5.10.15",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.13.7",
+    "@mui/material": "^5.13.7",
     "@tauri-apps/api": "^1.0.2",
     "@types/prismjs": "^1.26.0",
     "@types/three": "^0.143.1",

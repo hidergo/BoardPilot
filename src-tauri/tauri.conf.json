@@ -6,7 +6,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "hidergoui",
+    "productName": "BoardPilot",
     "version": "0.0.0"
   },
   "tauri": {
@@ -30,7 +30,7 @@
         "icons/128x128@2x.png",
         "icons/icon.ico"
       ],
-      "identifier": "com.hidergo.hidergoui",
+      "identifier": "com.hidergo.boardpilot",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -59,10 +59,10 @@
         "fullscreen": false,
         "height": 768,
         "minHeight": 600,
-        "width": 1024,
+        "width": 1280,
         "minWidth": 800,
-        "resizable": true,
-        "title": "hid:ergo UI"
+        "resizable": false,
+        "title": "BoardPilot"
       }
     ]
   }

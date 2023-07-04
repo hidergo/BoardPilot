@@ -1,30 +1,21 @@
 import { InputLabel, MenuItem, Select } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import hidergoLogo from '../assets/hidergo_logo.png';
+import hidergoLogo from '../assets/boardpilot_logo_white.png'
 import Device from '../misc/Device';
+import { TopBarButton } from './TopBarButton';
 
 const TopBarContainer: React.CSSProperties = {
     background: '#373737',
-    padding: 10,
     margin: 0,
     flex: 1,
     display: 'flex',
-    maxHeight: 48,
+    maxHeight: 70,
+    minHeight: 50,
     flexDirection: 'row',
     color: '#FFF',
-
+    userSelect: 'none',
     fontWeight: 400,
     fontFamily: 'Inter',
-};
-
-const topBarButton: React.CSSProperties = {
-    paddingTop: "0.5em",
-    height: "100%",
-    textAlign: 'center',
-    fontSize: '1.5em',
-    flex: 1,
-    cursor: 'pointer',
-    borderRight: '1px solid #888',
 };
 
 type OnChangeViewCallback = (view: string) => any;
@@ -34,7 +25,7 @@ type OnSelectDeviceCallback = (dev: Device | null) => any;
 export default function TopBar(props: { onChangeView: OnChangeViewCallback, onSelectDevice: OnSelectDeviceCallback }) {
 
     const [devices, setDevices] = useState<Device[]>([]);
-
+    const [currentView, setCurrentView] = useState<string>("keymapeditor");
     const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
 
     useEffect(() => {
@@ -48,33 +39,21 @@ export default function TopBar(props: { onChangeView: OnChangeViewCallback, onSe
 
     return (
         <div style={TopBarContainer}>
-            <div style={{ flex: 1, display: 'flex', justifyContent: "space-around" }}>
-                <img src={hidergoLogo} style={{ flex: 1, maxWidth: 100 }} />
+
+            <div style={{ flex: 1, display: 'flex', justifyContent: "space-around", minHeight: 70 }}>
+                <img src={hidergoLogo} style={{ flex: 1, maxWidth: 160, maxHeight: 40, paddingTop: 17 }} />
             </div>
-            <div style={topBarButton}>
-                <p style={{ padding: 0, margin: 0 }} onClick={() => { props.onChangeView("keymapeditor") }}>
-                    Keymap
-                </p>
-            </div>
-            <div style={topBarButton} onClick={() => { props.onChangeView("display") }}>
-                <p style={{ padding: 0, margin: 0 }}>
-                    Display
-                </p>
-            </div>
-            <div style={{ ...topBarButton, ...{ borderRight: 'none' } }} onClick={() => { props.onChangeView("trackpad") }}>
-                <p style={{ padding: 0, margin: 0 }}>
-                    Trackpad
-                </p>
-            </div>
+            <TopBarButton label="Keymap" currentView={currentView} view="keymapeditor" onButtonClick={() => { setCurrentView("keymapeditor"); props.onChangeView("keymapeditor") } }/>
+            <TopBarButton label="Display" currentView={currentView} view="display" onButtonClick={() => { setCurrentView("display");props.onChangeView("display") }} />
+            <TopBarButton label="Trackpad" currentView={currentView} view="trackpad" onButtonClick={() => { setCurrentView("trackpad"); props.onChangeView("trackpad") }} />
             {
                 devices.length > 0 &&
-                <div style={{ flex: 1, marginLeft: 10 }}>
-                    <InputLabel sx={{ color: 'white' }} id="device-select-label">Device</InputLabel>
+                <div style={{ flex: 1, marginLeft: 10, paddingTop: 22 }}>
                     <Select
-                        label="Device"
                         labelId="device-select-label"
+                        placeholder='Select a device'
                         value={selectedDevice?.deviceInfo.device.serial}
-                        sx={{ height: 30, color: 'white' }}
+                        sx={{ height: 30, color: 'white', width: 200 }}
                         onChange={(e) => {
                             const _dev = devices.find(d => d.deviceInfo.device.serial === e.target.value) || null;
                             setSelectedDevice(_dev);
@@ -82,11 +61,17 @@ export default function TopBar(props: { onChangeView: OnChangeViewCallback, onSe
                         }}
                     >
                         {
-                            devices.map((e, i) => {
-                                return <MenuItem value={e.deviceInfo.device.serial} key={"dev-select-" + i}>
-                                    {e.deviceInfo.product.product}
+                            devices.length > 0 ?
+                                devices.map((e, i) => {
+                                    return <MenuItem value={e.deviceInfo.device.serial} key={"dev-select-" + i}>
+                                        {e.deviceInfo.product.product}
+                                    </MenuItem>
+                                })
+                                :
+                                <MenuItem disabled>
+                                    No devices available
                                 </MenuItem>
-                            })
+
                         }
                     </Select>
                 </div>

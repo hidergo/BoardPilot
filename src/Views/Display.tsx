@@ -12,6 +12,8 @@ import Hidergod from "../misc/Hidergod";
 import Device from "../misc/Device";
 import { bytesToHex, ConfigField } from "../misc/ConfigFields";
 import { HidergodCmd } from "../misc/HidergodMsg";
+import { colorPalette } from '../Styles/Colors';
+import { IosShare, ExitToApp, Save, NoteAdd } from "@mui/icons-material";
 
 const loadingBoxStyle : SxProps = {
     display: "flex",
@@ -22,17 +24,20 @@ const loadingBoxStyle : SxProps = {
 const outerBoxStyle : SxProps = {
     display: "flex",
     flexDirection: "row",
-    height: "100%"
+    height: "100%",
+    backgroundColor: colorPalette.background
 }
 
 const previewBoxStyle : SxProps = {
     display: "flex",
     flex: 1,
-    flexDirection: "column"
+    flexDirection: "column",
+    backgroundColor: colorPalette.background,
+    maxWidth: "35%"
 }
 
 const editorBoxStyle : SxProps = {
-    flex: 1
+    flex: 1,    
 }
 
 export default function Display () {
@@ -287,25 +292,25 @@ content += `};`;
                 <Box sx={{flex: 1, maxHeight: 50}}>
 
                 </Box>
-                <Box sx={{flex: 5, padding: 10}}>
+                <Box sx={{flex: 2, padding: 10}}>
                     <div style={{display: "flex", alignItems: "center", justifyContent: "center", height: "100%"}} ref={canvasContainer}>
-                        <canvas style={{border: "1px solid rgba(0,0,0,0.3)", imageRendering: "pixelated"}} width={80} height={128} ref={canv}></canvas>
+                        <canvas style={{border: "1px solid white", imageRendering: "pixelated", backgroundColor: "white"}} width={80} height={128} ref={canv}></canvas>
                     </div>
                 </Box>
             </Box>
             <Box sx={editorBoxStyle}>
                 <Card elevation={4} sx={{width: '100%', height: '100%', boxSizing: 'border-box'}}>
-                    <Box style={{flex: 1}}>
-                        <Button  onClick={openFileDialog} variant="contained">Open file</Button>
-                        <Button  onClick={newFile} variant="contained">New file</Button>
-                        <Button  onClick={exportFile} variant="contained">Export</Button>
-                        <Button  onClick={uploadFile} variant="contained">Upload</Button>
+                    <Box sx={{ padding: 3, display: 'flex', justifyContent: 'center', gap: 2, width: "100%"}}>
+                        <Button startIcon={<ExitToApp/>} onClick={openFileDialog} variant="contained">Open .HDL</Button>
+                        <Button startIcon={<NoteAdd/>} onClick={newFile} variant="contained">New .HDL file</Button>
+                        <Button startIcon={<Save/>} onClick={exportFile} variant="contained">Export .HDL</Button>
+                        <Button startIcon={<IosShare/>} onClick={uploadFile} variant="contained">Upload</Button>
 
                     </Box>
-                    <Box style={{flex: 7, height: "85vh", overflow: "auto"}}>
+                    <Box style={{flex: 7, height: "80vh", overflow: "auto"}}>
                         <Editor 
-                            
                             value={code}
+                            placeholder="Enter HDL code here..."
                             onValueChange={c => setCode(c)}
                             highlight={c => highlight(c, languages.xml, "xml")}
                             onKeyDown={(e) => {
@@ -322,8 +327,9 @@ content += `};`;
                             style={{
                                 fontFamily: 'monaco, monospace',
                                 width: '100%',
-                                minHeight: '100%'
+                                minHeight: '100%',
                             }}
+                            padding={10}
                         />
                     </Box>
                 </Card>

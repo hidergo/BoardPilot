@@ -1,10 +1,15 @@
-import { Button, Card, Checkbox, Input, Slider, TextField, Tooltip, Typography } from "@mui/material";
+import { Button, Card, Checkbox, Divider, Input, Slider, TextField, Tooltip, Typography } from "@mui/material";
 import { Box, Container } from "@mui/system";
 import React, { useEffect } from "react";
 import { ConfigField } from "../misc/ConfigFields";
 import Device from "../misc/Device";
 import Hidergod from "../misc/Hidergod";
 import { HidergodMsg } from "../misc/HidergodMsg";
+import { colorPalette } from "../Styles/Colors";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import IosShareIcon from '@mui/icons-material/IosShare';
+import CachedIcon from '@mui/icons-material/Cached';
 
 type TrackpadConfValue = {
     name: string, 
@@ -166,11 +171,16 @@ const TrackpadConfValuesRaw : TrackpadConfValue[] = [
 
 const TrackpadConfDefault = TrackpadConfValuesRaw.map(e => {return {name: e.name, value: e.default}});
 
+const sliderStyle = {
+    marginRight: 1, 
+    paddingTop: 5
+}
+
 export default function Trackpad () {
 
     const [rawValues, setRawValues] = React.useState(TrackpadConfValuesRaw.map(e => {return {name: e.name, value: e.default}}));
-
     const [sensitivity, setSensitivity] = React.useState(128);
+    const [devMenuOpen, setDevMenuOpen] = React.useState(false);
 
     function handleRawValueChange (name: string, newValue: number) {
 
@@ -372,38 +382,41 @@ export default function Trackpad () {
         readConfigMouseSensitivity();
     }, []);
 
-    return <Container sx={{paddingTop: 1}}>
-        <Card>
-            <Typography variant="h5" sx={{paddingBottom: 3}}>Touchpad sensitivity</Typography>
-            <Box sx={{display: 'inline-flex', width: '100%'}}>
-                <Slider 
-                    value={sensitivity} 
-                    step={1} 
-                    min={0} 
-                    max={255} 
-                    sx={{marginRight: 1}}
-                    onChange={(_x, n) => {setSensitivity(n as number)}}
-                />
-                <TextField 
-                    value={sensitivity} 
-                    type={"number"} 
-                    inputProps={{min: 0, max: 255}} 
-                    onChange={(x) => {setSensitivity(parseInt(x.target.value))}}
-                />
+    return <Container sx={{paddingTop: 1, userSelect: 'none', backgroundColor: colorPalette.background, padding: 3, minWidth: "100%"}}>
+            <Box>
+                <Typography variant="h5" sx={{padding: 2, paddingLeft: "10%"}}>Sensitivity</Typography>
+                <Box sx={{display: 'inline-flex', width: '80%', paddingLeft: "10%"}}>
+                    <Slider 
+                        value={sensitivity} 
+                        step={1} 
+                        min={0} 
+                        max={255} 
+                        sx={sliderStyle}
+                        onChange={(_x, n) => {setSensitivity(n as number)}}
+                    />
+                    <TextField 
+                        value={sensitivity} 
+                        type={"number"} 
+                        inputProps={{min: 0, max: 255}} 
+                        onChange={(x) => {setSensitivity(parseInt(x.target.value))}}
+                    />
+                </Box>
             </Box>
-            <Button onClick={() => {writeConfigMouseSensitivity(false)}}>Apply</Button>
-            <Button onClick={() => {writeConfigMouseSensitivity(true)}}>Apply and save</Button>
-        </Card>
-        <Card sx={{padding: 2}}>
-            <Typography variant="h5" sx={{paddingBottom: 3}}>IQS5XX raw register values</Typography>
-            <Button onClick={() => {setRawValues([...TrackpadConfDefault])}}>Reset to default</Button>
+            <Box sx={{paddingLeft: "10%", paddingBottom: 5}}>
+                <Button startIcon={<IosShareIcon/>} variant="contained" style={{margin: 10, marginLeft: 0}} onClick={() => {writeConfigMouseSensitivity(true)}}>Apply</Button>
+                <Button variant="outlined" startIcon={!devMenuOpen ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>} style={{margin: 10}} onClick={() => {setDevMenuOpen(!devMenuOpen)}}>{!devMenuOpen ? "Open" : "Close"} Advanced Settings</Button>
+            </Box>
+        {devMenuOpen &&
+            <Box>
+            <Typography variant="h5" sx={{paddingBottom: 3, paddingLeft: "10%"}}>Trackpad IC (IQS550) raw register values</Typography>
+            <Button startIcon={<CachedIcon/>} sx={{marginLeft: "10%", marginBottom:3}} variant="contained" onClick={() => {setRawValues([...TrackpadConfDefault])}}>Reset to default</Button>
 
             {
                 rawValues.map((e, i) => {
                     const z = TrackpadConfValuesRaw[i];
                     return <Box key={"trackpad-conf-raw-" + i}>
                         <Tooltip title={z.tooltip} placement="bottom-start" enterDelay={500}>
-                            <Typography variant="subtitle1">{z.title}</Typography>
+                            <Typography variant="subtitle1" sx={{paddingLeft: "10%"}}>{z.title}</Typography>
                         </Tooltip>
                         {
                             z.type === "checkbox" &&
@@ -414,7 +427,7 @@ export default function Trackpad () {
                         }
                         {
                             z.type === "checkboxgroup" &&
-                            <Box display={'inline-flex'}>
+                            <Box display={'inline-flex'} sx={{paddingLeft: "10%"}}>
                                 {
                                     z.labels &&
                                     z.labels.map((le, li) => {
@@ -440,13 +453,13 @@ export default function Trackpad () {
                         }
                         {
                             z.type === "slider" &&
-                            <Box sx={{display: 'inline-flex', width: '100%'}}>
+                            <Box sx={{display: 'inline-flex', width: '85%', paddingLeft: "10%"}}>
                                 <Slider 
                                     value={e.value} 
                                     step={1} 
                                     min={z.range?.min || 0} 
                                     max={z.range?.max || 0} 
-                                    sx={{marginRight: 1}}
+                                    sx={sliderStyle}
                                     onChange={(_x, n) => {handleRawValueChange(e.name, n as number)}}
                                 />
                                 <TextField 
@@ -460,10 +473,9 @@ export default function Trackpad () {
                     </Box>
                 })
             }
-            <Button onClick={() => {writeConfigIQS5XXRegs(false)}}>Apply</Button>
-            <Button onClick={() => {writeConfigIQS5XXRegs(true)}}>Apply and save</Button>
-
-        </Card>
+            <Button variant="outlined"sx={{marginLeft: "10%", marginBottom:3}} onClick={() => {writeConfigIQS5XXRegs(false)}}>Test Changes</Button>
+            <Button variant="contained" sx={{marginLeft: 3, marginBottom:3}} onClick={() => {writeConfigIQS5XXRegs(true)}}>Save Changes</Button>
+            </Box>}
         
     </Container>;
 }

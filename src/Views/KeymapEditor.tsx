@@ -1,13 +1,19 @@
-import { Alert, Autocomplete, Button, Card, Divider, FormControl, InputLabel, MenuItem, Popover, Select, TextField, Typography } from "@mui/material";
+import { Alert, Autocomplete, Button, Card, Divider, FormControl, InputLabel, MenuItem, Popover, Select, TextField, Typography, IconButton } from "@mui/material";
 import { Box } from "@mui/system";
 import { Fragment, useEffect, useState } from "react";
+import { readBinaryFile, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
+import { open, save } from "@tauri-apps/api/dialog";
 import Keymap, { KeyDef, KeymapJsonFormat } from "../Components/Keyboard";
 import Device from "../misc/Device";
 import Hidergod from "../misc/Hidergod";
 import { bytesToHex, ConfigField, hexToBytes } from "../misc/ConfigFields";
 import { keymapBehaviours, getKeymapDeviceName, getKeymapDeviceId } from "../misc/KeymapDefs";
 import hidergo_disconnect_mk1_keymap from '../Keymaps/hidergo_disconnect_mk1_keymap.json'
-
+import { colorPalette } from '../Styles/Colors';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import SaveIcon from '@mui/icons-material/Save';
+import IosShareIcon from '@mui/icons-material/IosShare';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 export default function KeymapEditor () {
     
@@ -49,7 +55,6 @@ export default function KeymapEditor () {
     }))
 
     const [editorVal, setEditorVal] = useState(groupedActions[0]);
-
 
     const [selectedKey, setSelectedKey] = useState<KeymapJsonFormat | null>(null);
     const [selectedTarget, setSelectedTarget] = useState<SVGElement | null>(null);
@@ -175,6 +180,32 @@ export default function KeymapEditor () {
         );
     }
 
+    async function saveConfigKeymapAsJson () {
+        const file = await save({
+            filters: [{
+                name: 'JSON (.json)',
+                extensions: ['json']
+            }]
+        })
+        const json = JSON.stringify(reboundKeys);
+        await writeTextFile(file, json);
+    }
+
+    async function loadConfigKeymapAsJson () {
+        const file = await open({
+            filters: [{
+                name: 'JSON (.json)',
+                extensions: ['json']
+            }]
+        })
+        if(file) {
+            const json = await readTextFile(file as string);
+            const rbks = JSON.parse(json) as KeyDef[];
+            setReboundKeys(rbks);
+        }
+    }
+
+
     function writeConfigKeymap (save: boolean) {
         if(!Device.selectedDevice)
             return;
@@ -224,25 +255,19 @@ export default function KeymapEditor () {
         }, 100)
     }, [])
 
-    return <Box sx={{boxSizing: 'border-box', height: '100%', padding: 1}}>
-        <Box sx={{height: '100%', display: 'flex', flexDirection: 'column'}}>
-            <Card sx={{margin: 1, padding: 1, flex: 3, display: 'flex', flexDirection: 'column'}}>
+    return <Box sx={{userSelect: 'none', boxSizing: 'border-box', height: '100%', width: window.innerWidth, padding: 1, display: 'flex', flexDirection: 'row', backgroundColor: colorPalette.background}}>
+        <Box sx={{flex: 1, height: '100%', display: 'flex', flexDirection: 'column', borderColor: colorPalette.backgroundExtraLight, justifyContent: 'center'}}>
+            {keymap.layers.map((e, i) => {
+                return (
+                    <Box key={"layer-sel-" + i} onClick={() => setSelectedLayer(i)} sx={[{borderRight: '1px solid', padding: 3,margin: 1, cursor: 'pointer', color: colorPalette.text}, selectedLayer == i && {backgroundColor: colorPalette.backgroundLight}]}>
+                        {e}
+                    </Box>
+                )
+            })}
+        </Box>
+        <Box sx={{display: 'flex', flexDirection: 'column', width: '80%', padding: 10}}>
                 <Box sx={{flex: 4}}>
                     <Box sx={{display: 'flex', flexDirection: 'row', padding: 1}}>
-                        <Box sx={{flex: 2}}>
-                            <Select
-                                sx={{maxWidth: '200px'}}
-                                label="Layer"
-                                onChange={(e) => {setSelectedLayer(Number(e.target.value))}}
-                                value={selectedLayer}
-                                >
-                            {
-                                keymap.layers.map((e, i) => {
-                                    return <MenuItem value={i} key={"layer-sel-" + i}>{e}</MenuItem>
-                                })
-                            }
-                            </Select>
-                        </Box>
                         <Box sx={{flex: 1}}>
                             {
                                 !keymapReadState &&
@@ -250,11 +275,11 @@ export default function KeymapEditor () {
                             }
                         </Box>
                     </Box>
-                    <svg width={window.innerWidth - 20} viewBox={"0 0 " + String(window.innerWidth) + " 400"} xmlns="http://www.w3.org/2000/svg">
+                    <svg style={{cursor: 'pointer',}} width={window.innerWidth * 0.77} viewBox={"0 0 " + window.innerWidth * 0.90 + " 400"} xmlns="http://www.w3.org/2000/svg">
                         <Keymap 
                             keymap={keymap}
                             reboundKeys={reboundKeys}
-                            width={window.innerWidth - 20} 
+                            width={window.innerWidth * 0.8}
                             height={window.innerHeight / 2} 
                             selected={selectedKey} 
                             layer={selectedLayer}
@@ -295,14 +320,17 @@ export default function KeymapEditor () {
                         />
                     </svg>
                 </Box>
-                <Divider />
-                <Box sx={{paddingTop: 1, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end'}}>
-                    <Button variant="contained" onClick={() => {writeConfigKeymap(false)}} >Upload</Button>
-                    <Button variant="contained" onClick={() => {writeConfigKeymap(true)}} >Upload and save</Button>
-
-                </Box>
-            </Card>
-            
+            <Box sx={{ paddingTop: 3, paddingRight: 18, display: 'flex', justifyContent: 'center', gap: 2}}>
+                <Button startIcon={<ExitToAppIcon/>} variant="outlined" onClick={() => { loadConfigKeymapAsJson() }}>
+                    Import JSON
+                </Button>
+                <Button startIcon={<SaveIcon/>} variant="outlined" onClick={() => { saveConfigKeymapAsJson() }}>
+                    Save JSON
+                </Button>
+                <Button startIcon={<IosShareIcon/>} variant="contained" onClick={() => { writeConfigKeymap(true) }}>
+                    Upload
+                </Button>
+            </Box>
             <Popover
                 open={selectedKey !== null}
                 anchorEl={selectedTarget}
@@ -313,14 +341,14 @@ export default function KeymapEditor () {
                   horizontal: 'left',
                 }}
             >
-                <FormControl sx={{display: 'flex', flexDirection: 'column'}}>
+                <FormControl sx={{display: 'flex', flexDirection: 'column', backgroundColor: colorPalette.backgroundLight}}>
                     <Box sx={{display: 'flex', flexDirection: 'row', padding: 2, paddingBottom: 1}}>
                         <Fragment>
                             <TextField
                                 select
                                 value={editorBehaviour}
                                 label="Behaviour"
-                                sx={{minWidth: 200}}
+                                sx={{minWidth: 200, paddingRight: 1}}
                                 onChange={(e) => {
                                     setEditorBehaviour(e.target.value); 
                                     const gActions = keymapBehaviours[e.target.value].groups.flatMap((e, gi) => {

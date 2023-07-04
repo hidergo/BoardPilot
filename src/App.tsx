@@ -12,8 +12,17 @@ import Device from "./misc/Device";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import HDLDisplay from "./hdl/HDLDisplay";
 import KeymapEditor from "./Views/KeymapEditor";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 let hidergod: Hidergod = new Hidergod();
+
+
+const darkTheme = createTheme({
+	palette: {
+		mode: 'dark',
+	},
+});
 
 function App() {
 	const [view, setView] = useState("keymapeditor");
@@ -23,32 +32,34 @@ function App() {
 
 	useEffect(() => {
 		console.log("Connecting to device...");
-		
+
 		setSelectedDevice(Device.selectedDevice);
-        Device.addDeviceUpdateListener((d) => {
-            setSelectedDevice(Device.selectedDevice);
-        })
+		Device.addDeviceUpdateListener((d) => {
+			setSelectedDevice(Device.selectedDevice);
+		})
 	}, []);
 
 	return (
 		<div className="container">
-			<Fragment>
-				<TopBar onChangeView={(view) => { setView(view) }} onSelectDevice={(dev) => { setSelectedDevice(dev) }} />
-				<Box className="content-container">
-					{
-						view === "keymapeditor" &&
-						<KeymapEditor />
-					}
-					{
-						view === "display" &&
-						<Display />
-					}
-					{
-						view == "trackpad" &&
-						<Trackpad />
-					}
-				</Box>
-			</Fragment>
+			<ThemeProvider theme={darkTheme}>
+				<Fragment>
+					<TopBar onChangeView={(view) => { setView(view) }} onSelectDevice={(dev) => { setSelectedDevice(dev) }} />
+					<Box className="content-container">
+						{
+							view === "keymapeditor" &&
+							<KeymapEditor />
+						}
+						{
+							view === "display" &&
+							<Display />
+						}
+						{
+							view == "trackpad" &&
+							<Trackpad />
+						}
+					</Box>
+				</Fragment>
+			</ThemeProvider>
 		</div>
 
 	);

@@ -5,7 +5,7 @@
 	font-weight: 400;
 
 	color: #0f0f0f;
-	background-color: #f6f6f6;
+	background-color: #1E1E1E;
 
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;
@@ -30,11 +30,6 @@ body {
 	height: 100vh;
 }
 
-.content-container {
-	background: white;
-	box-sizing: border-box;
-	flex: 10;
-}
 
 .logo.tauri:hover {
 	filter: drop-shadow(0 0 2em #24c8db);
@@ -86,14 +81,17 @@ button {
 
 	font-family: 'Inter';
 	src: local('Inter'), url(./assets/Inter-Regular.ttf) format('truetype');
-	/* other formats include: 'woff2', 'truetype, 'opentype',
-							  'embedded-opentype', and 'svg' */
-  }
+}
+
+@font-face {
+	font-family: 'Inter-Bold';
+	src: local('Inter-Bold'), url(./assets/Inter-Bold.ttf) format('truetype');
+}
 
 @media (prefers-color-scheme: dark) {
 	:root {
 		color: #f6f6f6;
-		background-color: #2f2f2f;
+		background-color: #1E1E1E;
 	}
 
 	a:hover {
