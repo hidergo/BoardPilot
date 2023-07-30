@@ -212,7 +212,8 @@ export default function KeymapEditor() {
             }]
         })
         const json = JSON.stringify(reboundKeys);
-        await writeTextFile(file, json);
+        if(file)
+            await writeTextFile(file, json);
     }
 
     async function loadConfigKeymapAsJson() {

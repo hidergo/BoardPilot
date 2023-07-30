@@ -48,7 +48,8 @@
         "signingIdentity": null
       },
       "resources": [
-        "external_bin/BoardPilotService-x86_64-pc-windows-msvc.exe"
+        "external_bin/BoardPilotService-x86_64-pc-windows-msvc.exe",
+        "external_bin/BoardPilotService-x86_64-unknown-linux-gnu"
       ],
       "shortDescription": "",
       "targets": "all",

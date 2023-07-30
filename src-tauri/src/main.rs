@@ -111,7 +111,11 @@ fn boardpilotservice_send (message: String) {
 fn run_boardpilotservice() {
     let binary_path = if cfg!(windows) {
         "./external_bin/BoardPilotService-x86_64-pc-windows-msvc.exe"
-    } else {
+    }
+    else if cfg!(unix) {
+        "./external_bin/BoardPilotService-x86_64-unknown-linux-gnu"
+    }
+    else {
         // handle other platforms or simply panic if unsupported
         panic!("Unsupported platform!");
     };
