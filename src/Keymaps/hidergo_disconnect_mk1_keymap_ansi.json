@@ -1,0 +1,728 @@
+{
+    "name": "hid:ergo Disconnect MK1",
+    "type": "SPLITKB",
+    "layers": [
+        "Default",
+        "Arrow",
+        "Bottom"
+    ],
+
+    "keys_left": [
+        [
+            {
+                "name": "esc",
+                "size": 1,
+                "pos": 0,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070029"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x00070035"}
+                ]
+            },
+            {
+                "name": "1",
+                "size": 1,
+                "pos": 1,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007001E"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x0007003A"}
+                ]
+            },
+            {
+                "name": "2",
+                "size": 1,
+                "pos": 2,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007001F"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x0007003B"}
+                ]
+            },
+            {
+                "name": "3",
+                "size": 1,
+                "pos": 3,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070020"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x0007003C"}
+                ]
+            },
+            {
+                "name": "4",
+                "size": 1,
+                "pos": 4,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070021"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x0007003D"}
+                ]
+            },
+            {
+                "name": "5",
+                "size": 1,
+                "pos": 5,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070022"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x0007003E"}
+                ]
+            },
+            {
+                "name": "6",
+                "size": 1,
+                "pos": 6,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070023"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x0007003F"}
+                ]
+            }
+        ],
+        [
+            {
+                "name": "tab",
+                "size": 1.5,
+                "pos": 14,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007002B"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "q",
+                "size": 1,
+                "pos": 15,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070014"},
+                    {"device": "TRANS"},
+                    {"device": "BLUETOOTH", "param1": 3, "param2": 0}
+                ]
+            },
+            {
+                "name": "w",
+                "size": 1,
+                "pos": 16,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007001A"},
+                    {"device": "TRANS"},
+                    {"device": "BLUETOOTH", "param1": 3, "param2": 1}
+                ]
+            },
+            {
+                "name": "e",
+                "size": 1,
+                "pos": 17,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070008"},
+                    {"device": "TRANS"},
+                    {"device": "BLUETOOTH", "param1": 3, "param2": 2}
+                ]
+            },
+            {
+                "name": "r",
+                "size": 1,
+                "pos": 18,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070015"},
+                    {"device": "TRANS"},
+                    {"device": "RESET"}
+                ]
+            },
+            {
+                "name": "t",
+                "size": 1,
+                "pos": 19,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070017"},
+                    {"device": "TRANS"},
+                    {"device": "BLUETOOTH", "param1": 0}
+                ]
+            }
+        ],
+        [
+            {
+                "name": "mod",
+                "size": 1.75,
+                "pos": 28,
+                "disabled": true
+            },
+            {
+                "name": "a",
+                "size": 1,
+                "pos": 29,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070004"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "s",
+                "size": 1,
+                "pos": 30,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070016"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "d",
+                "size": 1,
+                "pos": 31,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070007"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "f",
+                "size": 1,
+                "pos": 32,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070009"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "g",
+                "size": 1,
+                "pos": 33,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007000A"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "rotary_l",
+                "size": 1,
+                "pos": 34,
+                "hidden": true,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x000C00E2"},
+                    {"device": "TRANS"},
+                    {"device": "BOOTLOAD"}
+                ]
+            }
+        ],
+        [
+            {
+                "name": "lshift",
+                "size":2.25,
+                "pos": 42,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x000700E1"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "z",
+                "size": 1,
+                "pos": 44,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007001D"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "x",
+                "size": 1,
+                "pos": 45,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007001B"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "c",
+                "size": 1,
+                "pos": 46,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070006"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x000C00B6"}
+                ]
+            },
+            {
+                "name": "v",
+                "size": 1,
+                "pos": 47,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070019"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x000C00CD"}
+                ]
+            },
+            {
+                "name": "b_left",
+                "size": 1,
+                "pos": 48,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070005"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x000C00B7"}
+                ]
+            }
+        ],
+        [
+            {
+                "name": "lctrl",
+                "size": 1.25,
+                "pos": 57,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x000700E0"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "super",
+                "size": 1.25,
+                "pos": 58,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x000700E3"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "lalt",
+                "size": 1.25,
+                "pos": 59,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x000700E2"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "tog",
+                "size": 1,
+                "pos": 60,
+                "disabled": true
+            },
+            {
+                "name": "lbspace",
+                "size": 2,
+                "rot": -45,
+                "offX": -0.3,
+                "offY": 1.5,
+                "pos": 61,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007002A"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x0007004C"}
+                ]
+            },
+            {
+                "name": "lspace",
+                "size": 2,
+                "rot": -45,
+                "offX": -1.5,
+                "offY": 2.3,
+                "pos": 62,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007002C"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "lenter",
+                "size": 1,
+                "rot": -45,
+                "offX": -2,
+                "offY": 0.8,
+                "pos": 63,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070028"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x00070049"}
+                ]
+            }
+        ]
+        
+    ],
+    "keys_right": [
+        [
+            {
+                "name": "rbspace",
+                "size": 2,
+                "pos": 13,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007002A"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x0007004C"}
+                ]
+            },
+            {
+                "name": "acute",
+                "size": 1,
+                "pos": 12,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007002E"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x00070045"}
+                ]
+            },
+            {
+                "name": "plus",
+                "size": 1,
+                "pos": 11,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007002D"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x00070044"}
+                ]
+            },
+            {
+                "name": "0",
+                "size": 1,
+                "pos": 10,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070027"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x00070043"}
+                ]
+            },
+            {
+                "name": "9",
+                "size": 1,
+                "pos": 9,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070026"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x00070042"}
+                ]
+            },
+            {
+                "name": "8",
+                "size": 1,
+                "pos": 8,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070025"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x00070041"}
+                ]
+            },
+            {
+                "name": "7",
+                "size": 1,
+                "pos": 7,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070024"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x00070040"}
+                ]
+            }
+        ],
+        [
+            {
+                "name": "backslash",
+                "size": 1.5,
+                "pos": 41,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070031"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x00070046"}
+                ]
+            },
+            {
+                "name": "caret",
+                "size": 1,
+                "pos": 26,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070030"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x0007004B"}
+                ]
+            },
+            {
+                "name": "å",
+                "size": 1,
+                "pos": 25,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007002F"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x0007004A"}
+                ]
+            },
+            {
+                "name": "p",
+                "size": 1,
+                "pos": 24,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070013"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x00070049"}
+                ]
+            },
+            {
+                "name": "o",
+                "size": 1,
+                "pos": 23,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070012"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "i",
+                "size": 1,
+                "pos": 22,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007000C"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "u",
+                "size": 1,
+                "pos": 21,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070018"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "y",
+                "size": 1,
+                "pos": 20,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007001C"},
+                    {"device": "TRANS"},
+                    {"device": "RESET"}
+                ]
+            }
+        ],
+        [
+            {
+                "name": "renter",
+                "size": 2.25,
+                "pos": 27,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070028"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x00070049"}
+                ]
+            },
+            {
+                "name": "ä",
+                "size": 1,
+                "pos": 40,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070034"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x0007004E"}
+                ]
+            },
+            {
+                "name": "ö",
+                "size": 1,
+                "pos": 39,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070033"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x0007004D"}
+                ]
+            },
+            {
+                "name": "l",
+                "size": 1,
+                "pos": 38,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007000F"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x0007004F"}
+                ]
+            },
+            {
+                "name": "k",
+                "size": 1,
+                "pos": 37,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007000E"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x00070052"}
+                ]
+            },
+            {
+                "name": "j",
+                "size": 1,
+                "pos": 36,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007000D"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x00070051"}
+                ]
+            },
+            {
+                "name": "h",
+                "size": 1,
+                "pos": 35,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007000B"},
+                    {"device": "TRANS"},
+                    {"device": "KEY_PRESS", "param1": "0x00070050"}
+                ]
+            }
+        ],
+        [
+            {
+                "name": "rshift",
+                "size": 2.75,
+                "pos": 56,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x000700E5"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "dash",
+                "size": 1,
+                "pos": 55,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070038"},
+                    {"device": "KEY_PRESS", "param1": "0x00070052"},
+                    {"device": "KEY_PRESS", "param1": "0x00070052"}
+                ]
+            },
+            {
+                "name": "dot",
+                "size": 1,
+                "pos": 54,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070037"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "comma",
+                "size": 1,
+                "pos": 53,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070036"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "m",
+                "size": 1,
+                "pos": 52,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070010"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "n",
+                "size": 1,
+                "pos": 51,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070011"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "b_right",
+                "size": 1,
+                "pos": 50,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070005"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "rotary_r",
+                "size": 1,
+                "pos": 49,
+                "hidden": true,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x000C00E2"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            }
+        ],
+        [
+            {
+                "name": "FN_right",
+                "size": 1.5,
+                "pos": 69,
+                "defaults": [
+                    {"device": "MO", "param1": 2},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "rctrl",
+                "size": 1.25,
+                "pos": 68,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x000700E4"},
+                    {"device": "KEY_PRESS", "param1": "0x0007004F"},
+                    {"device": "KEY_PRESS", "param1": "0x0007004F"}
+                ]
+            },
+            {
+                "name": "menu",
+                "size": 1,
+                "pos": 67,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x00070065"},
+                    {"device": "KEY_PRESS", "param1": "0x00070051"},
+                    {"device": "KEY_PRESS", "param1": "0x00070051"}
+                ]
+            },
+            {
+                "name": "rsuper",
+                "size": 1.25,
+                "pos": 66,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x000700E7"},
+                    {"device": "KEY_PRESS", "param1": "0x00070050"},
+                    {"device": "KEY_PRESS", "param1": "0x00070050"}
+                ]
+            },
+            {
+                "name": "ralt",
+                "size": 1.25,
+                "pos": 65,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x000700E6"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            },
+            {
+                "name": "rspace",
+                "size": 2,
+                "pos": 64,
+                "defaults": [
+                    {"device": "KEY_PRESS", "param1": "0x0007002C"},
+                    {"device": "TRANS"},
+                    {"device": "TRANS"}
+                ]
+            }
+        ]
+    ]
+}

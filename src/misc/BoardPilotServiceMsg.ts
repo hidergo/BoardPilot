@@ -5,7 +5,7 @@ import { DeviceInfo } from './Device';
 /**
  * @brief Command list
  */
-export enum HidergodCmd {
+export enum BoardPilotServiceCmd {
     APICMD_REGISTER =       0x01,
     APICMD_DEVICES =        0x10,
 
@@ -23,12 +23,12 @@ export enum ApiEventType {
     APIEVENT_DEVICE_DISCONNECTED
 }
 
-export namespace HidergodMsg {
+export namespace BoardPilotServiceMsg {
     /**
      * @brief Default request structure
      */
     export type request = {
-        cmd: HidergodCmd,
+        cmd: BoardPilotServiceCmd,
         // reqid is set in Hidergod.request() function so not needed here
         //reqid: number
     }
@@ -36,7 +36,7 @@ export namespace HidergodMsg {
      * @brief Default response structure
      */
     export type response = {
-        cmd: HidergodCmd,
+        cmd: BoardPilotServiceCmd,
         status: boolean,
         reqid: number
     }
@@ -47,14 +47,14 @@ export namespace HidergodMsg {
      * @brief Registration request message. Not derived from request
      */
     export interface registerRequest {
-        cmd: HidergodCmd.APICMD_REGISTER,
+        cmd: BoardPilotServiceCmd.APICMD_REGISTER,
         key: string
     }
     /**
      * @brief Registration response message. Not derived from response
      */
     export interface registerResponse {
-        cmd: HidergodCmd.APICMD_REGISTER,
+        cmd: BoardPilotServiceCmd.APICMD_REGISTER,
         status: boolean
     }
 
@@ -62,13 +62,13 @@ export namespace HidergodMsg {
      * @brief Request devices
      */
     export interface devicesRequest extends request {
-        cmd: HidergodCmd.APICMD_DEVICES
+        cmd: BoardPilotServiceCmd.APICMD_DEVICES
     }
     /**
      * @brief Request devices response
      */
     export interface devicesResponse extends response {
-        cmd: HidergodCmd.APICMD_DEVICES,
+        cmd: BoardPilotServiceCmd.APICMD_DEVICES,
         devices: DeviceInfo[]
     }
     
@@ -76,7 +76,7 @@ export namespace HidergodMsg {
      * @brief Write to zmk_config request
      */
     export interface controlWriteRequest extends request {
-        cmd: HidergodCmd.APICMD_ZMK_CONTROL_WRITE,
+        cmd: BoardPilotServiceCmd.APICMD_ZMK_CONTROL_WRITE,
         device: string,
         field: ConfigField,
         save: boolean,
@@ -87,7 +87,7 @@ export namespace HidergodMsg {
      * @brief Write to zmk_config response
      */
     export interface controlWriteResponse extends response {
-        cmd: HidergodCmd.APICMD_ZMK_CONTROL_WRITE,
+        cmd: BoardPilotServiceCmd.APICMD_ZMK_CONTROL_WRITE,
         device: string,
         field: ConfigField
     }
@@ -96,7 +96,7 @@ export namespace HidergodMsg {
      * @brief Read from zmk_config request
      */
     export interface controlReadRequest extends request {
-        cmd: HidergodCmd.APICMD_ZMK_CONTROL_READ,
+        cmd: BoardPilotServiceCmd.APICMD_ZMK_CONTROL_READ,
         device: string,
         field: ConfigField
     }
@@ -104,7 +104,7 @@ export namespace HidergodMsg {
      * @brief Read from zmk_config response
      */
     export interface controlReadResponse extends response {
-        cmd: HidergodCmd.APICMD_ZMK_CONTROL_READ,
+        cmd: BoardPilotServiceCmd.APICMD_ZMK_CONTROL_READ,
         device: string,
         field: ConfigField,
         // Received as hex string
@@ -115,7 +115,7 @@ export namespace HidergodMsg {
      * @brief Event response
      */
     export interface eventResponse {
-        cmd: HidergodCmd.APICMD_EVENT,
+        cmd: BoardPilotServiceCmd.APICMD_EVENT,
         type: ApiEventType,
         device: DeviceInfo
     }

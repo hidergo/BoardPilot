@@ -2,7 +2,7 @@ import { invoke } from "@tauri-apps/api";
 import { listen } from "@tauri-apps/api/event";
 import { bytesToHex, ConfigField, hexToBytes } from "./ConfigFields";
 import Device, { DeviceInfo } from "./Device";
-import { ApiEventType, HidergodCmd, HidergodMsg } from "./HidergodMsg";
+import { ApiEventType, BoardPilotServiceCmd, BoardPilotServiceMsg } from "./BoardPilotServiceMsg";
 
 export type OnResponseCallback = (data: object | null) => any;
 
@@ -10,14 +10,14 @@ export type OnReadConfigCallback = (data: {field: ConfigField, device: Device | 
 export type OnWriteConfigCallback = (data: {field: ConfigField, device: Device | undefined, status: boolean}) => void;
 
 
-export default class Hidergod {
+export default class BoardPilotService {
 
     private static _reqid = 0;
     private static get reqid () {
         return this._reqid++;
     }
 
-    public static instance : Hidergod | null = null;
+    public static instance : BoardPilotService | null = null;
 
     private connected = false;
 
@@ -25,10 +25,10 @@ export default class Hidergod {
 
     constructor (port: number = 24429) {
 
-        if(Hidergod.instance !== null)
+        if(BoardPilotService.instance !== null)
             return;
 
-        Hidergod.instance = this;
+        BoardPilotService.instance = this;
 
         // Set events
         listen('api_onopen', (event) => {
@@ -51,19 +51,19 @@ export default class Hidergod {
         });
 
         // Connect
-        invoke("hidergod_connect", {port: port});
+        invoke("boardpilotservice_connect", {port: port});
     }
 
     private authenticate () {
 
         console.log("Authenticating...")
-        const msg : HidergodMsg.registerRequest = {
-            cmd: HidergodCmd.APICMD_REGISTER,
+        const msg : BoardPilotServiceMsg.registerRequest = {
+            cmd: BoardPilotServiceCmd.APICMD_REGISTER,
             key: "p*kG462jhJBY166EZLKxf9Du"
         }
 
         this.request(msg, (data) => {
-            const resp = data as HidergodMsg.registerResponse;
+            const resp = data as BoardPilotServiceMsg.registerResponse;
             
             if(data && resp.status) {
                 console.log("Logged in to the API");
@@ -96,8 +96,8 @@ export default class Hidergod {
                 }
             }
 
-            if(jsn.cmd === HidergodCmd.APICMD_EVENT) {
-                const msg = jsn as HidergodMsg.eventResponse;
+            if(jsn.cmd === BoardPilotServiceCmd.APICMD_EVENT) {
+                const msg = jsn as BoardPilotServiceMsg.eventResponse;
                 switch(msg.type) {
                     case ApiEventType.APIEVENT_NONE:
                         console.log("Unknown event");
@@ -143,7 +143,7 @@ export default class Hidergod {
     }
 
     /**
-     * @brief Sends a request to hidergod
+     * @brief Sends a request to BoardPilotService
      * @param msg 
      * @param onResponse 
      * @returns 
@@ -152,7 +152,7 @@ export default class Hidergod {
         if(!this.connected)
             return false;
 
-        const _req_id = Hidergod.reqid;
+        const _req_id = BoardPilotService.reqid;
         const nmsg = {
             ...msg,
             reqid: _req_id
@@ -161,7 +161,7 @@ export default class Hidergod {
         if(onResponse) {
             this._requests.push({reqid: _req_id, callback: onResponse});
         }
-        invoke("hidergod_send", {message: JSON.stringify(nmsg)});
+        invoke("boardpilotservice_send", {message: JSON.stringify(nmsg)});
         return true;
     }
 
@@ -173,14 +173,14 @@ export default class Hidergod {
      * @returns 
      */
     public readConfig (device: Device, field: ConfigField, onResponse?: OnReadConfigCallback) {
-        const msg : HidergodMsg.controlReadRequest = {
-            cmd: HidergodCmd.APICMD_ZMK_CONTROL_READ,
+        const msg : BoardPilotServiceMsg.controlReadRequest = {
+            cmd: BoardPilotServiceCmd.APICMD_ZMK_CONTROL_READ,
             field: field,
             device: device.deviceInfo.device.serial
         }
         return this.request(msg, (resp) => {
             if(resp) {
-                const readResp = resp as HidergodMsg.controlReadResponse;
+                const readResp = resp as BoardPilotServiceMsg.controlReadResponse;
 
                 const dev = Device.findDevice(readResp.device);
                 const data = hexToBytes(readResp.bytes);
@@ -207,8 +207,8 @@ export default class Hidergod {
      * @returns 
      */
     public writeConfig (device: Device, field: ConfigField, data: Uint8Array, save: boolean, onResponse?: OnWriteConfigCallback) {
-        const msg : HidergodMsg.controlWriteRequest = {
-            cmd: HidergodCmd.APICMD_ZMK_CONTROL_WRITE,
+        const msg : BoardPilotServiceMsg.controlWriteRequest = {
+            cmd: BoardPilotServiceCmd.APICMD_ZMK_CONTROL_WRITE,
             field: field,
             save: save,
             bytes: bytesToHex(data),
@@ -216,7 +216,7 @@ export default class Hidergod {
         }
         return this.request(msg, (resp) => {
             if(resp) {
-                const writeResp = resp as HidergodMsg.controlWriteResponse;
+                const writeResp = resp as BoardPilotServiceMsg.controlWriteResponse;
 
                 const dev = Device.findDevice(writeResp.device);
 

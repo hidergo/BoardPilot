@@ -8,10 +8,10 @@ import Editor from "react-simple-code-editor";
 import HDLDisplay from "../hdl/HDLDisplay";
 import { highlight, languages } from "prismjs";
 import { basename } from "@tauri-apps/api/path";
-import Hidergod from "../misc/Hidergod";
+import BoardPilotService from "../misc/BoardPilotService";
 import Device from "../misc/Device";
 import { bytesToHex, ConfigField } from "../misc/ConfigFields";
-import { HidergodCmd } from "../misc/HidergodMsg";
+import { BoardPilotServiceCmd } from "../misc/BoardPilotServiceMsg";
 import { colorPalette } from '../Styles/Colors';
 import { IosShare, ExitToApp, Save, NoteAdd } from "@mui/icons-material";
 
@@ -271,8 +271,8 @@ content += `};`;
         const actualBytes = new Uint8Array(1024);
         actualBytes.set(bytes);
 
-        Hidergod.instance?.request({
-            cmd: HidergodCmd.APICMD_ZMK_CONTROL_WRITE,
+        BoardPilotService.instance?.request({
+            cmd: BoardPilotServiceCmd.APICMD_ZMK_CONTROL_WRITE,
             device: Device.selectedDevice.deviceInfo.device.serial,
             field: ConfigField.ZMK_CONFIG_KEY_DISPLAY_CODE,
             save: false,

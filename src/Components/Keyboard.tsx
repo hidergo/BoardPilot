@@ -171,11 +171,8 @@ function KeyboardSplit(props: KeyboardProps) {
                     }
 
                     let visibleText = "";
-                    console.log(v)
-                    console.log("layer", props.layer)
                     //@ts-ignore
                     if (v.defaults && v.defaults[props.layer] && v.defaults[props.layer].device && v.defaults[props.layer].param1 && v.defaults[props.layer].device != "MO") {
-                        console.log("in loop")
                         let found = false;
                         for (let group of keymapBehaviours[v.defaults[props.layer].device].groups) {
                             for (let value of group.values) {
@@ -241,7 +238,6 @@ function KeyboardSplit(props: KeyboardProps) {
 
                     let visibleText = "";
                     if (v.defaults && v.defaults[props.layer] && v.defaults[props.layer].device && v.defaults[props.layer].param1 && v.defaults[props.layer].device != "MO") {
-                        console.log("in loop")
                         let found = false;
                         for (let group of keymapBehaviours[v.defaults[props.layer].device].groups) {
                             for (let value of group.values) {

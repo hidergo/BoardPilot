@@ -12,9 +12,15 @@ use std::{net::TcpStream, io::Read, io::Write};
 
 use tauri::Window;
 
+use tauri::api::process::Command;
+
+use std::thread;
+
+use std::time::Duration;
+
 static mut tcp_stream: Option<TcpStream> = None;
 
-fn hidergod_recv_thread (mut stream: TcpStream, window: Window) {
+fn boardpilotservice_recv_thread (mut stream: TcpStream, window: Window) {
     let mut buffer = [0u8; 4096];
     window.emit("api_onopen", Payload { message: "".into() }).unwrap();
     let mut err = 0;
@@ -44,7 +50,7 @@ fn hidergod_recv_thread (mut stream: TcpStream, window: Window) {
 } 
 
 #[tauri::command]
-fn hidergod_connect (window: Window, port: u16) -> bool {
+fn boardpilotservice_connect (window: Window, port: u16) -> bool {
     println!("Connecting to server...");
     unsafe {
         if tcp_stream.is_some() {
@@ -72,7 +78,7 @@ fn hidergod_connect (window: Window, port: u16) -> bool {
                 unsafe {
                     tcp_stream = Some(nstrm);
                 }
-                hidergod_recv_thread(strm, window);
+                boardpilotservice_recv_thread(strm, window);
             });
             println!("Connected to server");
             return true;
@@ -86,7 +92,7 @@ fn hidergod_connect (window: Window, port: u16) -> bool {
 }
 
 #[tauri::command]
-fn hidergod_send (message: String) {
+fn boardpilotservice_send (message: String) {
     unsafe {
         match &tcp_stream {
             None => {
@@ -101,14 +107,30 @@ fn hidergod_send (message: String) {
     }
 }
 
+#[tauri::command]
+fn run_boardpilotservice() {
+    let binary_path = if cfg!(windows) {
+        "./external_bin/BoardPilotService-x86_64-pc-windows-msvc.exe"
+    } else {
+        // handle other platforms or simply panic if unsupported
+        panic!("Unsupported platform!");
+    };
+
+    let mut command = Command::new(binary_path);
+    command.spawn().expect("failed to run the binary");
+}
 fn main() {
+    run_boardpilotservice();
+    thread::sleep(Duration::from_secs(2));
     tauri::Builder::default()
         .setup(|app| {
             
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![hidergod_connect, hidergod_send])
+        .invoke_handler(tauri::generate_handler![boardpilotservice_connect, boardpilotservice_send])
 
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
+
+

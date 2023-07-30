@@ -1,5 +1,5 @@
-import Hidergod from "./Hidergod";
-import { HidergodCmd, HidergodMsg } from "./HidergodMsg";
+import BoardPilotService from "./BoardPilotService";
+import { BoardPilotServiceCmd, BoardPilotServiceMsg } from "./BoardPilotServiceMsg";
 
 export type DeviceInfo = {
     product: {
@@ -72,12 +72,12 @@ export default class Device {
     }
 
     static fetchDevices () {
-        const msg : HidergodMsg.devicesRequest = {
-            cmd: HidergodCmd.APICMD_DEVICES
+        const msg : BoardPilotServiceMsg.devicesRequest = {
+            cmd: BoardPilotServiceCmd.APICMD_DEVICES
         }
-        Hidergod.instance?.request(msg, (data) => {
+        BoardPilotService.instance?.request(msg, (data) => {
             if(data) {
-                const resp = data as HidergodMsg.devicesResponse;
+                const resp = data as BoardPilotServiceMsg.devicesResponse;
 
                 resp.devices.forEach(e => {
                     let dev = Device.findDevice(e.device.serial);

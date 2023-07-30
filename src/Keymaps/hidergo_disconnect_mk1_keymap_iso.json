@@ -11,10 +11,7 @@
         [
             {
                 "name": "esc",
-                "dsp": "ESC",
-                "dsp2": "§",
                 "size": 1,
-                "fontSize": 0.8,
                 "pos": 0,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x00070029"},
@@ -24,8 +21,6 @@
             },
             {
                 "name": "1",
-                "dsp": "1",
-                "dsp2": "F1",
                 "size": 1,
                 "pos": 1,
                 "defaults": [
@@ -36,8 +31,6 @@
             },
             {
                 "name": "2",
-                "dsp": "2",
-                "dsp2": "F2",
                 "size": 1,
                 "pos": 2,
                 "defaults": [
@@ -48,8 +41,6 @@
             },
             {
                 "name": "3",
-                "dsp": "3",
-                "dsp2": "F3",
                 "size": 1,
                 "pos": 3,
                 "defaults": [
@@ -60,8 +51,6 @@
             },
             {
                 "name": "4",
-                "dsp": "4",
-                "dsp2": "F4",
                 "size": 1,
                 "pos": 4,
                 "defaults": [
@@ -72,8 +61,6 @@
             },
             {
                 "name": "5",
-                "dsp": "5",
-                "dsp2": "F5",
                 "size": 1,
                 "pos": 5,
                 "defaults": [
@@ -84,8 +71,6 @@
             },
             {
                 "name": "6",
-                "dsp": "6",
-                "dsp2": "F6",
                 "size": 1,
                 "pos": 6,
                 "defaults": [
@@ -98,9 +83,7 @@
         [
             {
                 "name": "tab",
-                "dsp": "TAB",
                 "size": 1.5,
-                "fontSize": 0.8,
                 "pos": 14,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x0007002B"},
@@ -110,8 +93,6 @@
             },
             {
                 "name": "q",
-                "dsp": "Q",
-                "dsp2": "BT 1",
                 "size": 1,
                 "pos": 15,
                 "defaults": [
@@ -122,8 +103,6 @@
             },
             {
                 "name": "w",
-                "dsp": "W",
-                "dsp2": "BT 2",
                 "size": 1,
                 "pos": 16,
                 "defaults": [
@@ -134,8 +113,6 @@
             },
             {
                 "name": "e",
-                "dsp": "E",
-                "dsp2": "BT 3",
                 "size": 1,
                 "pos": 17,
                 "defaults": [
@@ -146,8 +123,6 @@
             },
             {
                 "name": "r",
-                "dsp": "R",
-                "dsp2": "RESET",
                 "size": 1,
                 "pos": 18,
                 "defaults": [
@@ -158,8 +133,6 @@
             },
             {
                 "name": "t",
-                "dsp": "T",
-                "dsp2": "BT CLR",
                 "size": 1,
                 "pos": 19,
                 "defaults": [
@@ -172,16 +145,12 @@
         [
             {
                 "name": "mod",
-                "dsp": "MOD",
-                "dsp2": "CAPS LOCK",
                 "size": 1.75,
-                "fontSize": 0.8,
                 "pos": 28,
                 "disabled": true
             },
             {
                 "name": "a",
-                "dsp": "A",
                 "size": 1,
                 "pos": 29,
                 "defaults": [
@@ -192,7 +161,6 @@
             },
             {
                 "name": "s",
-                "dsp": "S",
                 "size": 1,
                 "pos": 30,
                 "defaults": [
@@ -203,7 +171,6 @@
             },
             {
                 "name": "d",
-                "dsp": "D",
                 "size": 1,
                 "pos": 31,
                 "defaults": [
@@ -214,7 +181,6 @@
             },
             {
                 "name": "f",
-                "dsp": "F",
                 "size": 1,
                 "pos": 32,
                 "defaults": [
@@ -225,7 +191,6 @@
             },
             {
                 "name": "g",
-                "dsp": "G",
                 "size": 1,
                 "pos": 33,
                 "defaults": [
@@ -236,7 +201,6 @@
             },
             {
                 "name": "rotary_l",
-                "dsp": ".",
                 "size": 1,
                 "pos": 34,
                 "hidden": true,
@@ -250,9 +214,7 @@
         [
             {
                 "name": "lshift",
-                "dsp": "SHIFT",
                 "size": 1.25,
-                "fontSize": 0.8,
                 "pos": 42,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x000700E1"},
@@ -262,7 +224,6 @@
             },
             {
                 "name": "lt",
-                "dsp": "<",
                 "size": 1,
                 "pos": 43,
                 "defaults": [
@@ -273,7 +234,6 @@
             },
             {
                 "name": "z",
-                "dsp": "Z",
                 "size": 1,
                 "pos": 44,
                 "defaults": [
@@ -284,7 +244,6 @@
             },
             {
                 "name": "x",
-                "dsp": "X",
                 "size": 1,
                 "pos": 45,
                 "defaults": [
@@ -295,8 +254,6 @@
             },
             {
                 "name": "c",
-                "dsp": "C",
-                "dsp2": "Back",
                 "size": 1,
                 "pos": 46,
                 "defaults": [
@@ -307,8 +264,6 @@
             },
             {
                 "name": "v",
-                "dsp": "V",
-                "dsp2": "Play",
                 "size": 1,
                 "pos": 47,
                 "defaults": [
@@ -319,8 +274,6 @@
             },
             {
                 "name": "b_left",
-                "dsp": "B",
-                "dsp2": "Next",
                 "size": 1,
                 "pos": 48,
                 "defaults": [
@@ -333,9 +286,7 @@
         [
             {
                 "name": "lctrl",
-                "dsp": "CTRL",
                 "size": 1.25,
-                "fontSize": 0.8,
                 "pos": 57,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x000700E0"},
@@ -345,9 +296,7 @@
             },
             {
                 "name": "super",
-                "dsp": "SUPER",
                 "size": 1.25,
-                "fontSize": 0.8,
                 "pos": 58,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x000700E3"},
@@ -357,9 +306,7 @@
             },
             {
                 "name": "lalt",
-                "dsp": "ALT",
                 "size": 1.25,
-                "fontSize": 0.8,
                 "pos": 59,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x000700E2"},
@@ -369,21 +316,16 @@
             },
             {
                 "name": "tog",
-                "dsp": "TO",
                 "size": 1,
-                "fontSize": 0.8,
                 "pos": 60,
                 "disabled": true
             },
             {
                 "name": "lbspace",
-                "dsp": "BACK",
-                "dsp2": "DEL",
                 "size": 2,
                 "rot": -45,
                 "offX": -0.3,
                 "offY": 1.5,
-                "fontSize": 0.8,
                 "pos": 61,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x0007002A"},
@@ -393,12 +335,10 @@
             },
             {
                 "name": "lspace",
-                "dsp": "SPACE",
                 "size": 2,
                 "rot": -45,
                 "offX": -1.5,
                 "offY": 2.3,
-                "fontSize": 0.8,
                 "pos": 62,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x0007002C"},
@@ -408,13 +348,10 @@
             },
             {
                 "name": "lenter",
-                "dsp": "ENT",
-                "dsp2": "INS",
                 "size": 1,
                 "rot": -45,
                 "offX": -2,
                 "offY": 0.8,
-                "fontSize": 0.8,
                 "pos": 63,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x00070028"},
@@ -429,10 +366,7 @@
         [
             {
                 "name": "rbspace",
-                "dsp": "BACK",
-                "dsp2": "DEL",
                 "size": 2,
-                "fontSize": 0.8,
                 "pos": 13,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x0007002A"},
@@ -442,8 +376,6 @@
             },
             {
                 "name": "acute",
-                "dsp": "´",
-                "dsp2": "F12",
                 "size": 1,
                 "pos": 12,
                 "defaults": [
@@ -454,8 +386,6 @@
             },
             {
                 "name": "plus",
-                "dsp": "+",
-                "dsp2": "F11",
                 "size": 1,
                 "pos": 11,
                 "defaults": [
@@ -466,8 +396,6 @@
             },
             {
                 "name": "0",
-                "dsp": "0",
-                "dsp2": "F10",
                 "size": 1,
                 "pos": 10,
                 "defaults": [
@@ -478,8 +406,6 @@
             },
             {
                 "name": "9",
-                "dsp": "9",
-                "dsp2": "F9",
                 "size": 1,
                 "pos": 9,
                 "defaults": [
@@ -490,8 +416,6 @@
             },
             {
                 "name": "8",
-                "dsp": "8",
-                "dsp2": "F8",
                 "size": 1,
                 "pos": 8,
                 "defaults": [
@@ -502,8 +426,6 @@
             },
             {
                 "name": "7",
-                "dsp": "7",
-                "dsp2": "F7",
                 "size": 1,
                 "pos": 7,
                 "defaults": [
@@ -516,10 +438,7 @@
         [
             {
                 "name": "renter",
-                "dsp": "ENTER",
-                "dsp2": "INS",
                 "size": 1.5,
-                "fontSize": 0.8,
                 "pos": 27,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x00070028"},
@@ -529,8 +448,6 @@
             },
             {
                 "name": "caret",
-                "dsp": "^",
-                "dsp2": "PGUP",
                 "size": 1,
                 "pos": 26,
                 "defaults": [
@@ -541,8 +458,6 @@
             },
             {
                 "name": "å",
-                "dsp": "Å",
-                "dsp2": "HOME",
                 "size": 1,
                 "pos": 25,
                 "defaults": [
@@ -553,8 +468,6 @@
             },
             {
                 "name": "p",
-                "dsp": "P",
-                "dsp2": "INS",
                 "size": 1,
                 "pos": 24,
                 "defaults": [
@@ -565,7 +478,6 @@
             },
             {
                 "name": "o",
-                "dsp": "O",
                 "size": 1,
                 "pos": 23,
                 "defaults": [
@@ -576,7 +488,6 @@
             },
             {
                 "name": "i",
-                "dsp": "I",
                 "size": 1,
                 "pos": 22,
                 "defaults": [
@@ -587,7 +498,6 @@
             },
             {
                 "name": "u",
-                "dsp": "U",
                 "size": 1,
                 "pos": 21,
                 "defaults": [
@@ -598,8 +508,6 @@
             },
             {
                 "name": "y",
-                "dsp": "Y",
-                "dsp2": "RESET",
                 "size": 1,
                 "pos": 20,
                 "defaults": [
@@ -612,10 +520,7 @@
         [
             {
                 "name": "renter",
-                "dsp": "ENTER",
-                "dsp2": "INS",
                 "size": 1.25,
-                "fontSize": 0.8,
                 "pos": 27,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x00070028"},
@@ -625,8 +530,6 @@
             },
             {
                 "name": "squote",
-                "dsp": "'",
-                "dsp2": "PrtSc",
                 "size": 1,
                 "pos": 41,
                 "defaults": [
@@ -637,8 +540,6 @@
             },
             {
                 "name": "ä",
-                "dsp": "Ä",
-                "dsp2": "PGDN",
                 "size": 1,
                 "pos": 40,
                 "defaults": [
@@ -649,8 +550,6 @@
             },
             {
                 "name": "ö",
-                "dsp": "Ö",
-                "dsp2": "END",
                 "size": 1,
                 "pos": 39,
                 "defaults": [
@@ -661,8 +560,6 @@
             },
             {
                 "name": "l",
-                "dsp": "L",
-                "dsp2": "RIGHT",
                 "size": 1,
                 "pos": 38,
                 "defaults": [
@@ -673,8 +570,6 @@
             },
             {
                 "name": "k",
-                "dsp": "K",
-                "dsp2": "UP",
                 "size": 1,
                 "pos": 37,
                 "defaults": [
@@ -685,8 +580,6 @@
             },
             {
                 "name": "j",
-                "dsp": "J",
-                "dsp2": "DOWN",
                 "size": 1,
                 "pos": 36,
                 "defaults": [
@@ -697,8 +590,6 @@
             },
             {
                 "name": "h",
-                "dsp": "H",
-                "dsp2": "LEFT",
                 "size": 1,
                 "pos": 35,
                 "defaults": [
@@ -711,9 +602,7 @@
         [
             {
                 "name": "rshift",
-                "dsp": "SHIFT",
                 "size": 2.75,
-                "fontSize": 0.8,
                 "pos": 56,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x000700E5"},
@@ -723,8 +612,6 @@
             },
             {
                 "name": "dash",
-                "dsp": "-",
-                "dsp2": "UP",
                 "size": 1,
                 "pos": 55,
                 "defaults": [
@@ -735,7 +622,6 @@
             },
             {
                 "name": "dot",
-                "dsp": ".",
                 "size": 1,
                 "pos": 54,
                 "defaults": [
@@ -746,7 +632,6 @@
             },
             {
                 "name": "comma",
-                "dsp": ",",
                 "size": 1,
                 "pos": 53,
                 "defaults": [
@@ -757,7 +642,6 @@
             },
             {
                 "name": "m",
-                "dsp": "M",
                 "size": 1,
                 "pos": 52,
                 "defaults": [
@@ -768,7 +652,6 @@
             },
             {
                 "name": "n",
-                "dsp": "N",
                 "size": 1,
                 "pos": 51,
                 "defaults": [
@@ -779,7 +662,6 @@
             },
             {
                 "name": "b_right",
-                "dsp": "B",
                 "size": 1,
                 "pos": 50,
                 "defaults": [
@@ -790,7 +672,6 @@
             },
             {
                 "name": "rotary_r",
-                "dsp": ".",
                 "size": 1,
                 "pos": 49,
                 "hidden": true,
@@ -804,9 +685,7 @@
         [
             {
                 "name": "FN_right",
-                "dsp": "FN",
                 "size": 1.5,
-                "fontSize": 0.8,
                 "pos": 69,
                 "defaults": [
                     {"device": "MO", "param1": 2},
@@ -816,10 +695,7 @@
             },
             {
                 "name": "rctrl",
-                "dsp": "CTRL",
-                "dsp2": "RIGHT",
                 "size": 1.25,
-                "fontSize": 0.8,
                 "pos": 68,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x000700E4"},
@@ -829,10 +705,7 @@
             },
             {
                 "name": "menu",
-                "dsp": "MENU",
-                "dsp2": "DOWN",
                 "size": 1,
-                "fontSize": 0.8,
                 "pos": 67,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x00070065"},
@@ -842,10 +715,7 @@
             },
             {
                 "name": "rsuper",
-                "dsp": "SUPER",
-                "dsp2": "LEFT",
                 "size": 1.25,
-                "fontSize": 0.8,
                 "pos": 66,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x000700E7"},
@@ -855,9 +725,7 @@
             },
             {
                 "name": "ralt",
-                "dsp": "ALTGR",
                 "size": 1.25,
-                "fontSize": 0.8,
                 "pos": 65,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x000700E6"},
@@ -867,9 +735,7 @@
             },
             {
                 "name": "rspace",
-                "dsp": "SPACE",
                 "size": 2,
-                "fontSize": 0.8,
                 "pos": 64,
                 "defaults": [
                     {"device": "KEY_PRESS", "param1": "0x0007002C"},

@@ -3,8 +3,8 @@ import { Box, Container } from "@mui/system";
 import React, { useEffect } from "react";
 import { ConfigField } from "../misc/ConfigFields";
 import Device from "../misc/Device";
-import Hidergod from "../misc/Hidergod";
-import { HidergodMsg } from "../misc/HidergodMsg";
+import BoardPilotService from "../misc/BoardPilotService";
+import { BoardPilotServiceMsg } from "../misc/BoardPilotServiceMsg";
 import { colorPalette } from "../Styles/Colors";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -238,7 +238,7 @@ export default function Trackpad () {
         dv.setUint16(18, getRawValue("initScrollDistance"), true);
 
 
-        Hidergod.instance?.writeConfig(
+        BoardPilotService.instance?.writeConfig(
             Device.selectedDevice, 
             ConfigField.ZMK_CONFIG_CUSTOM_IQS5XX_REGS, 
             data,
@@ -258,7 +258,7 @@ export default function Trackpad () {
         if(!Device.selectedDevice)
             return;
 
-        Hidergod.instance?.readConfig(
+        BoardPilotService.instance?.readConfig(
             Device.selectedDevice, 
             ConfigField.ZMK_CONFIG_CUSTOM_IQS5XX_REGS,
             (resp) => {
@@ -325,7 +325,7 @@ export default function Trackpad () {
         // uint8_t      mouseSensitivity;
         dv.setUint8(0, sensitivity);
         
-        Hidergod.instance?.writeConfig(
+        BoardPilotService.instance?.writeConfig(
             Device.selectedDevice, 
             ConfigField.ZMK_CONFIG_KEY_MOUSE_SENSITIVITY, 
             data,
@@ -345,7 +345,7 @@ export default function Trackpad () {
         if(!Device.selectedDevice)
             return;
         
-        Hidergod.instance?.readConfig(
+        BoardPilotService.instance?.readConfig(
             Device.selectedDevice, 
             ConfigField.ZMK_CONFIG_KEY_MOUSE_SENSITIVITY, 
             (resp) => {
@@ -384,7 +384,7 @@ export default function Trackpad () {
 
     return <Container sx={{paddingTop: 1, userSelect: 'none', backgroundColor: colorPalette.background, padding: 3, minWidth: "100%"}}>
             <Box>
-                <Typography variant="h5" sx={{padding: 2, paddingLeft: "10%"}}>Sensitivity</Typography>
+                <Typography variant="h4" sx={{padding: 2, paddingLeft: "10%"}}>Sensitivity</Typography>
                 <Box sx={{display: 'inline-flex', width: '80%', paddingLeft: "10%"}}>
                     <Slider 
                         value={sensitivity} 
@@ -408,7 +408,7 @@ export default function Trackpad () {
             </Box>
         {devMenuOpen &&
             <Box>
-            <Typography variant="h5" sx={{paddingBottom: 3, paddingLeft: "10%"}}>Trackpad IC (IQS550) raw register values</Typography>
+            <Typography variant="h4" sx={{paddingBottom: 3, paddingLeft: "10%"}}>Trackpad IC (IQS550) raw register values</Typography>
             <Button startIcon={<CachedIcon/>} sx={{marginLeft: "10%", marginBottom:3}} variant="contained" onClick={() => {setRawValues([...TrackpadConfDefault])}}>Reset to default</Button>
 
             {

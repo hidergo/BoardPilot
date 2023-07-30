@@ -14,6 +14,12 @@
       "all": true,
       "fs": {
         "scope": ["**"]
+      },
+      "shell": {
+        "sidecar": true,
+        "scope": [
+          { "name": "external_bin/BoardPilotService", "sidecar": true }
+        ]
       }
     },
     "bundle": {
@@ -23,7 +29,9 @@
       "deb": {
         "depends": []
       },
-      "externalBin": [],
+      "externalBin": [
+        "external_bin/BoardPilotService"
+      ],
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -39,7 +47,9 @@
         "providerShortName": null,
         "signingIdentity": null
       },
-      "resources": [],
+      "resources": [
+        "external_bin/BoardPilotService-x86_64-pc-windows-msvc.exe"
+      ],
       "shortDescription": "",
       "targets": "all",
       "windows": {

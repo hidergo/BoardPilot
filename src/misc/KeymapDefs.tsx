@@ -198,6 +198,7 @@ export const keymapBehaviours : {[key: string]: keymapBehaviourType} = {
                     { name: "Tab", value1: 0x0007002B },
                     { name: "Space", value1: 0x0007002C },
                     { name: "Insert", value1: 0x00070049 },
+                    { name: "Print Screen", value1: 0x00070046 }
                 ]
             },
             {
