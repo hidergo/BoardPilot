@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, Divider, Input, Slider, TextField, Tooltip, Typography } from "@mui/material";
+import { Alert, Button, Card, Checkbox, Divider, Input, Slider, Snackbar, TextField, Tooltip, Typography } from "@mui/material";
 import { Box, Container } from "@mui/system";
 import React, { useEffect } from "react";
 import { ConfigField } from "../misc/ConfigFields";
@@ -384,6 +384,15 @@ export default function Trackpad () {
 
     return <Container sx={{paddingTop: 1, userSelect: 'none', backgroundColor: colorPalette.background, padding: 3, minWidth: "100%"}}>
             <Box>
+                <Snackbar
+                    open={((Device.selectedDevice?.deviceInfo.device.protocol === "bt") || false)}
+                >
+                    <Alert
+                        severity="warning"
+                    >
+                        Can't read from device via bluetooth. Existing changes will be overwritten
+                    </Alert>
+                </Snackbar>
                 <Typography variant="h4" sx={{padding: 2, paddingLeft: "10%"}}>Sensitivity</Typography>
                 <Box sx={{display: 'inline-flex', width: '80%', paddingLeft: "10%"}}>
                     <Slider 

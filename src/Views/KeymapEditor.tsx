@@ -1,4 +1,4 @@
-import { Alert, Autocomplete, Button, Card, Divider, FormControl, InputLabel, MenuItem, Popover, Select, TextField, Typography, IconButton, Modal } from "@mui/material";
+import { Alert, Autocomplete, Button, Card, Divider, FormControl, InputLabel, MenuItem, Popover, Select, TextField, Typography, IconButton, Modal, Snackbar } from "@mui/material";
 import { Box } from "@mui/system";
 import { Fragment, useEffect, useState } from "react";
 import { readBinaryFile, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
@@ -309,6 +309,15 @@ export default function KeymapEditor() {
                         }
                     </Box>
                 </Box>
+                <Snackbar
+                    open={((Device.selectedDevice?.deviceInfo.device.protocol === "bt") || false)}
+                >
+                    <Alert
+                        severity="warning"
+                    >
+                        Can't read from device via bluetooth. Existing changes will be overwritten
+                    </Alert>
+                </Snackbar>
                 <svg key={refreshKey} style={{ cursor: 'pointer', }} width={window.innerWidth * 0.77} viewBox={"0 0 " + window.innerWidth * 0.90 + " 400"} xmlns="http://www.w3.org/2000/svg">
                     <Keymap
                         //@ts-ignore
