@@ -1,6 +1,6 @@
 [submodule "src/hdl-core"]
 	path = src/hdl-core
-	url = https://github.com/osmakari/hdl-core
+	url = https://github.com/hidergo/hdl-core
 [submodule "src/hdl-cmp-ts"]
 	path = src/hdl-cmp-ts
-	url = https://github.com/osmakari/hdl-cmp-ts
+	url = https://github.com/hidergo/hdl-cmp-ts
