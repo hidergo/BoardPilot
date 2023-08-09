@@ -1,4 +1,4 @@
-import { Box, Button, Card, CircularProgress, SxProps } from "@mui/material";
+import { Alert, Box, Button, Card, CircularProgress, Snackbar, SxProps } from "@mui/material";
 import { open, save } from "@tauri-apps/api/dialog";
 import { readBinaryFile, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import HDLCompiler, { FileReaderInterface } from "hdl-cmp-ts/src/HDLCompiler";
@@ -40,6 +40,8 @@ const editorBoxStyle : SxProps = {
     flex: 1,    
 }
 
+let codeBuffer = "";
+
 export default function Display () {
     
     useEffect(() => {
@@ -54,9 +56,12 @@ export default function Display () {
     }, []);
 
     const [hdlLoaded, setHdlLoaded] = useState(false);
-    const [code, setCode] = useState("");
+    const [code, setCode] = useState(codeBuffer);
     const [currentFilePath, setCurrentFilePath] = useState<string|null>(null);
     const [hdlBasePath, setHDLBasePath] = useState("./");
+
+    const [alertMsg, setAlertMsg] = useState("");
+    const [showAlert, setShowAlert] = useState(false);
     
     const canv = createRef<HTMLCanvasElement>();
     const canvasContainer = createRef<HTMLDivElement>();
@@ -139,8 +144,10 @@ export default function Display () {
             const cmp = new HDLCompiler(fileReaderInterface);
             cmp.basePath = hdlBasePath
             let ok = await cmp.load(code);
-            if(!ok) {
+            if(!ok.status) {
                 console.log("Failed to parse file");
+                setAlertMsg("HDL error: " + ok.error?.message);
+                setShowAlert(true);
                 return;
             }
             const bytes = cmp.compile();
@@ -193,12 +200,15 @@ content += `};`;
                 const txt = await readTextFile(file);
                 const cmp = new HDLCompiler(fileReaderInterface);
                 setCode(txt);
+                codeBuffer = txt;
                 cmp.basePath = dirname(file) + "/";
                 setHDLBasePath(cmp.basePath);
                 setCurrentFilePath(file);
                 let ok = await cmp.load(txt);
-                if(!ok) {
+                if(!ok.status) {
                     console.log("Failed to parse file");
+                    setAlertMsg("HDL error: " + ok.error?.message);
+                    setShowAlert(true);
                     return;
                 }
                 bytes = cmp.compile();
@@ -215,9 +225,12 @@ content += `};`;
         const cmp = new HDLCompiler(fileReaderInterface);
         cmp.basePath = basePath;
         setCode(code);
+        codeBuffer = code;
         let ok = await cmp.load(code);
-        if(!ok) {
+        if(!ok.status) {
             console.log("Failed to parse file");
+            setAlertMsg("HDL error: " + ok.error?.message);
+            setShowAlert(true);
             return;
         }
         const bytes = cmp.compile();
@@ -248,6 +261,7 @@ content += `};`;
 
     function newFile () {
         setCode("");
+        codeBuffer = "";
         setCurrentFilePath(null);
         setHDLBasePath("./");
     }
@@ -303,7 +317,7 @@ content += `};`;
                     <Box sx={{ padding: 3, display: 'flex', justifyContent: 'center', gap: 2, width: "100%"}}>
                         <Button startIcon={<ExitToApp/>} onClick={openFileDialog} variant="contained">Open .HDL</Button>
                         <Button startIcon={<NoteAdd/>} onClick={newFile} variant="contained">New .HDL file</Button>
-                        <Button startIcon={<Save/>} onClick={exportFile} variant="contained">Export .HDL</Button>
+                        <Button startIcon={<Save/>} onClick={exportFile} variant="contained">Export .c</Button>
                         <Button startIcon={<IosShare/>} onClick={uploadFile} variant="contained">Upload</Button>
 
                     </Box>
@@ -311,7 +325,7 @@ content += `};`;
                         <Editor 
                             value={code}
                             placeholder="Enter HDL code here..."
-                            onValueChange={c => setCode(c)}
+                            onValueChange={c => { setCode(c); codeBuffer = c; }}
                             highlight={c => highlight(c, languages.xml, "xml")}
                             onKeyDown={(e) => {
                                 if(e.ctrlKey) {
@@ -332,6 +346,17 @@ content += `};`;
                             padding={10}
                         />
                     </Box>
+                    <Snackbar
+                        open={showAlert}
+                        anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+                        onClose={() => setShowAlert(false)}
+                    >
+                        <Alert
+                            severity="error"
+                        >
+                            {alertMsg}
+                        </Alert>
+                    </Snackbar>
                 </Card>
             </Box>
     </Box>;
