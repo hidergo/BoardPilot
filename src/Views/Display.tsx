@@ -41,6 +41,7 @@ const editorBoxStyle : SxProps = {
 }
 
 let codeBuffer = "";
+let pathBuffer : string | null = null;
 
 export default function Display () {
     
@@ -57,7 +58,7 @@ export default function Display () {
 
     const [hdlLoaded, setHdlLoaded] = useState(false);
     const [code, setCode] = useState(codeBuffer);
-    const [currentFilePath, setCurrentFilePath] = useState<string|null>(null);
+    const [currentFilePath, setCurrentFilePath] = useState<string|null>(pathBuffer);
     const [hdlBasePath, setHDLBasePath] = useState("./");
 
     const [alertMsg, setAlertMsg] = useState("");
@@ -185,6 +186,7 @@ content += `};`;
         if(file) {
             await writeTextFile(file, code);
             setCurrentFilePath(file);
+            pathBuffer = file;
             setHDLBasePath(dirname(file) + "/");
         }
     }
@@ -204,6 +206,7 @@ content += `};`;
                 cmp.basePath = dirname(file) + "/";
                 setHDLBasePath(cmp.basePath);
                 setCurrentFilePath(file);
+                pathBuffer = file;
                 let ok = await cmp.load(txt);
                 if(!ok.status) {
                     console.log("Failed to parse file");
@@ -263,6 +266,7 @@ content += `};`;
         setCode("");
         codeBuffer = "";
         setCurrentFilePath(null);
+        pathBuffer = null;
         setHDLBasePath("./");
     }
 
