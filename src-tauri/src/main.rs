@@ -109,19 +109,10 @@ fn boardpilotservice_send (message: String) {
 
 #[tauri::command]
 fn run_boardpilotservice() {
-    let binary_path = if cfg!(windows) {
-        "./external_bin/BoardPilotService-x86_64-pc-windows-msvc.exe"
-    }
-    else if cfg!(unix) {
-        "./external_bin/BoardPilotService-x86_64-unknown-linux-gnu"
-    }
-    else {
-        // handle other platforms or simply panic if unsupported
-        panic!("Unsupported platform!");
-    };
-
-    let mut command = Command::new(binary_path);
-    command.spawn().expect("failed to run the binary");
+    let (mut rx, mut child) = Command::new_sidecar("BoardPilotService")
+        .expect("Failed to create `BoardPilotService` binary command")
+        .spawn()
+        .expect("Failed to spawn sidecar");
 }
 fn main() {
     run_boardpilotservice();
