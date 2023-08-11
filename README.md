@@ -6,6 +6,8 @@ Currently it is possible to change the keymap, edit the display contents and cha
 
 This program runs an external, more lightweight binary called [BoardPilotService](https://github.com/hidergo/BoardPilotService). The service uses [hidapi](https://github.com/osmakari/hidapi) to read and write custom data to the device. BoardPilot communicates with BoardPilotService with local TCP socket.
 
+:warning:**NOTE** On linux, if you don't want to run this program as super user, your user must be in `dialout` group (`uucp` group on Arch based distros). Without this this group the program cannot connect to the device.
+
 ## Development environment setup
 
 1. Install tauri toolchain according to the documentation here: [Link](https://tauri.app/v1/guides/getting-started/prerequisites)
