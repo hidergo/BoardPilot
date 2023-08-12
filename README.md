@@ -1,5 +1,7 @@
 # BoardPilot tauri frontend app.
 
+❗For now, only the Disconnect MK1 is supported. We're working on 'universalizing' it to work with other boards. We welcome contributors to help with this task to make it a reality sooner❗
+
 This is a tauri app which allows you to interface with the BoardPilot background service.
 
 Currently it is possible to change the keymap, edit the display contents and change trackpad variables. Reading and writing to a device is supported on Windows and Linux via USB. Bluetooth is not yet supported.
