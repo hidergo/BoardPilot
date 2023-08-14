@@ -119,7 +119,7 @@ export default function KeymapEditor() {
         let i = 0;
         // Find existing rebind
         for (let rk of reboundKeys) {
-            if (rk.key === key.key) {
+            if (rk.key === key.key && rk.layer === key.layer) {
                 // Found existing bind, replace it
 
                 // Check if default
