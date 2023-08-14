@@ -52,3 +52,18 @@ jobs:
 
     - name: Build
       run: npm run tauri build # -- --verbose
+
+    - name: Upload Built Binaries (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v2
+      with:
+        name: tauri-binaries-linux
+        path: src-tauri/target/release/* # Make sure this is the correct path for your binaries
+
+    - name: Upload Built Binaries (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-artifact@v2
+      with:
+        name: tauri-binaries-windows
+        path: src-tauri/target/release/* # Make sure this is the correct path for your binaries
+
