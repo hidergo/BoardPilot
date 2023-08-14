@@ -10,6 +10,12 @@ This program runs an external, more lightweight binary called [BoardPilotService
 
 :warning:**NOTE** On linux, if you don't want to run this program as super user, your user must be in `dialout` group (`uucp` group on Arch based distros). Without this this group the program cannot connect to the device.
 
+## Screenshots
+
+![Screenshot 1](https://github.com/hidergo/BoardPilot/blob/master/screenshots/BoardPilot_1.png)
+![Screenshot 2](https://github.com/hidergo/BoardPilot/blob/master/screenshots/BoardPilot_2.png)
+![Screenshot 3](https://github.com/hidergo/BoardPilot/blob/master/screenshots/BoardPilot_3.png)
+
 ## Development environment setup
 
 1. Install tauri toolchain according to the documentation here: [Link](https://tauri.app/v1/guides/getting-started/prerequisites)
