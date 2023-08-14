@@ -10,6 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
 
@@ -24,13 +25,16 @@ jobs:
       with:
         node-version: 18  # Change to your desired Node.js version
 
-    - name: Install Rust (Linux)
-      if: matrix.os == 'ubuntu-latest'
-      run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    - name: Install Rust
+      uses: actions-rust-lang/setup-rust-toolchain@v1
 
-    - name: Install Rust (Windows)
-      if: matrix.os == 'windows-latest'
-      run: Invoke-WebRequest -Uri https://win.rustup.rs -OutFile C:\rustup-init.exe; .\rustup-init.exe -y
+    #- name: Install Rust (Linux)
+    #  if: matrix.os == 'ubuntu-latest'
+    #  run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+    #- name: Install Rust (Windows)
+    #  if: matrix.os == 'windows-latest'
+    #  run: Invoke-WebRequest -Uri https://win.rustup.rs -OutFile C:\rustup-init.exe; .\rustup-init.exe -y
 
     - name: Install Dependencies
       run: npm install
