@@ -1,0 +1,37 @@
+name: BoardPilot Tauri automatic build
+
+on:
+  push:
+    branches:
+      - actions  # TODO: testing, change to master later
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14  # Change to your desired Node.js version
+
+    - name: Install Rust (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+    - name: Install Rust (Windows)
+      if: matrix.os == 'windows-latest'
+      run: Invoke-WebRequest -Uri https://win.rustup.rs -OutFile C:\rustup-init.exe; .\rustup-init.exe -y
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build
+      run: npm run tauri build -- --verbose
