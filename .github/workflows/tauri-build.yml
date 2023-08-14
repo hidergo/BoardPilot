@@ -58,12 +58,12 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: tauri-binaries-linux
-        path: src-tauri/target/release/* # Make sure this is the correct path for your binaries
+        path: src-tauri/target/release/bundle/* # Make sure this is the correct path for your binaries
 
     - name: Upload Built Binaries (Windows)
       if: matrix.os == 'windows-latest'
       uses: actions/upload-artifact@v2
       with:
         name: tauri-binaries-windows
-        path: src-tauri/target/release/* # Make sure this is the correct path for your binaries
+        path: src-tauri/target/release/bundle/* # Make sure this is the correct path for your binaries
 
