@@ -32,9 +32,6 @@ jobs:
       if: matrix.os == 'windows-latest'
       run: Invoke-WebRequest -Uri https://win.rustup.rs -OutFile C:\rustup-init.exe; .\rustup-init.exe -y
 
-    - name: Fetch submodules
-      
-
     - name: Install Dependencies
       run: npm install
 
