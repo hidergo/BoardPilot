@@ -169,6 +169,18 @@ export const keymapBehaviours : {[key: string]: keymapBehaviourType} = {
                     { name: "F10", value1: 0x00070043 },
                     { name: "F11", value1: 0x00070044 },
                     { name: "F12", value1: 0x00070045 },
+                    { name: "F13", value1: 0x00070068 },
+                    { name: "F14", value1: 0x00070069 },
+                    { name: "F15", value1: 0x0007006A },
+                    { name: "F16", value1: 0x0007006B },
+                    { name: "F17", value1: 0x0007006C },
+                    { name: "F18", value1: 0x0007006D },
+                    { name: "F19", value1: 0x0007006E },
+                    { name: "F20", value1: 0x0007006F },
+                    { name: "F21", value1: 0x00070070 },
+                    { name: "F22", value1: 0x00070071 },
+                    { name: "F23", value1: 0x00070072 },
+                    { name: "F24", value1: 0x00070073 }
                 ]
             },
             {
@@ -197,8 +209,8 @@ export const keymapBehaviours : {[key: string]: keymapBehaviourType} = {
                     { name: "Delete", value1: 0x0007004C },
                     { name: "Tab", value1: 0x0007002B },
                     { name: "Space", value1: 0x0007002C },
-                    { name: "Insert", value1: 0x00070049 },
-                    { name: "Print Screen", value1: 0x00070046 }
+                    { name: "Caps lock", value1: 0x00070039 },
+                    { name: "Insert", value1: 0x00070049 }
                 ]
             },
             {
@@ -223,7 +235,36 @@ export const keymapBehaviours : {[key: string]: keymapBehaviourType} = {
                     { name: "Up arrow", value1: 0x00070052}
 
                 ]
-            }
+            },
+            {
+                name: "System keys",
+                values: [
+                    { name: "Num Lock", value1: 0x00070053 },
+                    { name: "Print Screen", value1: 0x00070046 },
+                    { name: "Pause Break", value1: 0x00070048 },
+                ]
+            },
+            {
+                name: "Numpad",
+                values: [
+                    { name: "Numpad /", value1: 0x00070054 },
+                    { name: "Numpad *", value1: 0x00070055 },
+                    { name: "Numpad -", value1: 0x00070056 },
+                    { name: "Numpad +", value1: 0x00070057 },
+                    { name: "Numpad Enter", value1: 0x00070058 },
+                    { name: "Numpad 1", value1: 0x00070059 },
+                    { name: "Numpad 2", value1: 0x0007005A },
+                    { name: "Numpad 3", value1: 0x0007005B },
+                    { name: "Numpad 4", value1: 0x0007005C },
+                    { name: "Numpad 5", value1: 0x0007005D },
+                    { name: "Numpad 6", value1: 0x0007005E },
+                    { name: "Numpad 7", value1: 0x0007005F },
+                    { name: "Numpad 8", value1: 0x00070060 },
+                    { name: "Numpad 9", value1: 0x00070061 },
+                    { name: "Numpad 0", value1: 0x00070062 },
+                    { name: "Numpad .", value1: 0x00070063 }
+                ],
+            },
         ]
     },
     MO: {

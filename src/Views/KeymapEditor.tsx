@@ -114,12 +114,23 @@ export default function KeymapEditor() {
         return false;
     }
 
+    function resetKey (key: number | undefined, layer: number) {
+        if(key === undefined)
+            return;
+        
+        const rb = reboundKeys.findIndex(e => e.key === key && e.layer === layer);
+        if(rb >= 0) {
+            const ks = [...reboundKeys];
+            ks.splice(rb, 1);
+            setReboundKeys(ks);
+        }
+    }
 
     function rebindKey(key: KeyDef) {
         let i = 0;
         // Find existing rebind
         for (let rk of reboundKeys) {
-            if (rk.key === key.key) {
+            if (rk.key === key.key && rk.layer === key.layer) {
                 // Found existing bind, replace it
 
                 // Check if default
@@ -463,7 +474,7 @@ export default function KeymapEditor() {
                         }
                     </Box>
                     <Box sx={{ display: 'flex', flexDirection: 'row', padding: 1, paddingTop: 0 }}>
-                        <Button variant="contained" sx={{ flex: 1, marginRight: 2 }}>Reset</Button>
+                        <Button onClick={() => resetKey(selectedKey?.pos, selectedLayer)} variant="contained" sx={{ flex: 1, marginRight: 2 }}>Reset</Button>
                         <Typography variant="subtitle2" sx={{ flex: 1, color: 'grey' }}>{editorVal.description}</Typography>
                     </Box>
 
