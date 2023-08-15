@@ -3,7 +3,7 @@ name: BoardPilot Tauri automatic build
 on:
   push:
     branches:
-      - actions  # TODO: testing, change to master later
+      - master
 
 jobs:
   build:
