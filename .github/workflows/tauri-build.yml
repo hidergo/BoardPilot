@@ -1,0 +1,69 @@
+name: BoardPilot Tauri automatic build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'  # Initialize submodules recursively
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 18  # Change to your desired Node.js version
+
+    - name: Install Rust
+      uses: actions-rust-lang/setup-rust-toolchain@v1
+      with:
+        rustflags: ""
+
+    - name: Install required packages (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt update
+        sudo apt install libwebkit2gtk-4.0-dev build-essential curl wget file libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+
+    #- name: Install Rust (Linux)
+    #  if: matrix.os == 'ubuntu-latest'
+    #  run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+    #- name: Install Rust (Windows)
+    #  if: matrix.os == 'windows-latest'
+    #  run: Invoke-WebRequest -Uri https://win.rustup.rs -OutFile C:\rustup-init.exe; .\rustup-init.exe -y
+
+    - name: Install Dependencies
+      run: npm install
+      env:
+        CI: false
+        npm_config_loglevel: verbose
+
+    - name: Build
+      run: npm run tauri build # -- --verbose
+
+    - name: Upload Built Binaries (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v2
+      with:
+        name: tauri-binaries-linux
+        path: src-tauri/target/release/bundle/* # Make sure this is the correct path for your binaries
+
+    - name: Upload Built Binaries (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-artifact@v2
+      with:
+        name: tauri-binaries-windows
+        path: src-tauri/target/release/bundle/* # Make sure this is the correct path for your binaries
+
