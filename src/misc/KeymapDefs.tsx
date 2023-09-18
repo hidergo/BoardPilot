@@ -186,10 +186,14 @@ export const keymapBehaviours : {[key: string]: keymapBehaviourType} = {
             {
                 name: "Special",
                 values: [
+                    { name: "+", value1: 0x0207002E },
                     { name: "-", value1: 0x0007002D },
+                    { name: "_", value1: 0x0207002D },
                     { name: "=", value1: 0x0007002E },
                     { name: "[", value1: 0x0007002F },
                     { name: "]", value1: 0x00070030 },
+                    { name: "{", value1: 0x0207002F },
+                    { name: "}", value1: 0x02070030 },
                     { name: "\\", value1: 0x00070031 },
                     { name: "#", value1: 0x00070032 },
                     { name: ";", value1: 0x00070033 },
@@ -198,6 +202,18 @@ export const keymapBehaviours : {[key: string]: keymapBehaviourType} = {
                     { name: ",", value1: 0x00070036 },
                     { name: ".", value1: 0x00070037 },
                     { name: "/", value1: 0x00070038 },
+                    { name: "*", value1: 0x00070055 },
+                    { name: "!", value1: 0x0207001E },
+                    { name: "@", value1: 0x0207001F },
+                    { name: "#", value1: 0x02070020 },
+                    { name: "$", value1: 0x02070021 },
+                    { name: "%", value1: 0x02070022 },
+                    { name: "^", value1: 0x02070023 },
+                    { name: "&", value1: 0x02070024 },
+                    { name: "(", value1: 0x02070026 },
+                    { name: ")", value1: 0x02070027 },
+                    { name: "~", value1: 0x02070035 },
+                    { name: "|", value1: 0x02070031 },
                 ]
             },
             {

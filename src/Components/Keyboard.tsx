@@ -54,6 +54,11 @@ export type KeymapDef = {
     name: string,
     // Keyboard type
     type: string,
+    // Total key count (on a single layer)
+    keyCount: number,
+    // Layout type
+    layout: "ansi"|"iso",
+    // Layer names
     layers: string[],
     // Keys
     keys?: KeymapJsonFormat[][],

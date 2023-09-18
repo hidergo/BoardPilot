@@ -1,12 +1,15 @@
 import BoardPilotService from "./BoardPilotService";
 import { BoardPilotServiceCmd, BoardPilotServiceMsg } from "./BoardPilotServiceMsg";
 
+
+
 export type DeviceInfo = {
     product: {
         vid: number,
         pid: number,
         manufacturer: string,
         product: string,
+        device_id: string,
         rev: number
     },
     device: {
@@ -19,6 +22,17 @@ export type DeviceInfo = {
  * @brief Callback type for device update
  */
 export type DeviceUpdateCallback = (device: Device | Device[]) => any;
+
+const enabledModules : {[key: string]: string[]} = {
+    "dcmk1": [
+        "keymapeditor",
+        "display",
+        "trackpad"
+    ],
+    "corne": [
+        "keymapeditor"
+    ]
+}
 
 
 export default class Device {
@@ -41,6 +55,10 @@ export default class Device {
         this.deviceInfo = deviceInfo;
 
         Device.devices.push(this);
+    }
+
+    moduleEnabled (module: string) {
+        return enabledModules[this.deviceInfo.product.device_id].includes(module);
     }
 
     /**
@@ -69,6 +87,11 @@ export default class Device {
         Device.deviceUpdateCallbacks.forEach(e => {
             e.callback(device);
         })
+    }
+
+    static selectDevice (device: Device) {
+        Device.selectedDevice = device;
+        this.triggerDeviceUpdateListeners(device);
     }
 
     static fetchDevices () {

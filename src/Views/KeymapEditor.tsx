@@ -3,43 +3,50 @@ import { Box } from "@mui/system";
 import { Fragment, useEffect, useState } from "react";
 import { readBinaryFile, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import { open, save } from "@tauri-apps/api/dialog";
-import Keymap, { KeyDef, KeymapJsonFormat } from "../Components/Keyboard";
+import Keymap, { KeyDef, KeymapDef, KeymapJsonFormat } from "../Components/Keyboard";
 import Device from "../misc/Device";
 import BoardPilotService from "../misc/BoardPilotService";
 import { bytesToHex, ConfigField, hexToBytes } from "../misc/ConfigFields";
 import { keymapBehaviours, getKeymapDeviceName, getKeymapDeviceId } from "../misc/KeymapDefs";
-import hidergo_disconnect_mk1_keymap_ansi from '../Keymaps/hidergo_disconnect_mk1_keymap_ansi.json'
-import hidergo_disconnect_mk1_keymap_iso from '../Keymaps/hidergo_disconnect_mk1_keymap_iso.json'
+
 import { colorPalette } from '../Styles/Colors';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import SaveIcon from '@mui/icons-material/Save';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { getKeymapLayout } from "../misc/KeymapLayout";
 
 export default function KeymapEditor() {
 
     const [refreshKey, setRefreshKey] = useState(0);
     const [keyboardVersionSelected, setKeyboardVersionSelected] = useState(false);
-    const [keymap, setKeymap] = useState(hidergo_disconnect_mk1_keymap_ansi);
-    const [flatKeymap, setFlatKeymap] = useState(
-        [
-            hidergo_disconnect_mk1_keymap_ansi.keys_left,
-            hidergo_disconnect_mk1_keymap_ansi.keys_right
-        ].flatMap((e) => e.flatMap(y => y.map(z => z)))
+    const [keymap, setKeymap] = useState(getKeymapLayout(
+        Device.selectedDevice ?
+            Device.selectedDevice.deviceInfo.product.device_id : ""))
+
+    console.log(Device.selectedDevice);
+    const [flatKeymap, setFlatKeymap] = useState<KeymapJsonFormat[]>(
+        ((keymap.keys_left && keymap.keys_right) ?
+            [
+                keymap.keys_left,
+                keymap.keys_right
+            ].flatMap((e) => e.flatMap(y => y.map(z => z))) :
+            keymap.keys?.flatMap(e => e.map(z => z))) || []
     );
 
     const [keymapReadState, setKeymapReadState] = useState(true);
 
     useEffect(() => {
-        console.log("useEffect2")
 
         //set split or not
         if (keymap.type === "SPLITKB") {
-            setFlatKeymap([
-                keymap.keys_left,
-                keymap.keys_right
-            ].flatMap((e) => e.flatMap(y => y.map(z => z))))
+            setFlatKeymap(((keymap.keys_left && keymap.keys_right) ?
+                [
+                    keymap.keys_left,
+                    keymap.keys_right
+                ].flatMap((e) => e.flatMap(y => y.map(z => z))) :
+                keymap.keys?.flatMap(e => e.map(z => z))) || [])
         }
         else {
             //setFlatKeymap(keymap.keys);
@@ -48,20 +55,25 @@ export default function KeymapEditor() {
     }, [keymap])
 
     useEffect(() => {
-        console.log("useEffect")
         //set iso or ansi
         let keyboardVersion = localStorage.getItem('keyboardVersion')
         if (keyboardVersion) {
-            if (keyboardVersion === 'ansi') setKeymap(hidergo_disconnect_mk1_keymap_ansi)
-            else setKeymap(hidergo_disconnect_mk1_keymap_iso)
             setKeyboardVersionSelected(true)
         } else {
             setKeyboardVersionSelected(false)
         }
-        // TODO: Callback on select device
-        setTimeout(() => {
+
+        const uId = Device.addDeviceUpdateListener((dev) => {
+            setKeymap(getKeymapLayout(
+                Device.selectedDevice ?
+                    Device.selectedDevice.deviceInfo.product.device_id : ""));
+
             readConfigKeymap();
-        }, 100)
+        })
+
+        return () => {
+            Device.removeDeviceUpdateListener(uId);
+        }
     }, [])
 
     const [reboundKeys, setReboundKeys] = useState<KeyDef[]>([]);
@@ -114,12 +126,12 @@ export default function KeymapEditor() {
         return false;
     }
 
-    function resetKey (key: number | undefined, layer: number) {
-        if(key === undefined)
+    function resetKey(key: number | undefined, layer: number) {
+        if (key === undefined)
             return;
-        
+
         const rb = reboundKeys.findIndex(e => e.key === key && e.layer === layer);
-        if(rb >= 0) {
+        if (rb >= 0) {
             const ks = [...reboundKeys];
             ks.splice(rb, 1);
             setReboundKeys(ks);
@@ -223,7 +235,7 @@ export default function KeymapEditor() {
             }]
         })
         const json = JSON.stringify(reboundKeys);
-        if(file)
+        if (file)
             await writeTextFile(file, json);
     }
 
@@ -285,8 +297,8 @@ export default function KeymapEditor() {
 
     const modalBody = (
         <Box sx={{ backgroundColor: colorPalette.background, position: "absolute", top: "40%", left: "40%", width: "20%", display: 'flex', flex: 1, flexDirection: 'column', alignContent: 'center', justifyContent: 'space-around' }}>
-            <Typography textAlign={'center'} sx={{paddingTop: 5}}>Select Keyboard Variant</Typography>
-            <Box sx={{display: 'flex', flex: 1, flexDirection: 'row', alignContent: 'center', justifyContent: 'space-around', padding: 5}}>
+            <Typography textAlign={'center'} sx={{ paddingTop: 5 }}>Select Keyboard Variant</Typography>
+            <Box sx={{ display: 'flex', flex: 1, flexDirection: 'row', alignContent: 'center', justifyContent: 'space-around', padding: 5 }}>
                 <Button type="submit" variant="outlined" onClick={() => { localStorage.setItem('keyboardVersion', 'ansi'); setKeyboardVersionSelected(true); setRefreshKey(Math.random()) }}>
                     ANSI
                 </Button>

@@ -1,4 +1,5 @@
 import { colorPalette } from "../Styles/Colors";
+import Device from "../misc/Device";
 
 type TopBarButtonProps = {
     label: string,
@@ -22,6 +23,11 @@ export function TopBarButton({ label, currentView, view, onButtonClick }: TopBar
         ...topBarButton,
         backgroundColor: colorPalette.backgroundLight,
     } : topBarButton;
+
+    if(Device.selectedDevice) {
+        if(!Device.selectedDevice.moduleEnabled(view))
+            return null;
+    }
 
     return (
         <div style={buttonStyle} onClick={() => onButtonClick(view)}>

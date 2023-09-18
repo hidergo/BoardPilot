@@ -63,6 +63,8 @@ export default function TopBar(props: { onChangeView: OnChangeViewCallback, onSe
                                     const _dev = devices.find(d => d.deviceInfo.device.serial === e.target.value) || null;
                                     setSelectedDevice(_dev);
                                     props.onSelectDevice(_dev);
+                                    if(_dev)
+                                        Device.selectDevice(_dev);
                                 }}
                             >
                                 {
