@@ -1,6 +1,8 @@
 {
     "name": "hid:ergo Disconnect MK1",
     "type": "SPLITKB",
+    "keyCount": 42,
+    "layout": "ansi",
     "layers": [
         "Default",
         "Arrow",
